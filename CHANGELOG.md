@@ -2,6 +2,11 @@
 
 All notable changes to **Eclipsed Realms: Chronicles of the Seven Seals** (formerly "Survival++ | Eclipsed Realms") (Tech Bytes Design). Versions follow `major.minor.patch`; the pack version is set in `tools/version.json`.
 
+## [1.4.2]
+
+### Added
+- **Spawn eggs for every mob**: Blossom Vex and Veiled Echo now have eggs too (lint now fails the build if any mob lacks one).
+
 ## [1.4.1]
 
 ### Fixed

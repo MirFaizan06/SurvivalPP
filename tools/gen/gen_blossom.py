@@ -71,7 +71,7 @@ def bp_vex():
         'minecraft:experience_reward': {'on_death': 'query.last_hit_by_player ? 3 : 0'},
     }
     return {'format_version': '1.26.50', 'minecraft:entity': {
-        'description': {'identifier': f'{NS}:blossom_vex', 'is_spawnable': False, 'is_summonable': True, 'spawn_category': 'monster'},
+        'description': {'identifier': f'{NS}:blossom_vex', 'is_spawnable': True, 'is_summonable': True, 'spawn_category': 'monster'},
         'component_groups': {'ecr:despawn': {'minecraft:instant_despawn': {}}}, 'components': comps,
         'events': {'ecr:expire': {'add': {'component_groups': ['ecr:despawn']}}}}}
 
@@ -92,7 +92,7 @@ def bp_echo():
         'minecraft:timer': {'time': [28, 34], 'looping': False, 'time_down_event': {'event': 'ecr:expire'}},
     }
     return {'format_version': '1.26.50', 'minecraft:entity': {
-        'description': {'identifier': f'{NS}:blossom_echo', 'is_spawnable': False, 'is_summonable': True, 'spawn_category': 'monster'},
+        'description': {'identifier': f'{NS}:blossom_echo', 'is_spawnable': True, 'is_summonable': True, 'spawn_category': 'monster'},
         'component_groups': {'ecr:despawn': {'minecraft:instant_despawn': {}}}, 'components': comps,
         'events': {'ecr:expire': {'add': {'component_groups': ['ecr:despawn']}}}}}
 
@@ -259,7 +259,7 @@ def build():
     anims2.write('blossom_echo', {k.replace('veiled_blossom', 'blossom_echo'): v for k, v in anims2.hanae(BOSS).items() if not k.endswith(('attack', 'cast'))})
     wjson(f'{RP}/entity/blossom_echo.entity.json', client(
         f'{NS}:blossom_echo', 'blossom_echo', gid, ['idle', 'walk', 'look'], ['idle', {'walk': 'q.modified_move_speed > 0.02'}, 'look'],
-        material='entity_alphablend', glow=False, textures={'default': 'textures/entity/blossom_echo'}))
+        egg=('#c8b8e8', '#f6a8c8'), material='entity_alphablend', glow=False, textures={'default': 'textures/entity/blossom_echo'}))
     # vex
     vb, vm, vgid = mob_hanae.MODELS['blossom_vex']
     v = vb(); v.pack()
@@ -268,7 +268,7 @@ def build():
     wjson(f'{RP}/models/entity/blossom_vex.geo.json', v.export())
     anims2.write('blossom_vex', anims2.blossom_vex())
     wjson(f'{RP}/entity/blossom_vex.entity.json', client(
-        f'{NS}:blossom_vex', 'blossom_vex', vgid, ['idle', 'charge', 'look'], ['idle', {'charge': 'q.has_target'}, 'look']))
+        f'{NS}:blossom_vex', 'blossom_vex', vgid, ['idle', 'charge', 'look'], ['idle', {'charge': 'q.has_target'}, 'look'], egg=('#f6f2f6', '#c8284a')))
     wjson(f'{RP}/render_controllers/ecr_blossom.render_controllers.json', render_controllers())
     # behaviour
     wjson(f'{BP}/entities/{BOSS}.json', gen_bosses.bp(BOSS, gen_bosses.BOSSES[BOSS]))
@@ -282,6 +282,8 @@ def build():
     for ident, title in (('veiled_blossom', 'The Veiled Blossom'), ('blossom_vex', 'Blossom Vex'), ('blossom_echo', 'Veiled Echo'), ('petal_blade', 'Petal Blade')):
         LANG[f'entity.{NS}:{ident}.name'] = title
     LANG[f'item.spawn_egg.entity.{NS}:{BOSS}.name'] = 'The Veiled Blossom Spawn Egg'
+    LANG[f'item.spawn_egg.entity.{NS}:blossom_vex.name'] = 'Blossom Vex Spawn Egg'
+    LANG[f'item.spawn_egg.entity.{NS}:blossom_echo.name'] = 'Veiled Echo Spawn Egg'
     altar_block()
     story_items()
     fogs()

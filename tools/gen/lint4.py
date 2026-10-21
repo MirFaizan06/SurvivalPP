@@ -229,6 +229,19 @@ for f in re.findall(r'\$\{NS\}:([a-z_]+)', m_.group(1)) if m_ else []:
     if f'ecr:{f}' not in fog_ids:
         bad(f'blossom.js pushes fog ecr:{f} but no such fog definition exists')
 
+# ------------------------------------------------------------------ every mob has a spawn egg (projectiles excluded)
+for p_ in glob.glob(f'{BP}/entities/*.json'):
+    e_ = jl(p_)['minecraft:entity']
+    fam = e_['components'].get('minecraft:type_family', {}).get('family', [])
+    if 'projectile' in fam or 'ecr_projectile' in fam:
+        continue
+    n = os.path.basename(p_)[:-5]
+    if not e_['description'].get('is_spawnable'):
+        bad(f'mob ecr:{n} is not spawnable (no spawn egg)')
+    ce_ = jl(f'{RP}/entity/{n}.entity.json')['minecraft:client_entity']['description']
+    if 'spawn_egg' not in ce_:
+        bad(f'mob ecr:{n} has no spawn_egg colours in its client entity')
+
 # ------------------------------------------------------------------ every block / item / entity has a display name
 lang = {}
 for line in open(f'{RP}/texts/en_US.lang', encoding='utf-8').read().split('\n'):
