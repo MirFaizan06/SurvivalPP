@@ -8,6 +8,19 @@
 <a class="brand" href="index.html"><img src="img/icon_1024.png" alt=""><span>Eclipsed Realms <small>Chronicles of the Seven Seals</small></span></a>
 <nav><a href="index.html">Home</a><a href="world.html">World & Survival</a><a href="adventure.html">Adventure</a><a href="creatures.html">Creatures</a><a href="lore.html">Lore</a><a href="systems.html">Systems</a><a href="changelog.html" class=on>Changelog</a></nav></div></header>
 <main><h1>Changelog</h1><p class="lead">Every release, newest first. Version numbers are <code>major.minor.patch</code>.</p><div class="log">
+<h2>[1.5.0] - "Atmosphere Update"</h2>
+<h3>Added</h3>
+<ul>
+<li><strong>Boss music for both main bosses:</strong> the Veiled Blossom plays a calm, ethereal piano theme; the Eclipse Sovereign plays an epic boss-battle theme. The music starts when the boss exists (ritual, quest or <code>/summon</code>), repeats while the fight lasts, fades out the vanilla soundtrack, and stops when the boss dies or you walk away. Both tracks are CC0 (credits in <code>tools/assets/music/CREDITS.md</code> and on the docs site).</li>
+<li><strong>Armour trims:</strong> every armour item (Azurite, Pyrelite, Eclipsite, Veilbloom) now carries the <code>minecraft:trimmable_armors</code> tag so the smithing table accepts trim templates. <em>Note: trims are drawn over the armour's texture using the vanilla texture layout; our armour uses custom 3D models, so a trim may not line up perfectly.</em></li>
+<li><strong>Self-check:</strong> <code>/scriptevent ecr:diag</code> (and an automatic check shortly after you join) reports any creature the game failed to load, with instructions for finding the cause in the Content Log.</li>
+<li><strong>Story helper:</strong> <code>/scriptevent ecr:story set &lt;step&gt;</code>, <code>reset</code> or <code>journal</code> for testing/recovery (needs permission to run <code>/scriptevent</code>).</li>
+<li><strong>Chapter I step 2 has a second way through:</strong> besides 3 Gravewalkers + 2 Cave Weavers, slaying <strong>8 ordinary monsters inside a Cherry Grove</strong> also completes it.</li>
+</ul>
+<h3>Changed</h3>
+<ul>
+<li><strong>The Veiled Blossom's fog is now built like Mojang's own overworld fogs</strong> (render-relative distance, weather fog and a coloured volumetric medium) in three colours: soft pink, deep rose, and dark crimson. Petals also drift around everyone in the fight, so the mood carries even where the sky washes out the fog colour.</li>
+</ul>
 <h2>[1.4.2]</h2>
 <h3>Added</h3>
 <ul>
@@ -107,6 +120,6 @@
 <li>World generation for Overworld, Nether and End; Pyre Spires, Eclipse Obelisks and Shrines.</li>
 </ul>
 </div></main>
-<footer>Eclipsed Realms: Chronicles of the Seven Seals v1.4.2 &middot; by Tech Bytes Design &middot; <a href="https://github.com/MirFaizan06/SurvivalPP">GitHub</a> &middot;
+<footer>Eclipsed Realms: Chronicles of the Seven Seals v1.5.0 &middot; by Tech Bytes Design &middot; <a href="https://github.com/MirFaizan06/SurvivalPP">GitHub</a> &middot;
 Not an official Minecraft product; not approved by or associated with Mojang or Microsoft.</footer>
 </body></html>

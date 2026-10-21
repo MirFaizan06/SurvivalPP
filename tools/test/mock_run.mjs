@@ -21,7 +21,7 @@ for (const f of fs.readdirSync(SCRIPTS)) {
         for (const n of m[1].split(',').map((s) => s.trim()).filter(Boolean)) imported[m[2] === 'server' ? 'server' : 'ui'].add(n);
     }
 }
-const CLASSES = new Set(['ItemStack', 'BlockPermutation', 'ModalFormData', 'ActionFormData']);
+const CLASSES = new Set(['ItemStack', 'BlockPermutation', 'ModalFormData', 'ActionFormData', 'EntityTypes']);
 const mk = (pkg, names, extra) => {
     const dir = path.join(WORK, 'node_modules', '@minecraft', pkg);
     fs.mkdirSync(dir, { recursive: true });
@@ -102,6 +102,7 @@ class FakeEntity {
     hasTag(t) { return this.tags.has(t); } addTag(t) { this.tags.add(t); } removeTag(t) { this.tags.delete(t); }
     triggerEvent(e) { this.events.push(e); }
     getProperty(k) { return this.props[k]; } setProperty(k, v) { this.props[k] = v; }
+    playSound(id) { (this.sounds ||= []).push(id); }
     applyDamage() { return true; } applyKnockback() {} setOnFire() {} teleport(l) { this.location = l; } kill() { this.isValid = false; } remove() {} runCommand(c) { (this.cmds ||= []).push(c); return { successCount: 1 }; }
     getRotation() { return { x: 0, y: 0 }; } getViewDirection() { return { x: 0, y: 0, z: 1 }; }
     getDynamicProperty(k) { return this.props[`dp:${k}`]; } setDynamicProperty(k, v) { this.props[`dp:${k}`] = v; }
@@ -169,7 +170,7 @@ const system = {
 };
 const formQueue = [];
 class ActionFormData extends ModalFormData { body() { return this; } button() { return this; } show() { return Promise.resolve(formQueue.length ? { canceled: false, selection: formQueue.shift() } : { canceled: true }); } }
-globalThis.__mock = { world, system, enumProxy, classes: { ItemStack, BlockPermutation: { resolve: (id, st) => new FakePerm(id, st) }, ModalFormData, ActionFormData } };
+globalThis.__mock = { world, system, enumProxy, classes: { EntityTypes: { get: (id) => ({ id }), getAll: () => [] }, ItemStack, BlockPermutation: { resolve: (id, st) => new FakePerm(id, st) }, ModalFormData, ActionFormData } };
 
 // ------------------------------------------------------------------ helpers to drive the game loop
 const flush = () => {
@@ -253,6 +254,7 @@ for (const t of ['ecr:hollow_king', 'ecr:mosswood_colossus', 'ecr:silkqueen', 'e
     const boss = ow.spawnEntity(t, fakeLoc(0, 64, 0));
     boss.health = 40;                                                           // phase 3
     runTicks(80);
+    if (t === 'ecr:eclipse_sovereign' && !(player.sounds || []).includes('ecr.music.eclipse_sovereign')) note('music: the Eclipse Sovereign theme never played');
     boss.health = 0;
     fire('after', 'entityDie', { deadEntity: boss, damageSource: { cause: 'entityAttack', damagingEntity: player } });
 }
@@ -339,6 +341,7 @@ if (story().step !== 3) note(`story: presenting the offerings should reach step 
 if (![...hero.inv.values()].some((i) => i.typeId === 'ecr:veiled_mirror')) note('story: no Veiled Mirror was granted');
 // altar: day refuses, step 3 -> 4, night + cherry grove + mirror starts the fight
 const altar = blockAt('ecr:blossom_altar', 100, 64, 100);
+hero.location = fakeLoc(100, 64, 103);                                           // standing at the shrine
 const mirror = [...hero.inv.values()].find((i) => i.typeId === 'ecr:veiled_mirror');
 hero.equip.set('Mainhand', mirror);
 timeOfDay = 6000;
@@ -360,6 +363,7 @@ else {
     if (bladesMid <= bladesBefore) note('boss: Hanae never fired a petal');
     for (const t of ['ecr:blossom_vex', 'ecr:blossom_echo']) if (!ow.spawned.includes(t)) note(`boss: Hanae never summoned ${t}`);
     if (!(hero.cmds || []).some((c) => c.startsWith('fog @s push ecr:blossom_veil'))) note('boss: the fog was never pushed to the player');
+    if (!(hero.sounds || []).includes('ecr.music.veiled_blossom')) note('music: the Veiled Blossom theme never played for the player');
     if (!(hero.cmds || []).some((c) => c.startsWith('fog @s push ecr:eclipse_bloom'))) note('boss: the Eclipse Bloom fog was never pushed');
     // mercy: a nearly dead player stops all attacks
     hero.health = 4; await tickAll(20);
@@ -371,6 +375,7 @@ else {
     fire('after', 'entityDie', { deadEntity: hanae, damageSource: { cause: 'entityAttack', damagingEntity: hero } });
     await tickAll(2);
     if (!(hero.cmds || []).some((c) => c.startsWith('fog @s remove ecr_hanae'))) note('boss: the fog was not removed when Hanae fell');
+    if (!(hero.cmds || []).some((c) => c.startsWith('stopsound @s ecr.music.veiled_blossom'))) note('music: the theme was not stopped when Hanae fell');
     if (story().step !== 5) note(`story: defeating Hanae should reach step 5, got ${JSON.stringify(story())}`);
 }
 fire('after', 'entityDie', { deadEntity: new FakeEntity('ecr:eclipse_sovereign', ow), damageSource: { cause: 'entityAttack', damagingEntity: hero } });

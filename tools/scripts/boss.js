@@ -1,5 +1,6 @@
 // Eclipse Sovereign: summoning ritual, phase logic, signature attacks; plus mob / weapon combat hooks
 import { world, system, EntityComponentTypes, EntityDamageCause } from '@minecraft/server';
+import { tickMusic, stopMusic } from './music.js';
 import { NS, DIM_IDS, safe, dimOf, mainhand, consumeMainhand, isCreative, say, msg, spawnParticle, playSound, rand, randInt, runLater } from './util.js';
 
 const BOSS = `${NS}:eclipse_sovereign`;
@@ -99,6 +100,7 @@ function summonMinions(boss, n) {
 }
 
 function bossTick(boss) {
+    tickMusic(boss);
     const now = system.currentTick;
     let s = state.get(boss.id);
     if (!s) {
@@ -157,6 +159,7 @@ export function initBoss() {
     world.afterEvents.entityDie.subscribe((ev) => {
         const e = ev.deadEntity;
         if (e.typeId !== BOSS) return;
+        stopMusic(e);
         state.delete(e.id);
         const dim = e.dimension;
         const loc = e.location;

@@ -220,13 +220,19 @@ def story_items():
 
 # ----------------------------------------------------------------------------- fog
 def fogs():
-    def fog(name, start, end, colour):
+    def fog(name, start, end, colour, density, scatter, absorb):
+        # same shape as Mojang's own overworld fogs (pale garden): render-relative distance + a coloured volumetric medium
+        d = {'fog_start': start, 'fog_end': end, 'fog_color': colour, 'render_distance_type': 'render'}
         wjson(f'{RP}/fogs/{name}.json', {'format_version': '1.21.90', 'minecraft:fog_settings': {
             'description': {'identifier': f'{NS}:{name}'},
-            'distance': {'air': {'fog_start': start, 'fog_end': end, 'fog_color': colour, 'render_distance_type': 'fixed'}}}})
-    fog('blossom_veil', 4, 64, '#f3c4da')
-    fog('blossom_storm', 1, 30, '#e88ab4')
-    fog('eclipse_bloom', 0, 20, '#3a0818')
+            'distance': {'air': d, 'weather': dict(d)},
+            'volumetric': {
+                'density': {'air': {'max_density': density, 'zero_density_height': 320.0, 'max_density_height': 320.0}},
+                'media_coefficients': {'air': {'scattering': scatter, 'absorption': absorb}},
+                'henyey_greenstein_g': {'air': {'henyey_greenstein_g': 0.4}}}}})
+    fog('blossom_veil', 0.18, 0.8, '#ffa6d2', 0.10, [0.95, 0.45, 0.75], [0.0, 0.1, 0.05])
+    fog('blossom_storm', 0.06, 0.5, '#ff6fb3', 0.17, [0.95, 0.3, 0.62], [0.02, 0.16, 0.08])
+    fog('eclipse_bloom', 0.02, 0.38, '#8a1040', 0.22, [0.9, 0.12, 0.3], [0.1, 0.3, 0.25])
 
 
 # ----------------------------------------------------------------------------- build

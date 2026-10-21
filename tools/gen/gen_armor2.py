@@ -35,7 +35,7 @@ def sakura_items():
             'minecraft:wearable': {'slot': f'slot.armor.{slot}', 'protection': SAKURA['prot'][i]},
             'minecraft:enchantable': {'slot': ENCH_SLOT[slot], 'value': SAKURA['ench']},
             'minecraft:repairable': repairable(name, f'{NS}:sakura_shard'),
-            'minecraft:tags': {'tags': ['minecraft:is_armor', f'{NS}:sakura_gear']},
+            'minecraft:tags': {'tags': ['minecraft:is_armor', 'minecraft:trimmable_armors', f'{NS}:sakura_gear']},
             'minecraft:rarity': {'value': SAKURA['rarity']}}
         write_item(name, comps, 'equipment', f'minecraft:itemGroup.name.{grp}')
         lang_item(name, SAKURA_NAMES[kind])

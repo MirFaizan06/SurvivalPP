@@ -15,6 +15,9 @@ const CHERRY = 'minecraft:cherry_grove';
 /** @type {[string, number, string][]} */
 const OFFERINGS = [['minecraft:pink_petals', 16, 'Pink Petals'], [`${NS}:silk_gland`, 1, 'Silk Gland'], [`${NS}:hollow_bone`, 1, 'Hollow Bone'], [`${NS}:spore_cluster`, 1, 'Spore Cluster']];
 const KILLS = { gravewalker: 3, cave_weaver: 2 };
+/** the Eclipse's taint also spreads into ordinary monsters inside a cherry grove: this many of them also complete step 2 */
+const GROVE_KILLS = 8;
+const COMMON_MONSTERS = new Set(['minecraft:zombie', 'minecraft:skeleton', 'minecraft:spider', 'minecraft:cave_spider', 'minecraft:husk', 'minecraft:stray', 'minecraft:drowned', 'minecraft:zombie_villager', 'minecraft:witch', 'minecraft:creeper', 'minecraft:enderman', 'minecraft:slime', 'minecraft:bogged', 'minecraft:parched']);
 
 /** one entry per step; `chapter` groups them for the journal header */
 const STEPS = [
@@ -48,7 +51,7 @@ const PAGES = {
 
 // ------------------------------------------------------------------------------------------- state
 function fresh() {
-    return { step: 0, grove: 0, kills: { gravewalker: 0, cave_weaver: 0 }, pages: [], mirror: false };
+    return { step: 0, grove: 0, kills: { gravewalker: 0, cave_weaver: 0 }, groveKills: 0, pages: [], mirror: false };
 }
 
 export function getStory(p) {
@@ -102,7 +105,7 @@ function pageUnlocked(st, key) {
 }
 
 function progressText(st) {
-    if (st.step === 1) return `\n\n§7Gravewalkers: ${Math.min(st.kills.gravewalker, KILLS.gravewalker)}/${KILLS.gravewalker}\nCave Weavers: ${Math.min(st.kills.cave_weaver, KILLS.cave_weaver)}/${KILLS.cave_weaver}`;
+    if (st.step === 1) return `\n\n§7Gravewalkers: ${Math.min(st.kills.gravewalker, KILLS.gravewalker)}/${KILLS.gravewalker}\nCave Weavers: ${Math.min(st.kills.cave_weaver, KILLS.cave_weaver)}/${KILLS.cave_weaver}\n§8...or any monsters slain inside a Cherry Grove: ${Math.min(st.groveKills || 0, GROVE_KILLS)}/${GROVE_KILLS}`;
     if (st.step === 2) return '\n\n§7' + OFFERINGS.map(([, n, name]) => `${name} x${n}`).join(', ');
     return '';
 }
@@ -226,6 +229,23 @@ export function initStory() {
         }, 'journalGift'), 60);
     });
 
+    // /scriptevent ecr:story set <step> | reset | journal   (testing / recovery; needs permission to run /scriptevent)
+    system.afterEvents.scriptEventReceive.subscribe((ev) => {
+        if (ev.id !== `${NS}:story`) return;
+        const p = /** @type {any} */ (ev.sourceEntity);
+        if (!p || p.typeId !== 'minecraft:player') return;
+        const [cmd, arg] = ev.message.trim().split(/\s+/);
+        if (cmd === 'reset') { save(p, fresh()); msg(p, '§d✿ Story progress reset.'); }
+        else if (cmd === 'journal') give(p, JOURNAL, 1);
+        else if (cmd === 'set') {
+            const st = getStory(p);
+            st.step = Math.max(0, Math.min(COMPLETE, parseInt(arg, 10) || 0));
+            if (st.step >= 3 && !st.mirror) { st.mirror = true; give(p, MIRROR, 1); }
+            save(p, st);
+            msg(p, `§d✿ Story step set to ${st.step}.`);
+        }
+    });
+
     world.afterEvents.itemUse.subscribe((ev) => {
         if (ev.itemStack && ev.itemStack.typeId === JOURNAL) openJournal(/** @type {any} */ (ev.source));
     });
@@ -249,6 +269,15 @@ export function initStory() {
         const e = ev.deadEntity;
         const id = e.typeId.replace(`${NS}:`, '');
         const killer = ev.damageSource && ev.damageSource.damagingEntity;
+        if (COMMON_MONSTERS.has(e.typeId) && killer && killer.typeId === 'minecraft:player') {
+            const p = /** @type {any} */ (killer);
+            const st = getStory(p);
+            if (st.step === 1 && safe(() => e.dimension.getBiome(e.location).id) === CHERRY) {
+                st.groveKills = (st.groveKills || 0) + 1;
+                if (st.groveKills >= GROVE_KILLS) { give(p, 'minecraft:emerald', 5); advance(p, st, 2); } else { save(p, st); say(p, `§d✿ §7Taint cut back in the grove: ${st.groveKills}/${GROVE_KILLS}`); }
+            }
+            return;
+        }
         if (id in KILLS && killer && killer.typeId === 'minecraft:player') {
             const p = /** @type {any} */ (killer);
             const st = getStory(p);

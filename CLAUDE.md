@@ -66,6 +66,9 @@ Known/expected lint output: `items checked N bad 12` (tool `destroy_speeds` fals
 - **Boss recipe (Hanae):** model `mob_hanae.py`, animations `anims2.hanae()`, entities `gen_blossom.py` (+ `gen_bosses.BOSSES[..., custom=True]`), behaviour `blossom.js`, fog JSON in `gen_blossom.fogs()`, boss-bar skin in `gen_ui.SKINS` (matched by the boss name text), death lines in `deaths.js`, mock-run scenario in `tools/test/mock_run.mjs`.
 - **Boss bars:** `gen_ui.py` writes `ui/hud_screen.json` using `modifications` + `insert_back` so the vanilla bar remains as a fallback; skins are selected with the string-subtraction trick on `#bossName`. The boss `minecraft:boss.name` must contain the skin key.
 - **Armour/swords:** `armor_models.py` (per-piece geometry + paint + icon, `DESIGNS`), `gen_armor2.py` (attachables + Veilbloom items), `art_swords.py`. Preview: `python tools/gen/preview_armor.py`.
+- **Boss music:** CC0 OGGs in `tools/assets/music/` (credits there), copied + registered by `gen_music.py` (`ecr.music.<boss>` sound definitions); `music.js` `tickMusic/stopMusic` are called from each main boss's tick and death handler. Add a track for a new main boss in `gen_music.TRACKS` and `music.js TRACKS`.
+- **Diagnostics:** `diag.js` lists every creature (`CREATURES`, kept in sync by lint4) and reports unloaded ones; `/scriptevent ecr:diag`. `/scriptevent ecr:story ...` helps testing.
+- **Armour trims:** items carry `minecraft:trimmable_armors`; trim rendering assumes the vanilla armour UV layout, which our custom geometry does not follow.
 - **Balance rule for Chapter I:** early boss, low damage, never lethal on purpose (mercy rule). Later Keepers can be harder.
 
 ## Content map (v1.4.0)

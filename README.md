@@ -1,7 +1,7 @@
 # Eclipsed Realms: Chronicles of the Seven Seals
 
 **A story-driven adventure for Minecraft Bedrock - follow the Wayfarer's Journal, fight bosses with their own fog and health bars, loot fifteen structures, and survive with new ores, stones, crops, animals and monsters.**
-Made by **Tech Bytes Design** · Current version **1.4.2** · Needs Minecraft Bedrock **1.26.50 or newer** · No experimental toggles required
+Made by **Tech Bytes Design** · Current version **1.5.0** · Needs Minecraft Bedrock **1.26.50 or newer** · No experimental toggles required
 
 📖 **Illustrated guide:** <https://mirfaizan06.github.io/SurvivalPP/> · 📜 **The full lore (spoilers):** [LORE.md](LORE.md) · 📋 **Changelog:** [CHANGELOG.md](CHANGELOG.md)
 
@@ -11,7 +11,7 @@ Made by **Tech Bytes Design** · Current version **1.4.2** · Needs Minecraft Be
 
 ## Install (30 seconds)
 
-1. Download **`EclipsedRealms_v1.4.2.mcaddon`** from the [`releases/`](releases) folder.
+1. Download **`EclipsedRealms_v1.5.0.mcaddon`** from the [`releases/`](releases) folder.
 2. Open it - Minecraft imports the Behavior Pack *and* the Resource Pack.
 3. Create a **new world** (or edit an existing one and enable both packs). 
 4. New terrain only: ores, structures, stones, crops and animals appear in chunks generated **after** the pack is enabled. Explore somewhere new.
@@ -154,11 +154,14 @@ Works on servers **without any operators**:
 | Item won't craft in the 2x2 inventory grid | Update to v1.3.0 - single-ingredient recipes (log → planks…) were fixed. |
 | Bosses won't summon | Read the on-screen hint: each needs the right block, time and height. |
 | No structures found | They only generate in new chunks. Hard ones are rare (about 1 per 400 chunks); the Sunken Crypt is underground. |
+| A creature is missing / `/summon` says not found | Run `/scriptevent ecr:diag` - it lists any creature the game failed to load. Then check Settings > Creator > Content Log and re-activate the Behavior Pack in the world. |
 | I lost my journal | Craft a new one (Book + Ink Sac + Pink Petals). Progress is saved on you, not on the book. |
 | Scripts seem dead | Check the content log for `[Eclipsed Realms] ready`. A failed module is named there. |
 
 ## For developers
 
 Everything (textures, models, animations, JSON, scripts) is generated from source in [`tools/`](tools): `python tools/dev.py all` rebuilds, lints against Mojang's schemas and vanilla block data, type-checks the scripts, runs a runtime smoke test and packages the `.mcaddon`. See [CLAUDE.md](CLAUDE.md) for the full workflow and conventions.
+
+**Music credits:** boss themes are CC0 tracks from OpenGameArt - "First Light Particles" by Yoiyami and "Epic Boss Battle" by Juhani Junkala (see [credits](tools/assets/music/CREDITS.md)).
 
 *© Tech Bytes Design. Not an official Minecraft product; not approved by or associated with Mojang or Microsoft.*

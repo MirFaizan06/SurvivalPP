@@ -13,6 +13,7 @@ import { initBosses2 } from './bosses2.js';
 import { initMobs2 } from './mobs2.js';
 import { initStory } from './story.js';
 import { initBlossom } from './blossom.js';
+import { initDiag } from './diag.js';
 
 // Custom block components must be registered during the startup event.
 system.beforeEvents.startup.subscribe((ev) => {
@@ -29,7 +30,7 @@ function initAll() {
     /** @type {[string, () => void][]} */
     const modules = [
         ['blocks', initBlockEvents], ['mining', initMining], ['tools', initTools], ['stasis', initStasis],
-        ['boss', initBoss], ['combat', initCombat], ['armor', initArmor], ['sanctum', initSanctum], ['deaths', initDeaths], ['crops', initCrops], ['foods', initFoodEffects], ['bosses2', initBosses2], ['mobs2', initMobs2], ['story', initStory], ['blossom', initBlossom],
+        ['boss', initBoss], ['combat', initCombat], ['armor', initArmor], ['sanctum', initSanctum], ['deaths', initDeaths], ['crops', initCrops], ['foods', initFoodEffects], ['bosses2', initBosses2], ['mobs2', initMobs2], ['story', initStory], ['blossom', initBlossom], ['diag', initDiag],
         ['rod', () => world.afterEvents.itemUse.subscribe((ev) => {
             if (ev.itemStack && ev.itemStack.typeId === 'minecraft:fishing_rod') onRodUse(ev.source, ev.itemStack);
         })],

@@ -72,7 +72,7 @@ def build_equipment():
                 'minecraft:wearable': {'slot': f'slot.armor.{slot}', 'protection': d['prot'][i]},
                 'minecraft:enchantable': {'slot': ENCH_SLOT[slot], 'value': d['ench']},
                 'minecraft:repairable': repairable(name, ingot),
-                'minecraft:tags': {'tags': ['minecraft:is_armor', f'minecraft:{d["tier"]}_tier', f'{NS}:{mat}_gear']},
+                'minecraft:tags': {'tags': ['minecraft:is_armor', 'minecraft:trimmable_armors', f'minecraft:{d["tier"]}_tier', f'{NS}:{mat}_gear']},
                 'minecraft:rarity': {'value': d['rarity']},
             }
             if d['fire']:

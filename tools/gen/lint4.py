@@ -229,6 +229,29 @@ for f in re.findall(r'\$\{NS\}:([a-z_]+)', m_.group(1)) if m_ else []:
     if f'ecr:{f}' not in fog_ids:
         bad(f'blossom.js pushes fog ecr:{f} but no such fog definition exists')
 
+# ------------------------------------------------------------------ diag.js lists exactly the creatures the behaviour pack defines
+m_ = re.search(r'CREATURES = \[(.*?)\];', open(f'{BP}/scripts/diag.js', encoding='utf-8').read(), re.S)
+listed = set(re.findall(r"'([a-z_]+)'", m_.group(1))) if m_ else set()
+defined = set()
+for p_ in glob.glob(f'{BP}/entities/*.json'):
+    e_ = jl(p_)['minecraft:entity']
+    fam_ = e_['components'].get('minecraft:type_family', {}).get('family', [])
+    if 'projectile' not in fam_ and 'ecr_projectile' not in fam_:
+        defined.add(os.path.basename(p_)[:-5])
+if listed != defined:
+    bad(f'diag.js CREATURES out of sync: missing {sorted(defined - listed)} extra {sorted(listed - defined)}')
+
+# ------------------------------------------------------------------ sounds: every definition points at a real file; scripts only play defined ids
+sdefs = jl(f'{RP}/sounds/sound_definitions.json')['sound_definitions'] if os.path.exists(f'{RP}/sounds/sound_definitions.json') else {}
+for k, v in sdefs.items():
+    for snd in v['sounds']:
+        if not os.path.exists(f"{RP}/{snd['name']}.ogg"):
+            bad(f'sound {k}: file {snd["name"]}.ogg missing')
+for p_ in glob.glob(f'{BP}/scripts/*.js'):
+    for sid in set(re.findall(r"'(ecr\.music\.[a-z_]+)'", open(p_, encoding='utf-8').read())):
+        if sid not in sdefs:
+            bad(f'{os.path.basename(p_)}: plays undefined sound {sid}')
+
 # ------------------------------------------------------------------ every mob has a spawn egg (projectiles excluded)
 for p_ in glob.glob(f'{BP}/entities/*.json'):
     e_ = jl(p_)['minecraft:entity']

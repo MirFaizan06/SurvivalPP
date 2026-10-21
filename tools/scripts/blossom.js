@@ -1,6 +1,7 @@
 // The Veiled Blossom (Hanae) - the first main boss.  Ritual, three phases, Petal Fan, Mirror Step, Veiled Echoes, Blossom Vexes,
 // Falling Blossoms, the Eclipse Bloom petal spiral, and a fog that changes with the fight.
 import { world, system, EntityComponentTypes, EntityDamageCause } from '@minecraft/server';
+import { tickMusic, stopMusic } from './music.js';
 import { NS, DIM_IDS, safe, dimOf, consumeMainhand, say, msg, spawnParticle, playSound, rand, randInt, runLater } from './util.js';
 import { nearbyPlayers, titleAll, healthFrac, shockwave } from './boss.js';
 
@@ -270,6 +271,7 @@ function phaseOf(boss) {
 }
 
 function bossTick(boss) {
+    tickMusic(boss);
     const now = system.currentTick;
     let s = state.get(boss.id);
     if (!s) { s = { next: {}, fog: new Map(), phase: 0, shield: false }; state.set(boss.id, s); }
@@ -329,7 +331,8 @@ function bossTick(boss) {
         for (let i = 0; i < 6; i++) spawnParticle(dim, LEAF, { x: L.x + rand(-1.4, 1.4), y: L.y + rand(0.2, 3), z: L.z + rand(-1.4, 1.4) });
         if (!s.shield) { s.shield = true; for (const p of players) say(p, '§d✿ Her reflections shield her - shatter the Veiled Echoes!'); }
     } else if (echoes === 0) s.shield = false;
-    // ambience
+    // ambience: petals drift around everyone in the fight (stronger each phase)
+    if (now % 10 < 5) for (const p of players) for (let i = 0; i < 3 + phase * 3; i++) spawnParticle(dim, LEAF, { x: p.location.x + rand(-5, 5), y: p.location.y + rand(0.5, 4), z: p.location.z + rand(-5, 5) });
     if (now % 10 < 5) spawnParticle(dim, LEAF, { x: L.x + rand(-1.6, 1.6), y: L.y + rand(0, 3.2), z: L.z + rand(-1.6, 1.6) });
     if (due(s, 'bell', now, 80, 40)) bell(dim, L, 1.2);
 }
@@ -352,6 +355,7 @@ export function initBlossom() {
             return;
         }
         if (e.typeId !== HANAE) return;
+        stopMusic(e);
         const s = state.get(e.id) || { fog: new Map() };
         state.delete(e.id);
         const dim = e.dimension, L = e.location;

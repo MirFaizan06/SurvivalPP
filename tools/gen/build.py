@@ -148,6 +148,8 @@ def generate():
     gen_blossom.build()
     import gen_ui
     gen_ui.build()
+    import gen_music
+    gen_music.build()
     gen_world.build_all()
     import gen_world2
     gen_world2.build_all()

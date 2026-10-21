@@ -2,6 +2,18 @@
 
 All notable changes to **Eclipsed Realms: Chronicles of the Seven Seals** (formerly "Survival++ | Eclipsed Realms") (Tech Bytes Design). Versions follow `major.minor.patch`; the pack version is set in `tools/version.json`.
 
+## [1.5.0] - "Atmosphere Update"
+
+### Added
+- **Boss music for both main bosses:** the Veiled Blossom plays a calm, ethereal piano theme; the Eclipse Sovereign plays an epic boss-battle theme. The music starts when the boss exists (ritual, quest or `/summon`), repeats while the fight lasts, fades out the vanilla soundtrack, and stops when the boss dies or you walk away. Both tracks are CC0 (credits in `tools/assets/music/CREDITS.md` and on the docs site).
+- **Armour trims:** every armour item (Azurite, Pyrelite, Eclipsite, Veilbloom) now carries the `minecraft:trimmable_armors` tag so the smithing table accepts trim templates. *Note: trims are drawn over the armour's texture using the vanilla texture layout; our armour uses custom 3D models, so a trim may not line up perfectly.*
+- **Self-check:** `/scriptevent ecr:diag` (and an automatic check shortly after you join) reports any creature the game failed to load, with instructions for finding the cause in the Content Log.
+- **Story helper:** `/scriptevent ecr:story set <step>`, `reset` or `journal` for testing/recovery (needs permission to run `/scriptevent`).
+- **Chapter I step 2 has a second way through:** besides 3 Gravewalkers + 2 Cave Weavers, slaying **8 ordinary monsters inside a Cherry Grove** also completes it.
+
+### Changed
+- **The Veiled Blossom's fog is now built like Mojang's own overworld fogs** (render-relative distance, weather fog and a coloured volumetric medium) in three colours: soft pink, deep rose, and dark crimson. Petals also drift around everyone in the fight, so the mood carries even where the sky washes out the fog colour.
+
 ## [1.4.2]
 
 ### Added
