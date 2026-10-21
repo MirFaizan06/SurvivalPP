@@ -2,6 +2,11 @@
 
 All notable changes to **Eclipsed Realms: Chronicles of the Seven Seals** (formerly "Survival++ | Eclipsed Realms") (Tech Bytes Design). Versions follow `major.minor.patch`; the pack version is set in `tools/version.json`.
 
+## [1.4.1]
+
+### Fixed
+- **Gravewalkers and Cave Weavers never appeared in Cherry Groves**, so Chapter I step 2 ("Tainted Roots") could not be completed by exploring. Gravewalkers now spawn in cherry groves (on the surface, in the dark) and Cave Weavers creep up there at night as well as underground.
+
 ## [1.4.0] - "Chronicles Update"
 
 ### Renamed

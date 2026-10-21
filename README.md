@@ -1,7 +1,7 @@
 # Eclipsed Realms: Chronicles of the Seven Seals
 
 **A story-driven adventure for Minecraft Bedrock - follow the Wayfarer's Journal, fight bosses with their own fog and health bars, loot fifteen structures, and survive with new ores, stones, crops, animals and monsters.**
-Made by **Tech Bytes Design** · Current version **1.4.0** · Needs Minecraft Bedrock **1.26.50 or newer** · No experimental toggles required
+Made by **Tech Bytes Design** · Current version **1.4.1** · Needs Minecraft Bedrock **1.26.50 or newer** · No experimental toggles required
 
 📖 **Illustrated guide:** <https://mirfaizan06.github.io/SurvivalPP/> · 📜 **The full lore (spoilers):** [LORE.md](LORE.md) · 📋 **Changelog:** [CHANGELOG.md](CHANGELOG.md)
 
@@ -11,7 +11,7 @@ Made by **Tech Bytes Design** · Current version **1.4.0** · Needs Minecraft Be
 
 ## Install (30 seconds)
 
-1. Download **`EclipsedRealms_v1.4.0.mcaddon`** from the [`releases/`](releases) folder.
+1. Download **`EclipsedRealms_v1.4.1.mcaddon`** from the [`releases/`](releases) folder.
 2. Open it - Minecraft imports the Behavior Pack *and* the Resource Pack.
 3. Create a **new world** (or edit an existing one and enable both packs). 
 4. New terrain only: ores, structures, stones, crops and animals appear in chunks generated **after** the pack is enabled. Explore somewhere new.

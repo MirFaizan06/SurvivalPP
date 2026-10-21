@@ -227,10 +227,13 @@ def monster_rule(name, weight, herd, tags, surface=True, underground=True, brigh
 
 
 def spawns():
-    wjson(f'{BP}/spawn_rules/gravewalker.json', monster_rule('gravewalker', 28, (1, 3), ['forest', 'plains', 'taiga', 'roofed', 'swamp'], underground=False,
+    wjson(f'{BP}/spawn_rules/gravewalker.json', monster_rule('gravewalker', 28, (1, 3), ['forest', 'plains', 'taiga', 'roofed', 'swamp', 'cherry_grove'], underground=False,
                                                              extra={'minecraft:spawns_on_block_filter': ['minecraft:grass_block', 'minecraft:dirt', 'minecraft:podzol', 'minecraft:coarse_dirt', 'minecraft:moss_block']}))
     wjson(f'{BP}/spawn_rules/revenant.json', monster_rule('revenant', 22, (1, 2), ['extreme_hills', 'mountains', 'taiga', 'caves', 'plains']))
-    wjson(f'{BP}/spawn_rules/cave_weaver.json', monster_rule('cave_weaver', 30, (1, 2), ['monster'], surface=False))
+    # Cave Weavers live underground everywhere, and creep up through the roots of cherry groves at night (the Chapter I quest needs them there)
+    cw = monster_rule('cave_weaver', 30, (1, 2), ['monster'], surface=False)
+    cw['minecraft:spawn_rules']['conditions'] += monster_rule('cave_weaver', 22, (1, 2), ['cherry_grove'], underground=False)['minecraft:spawn_rules']['conditions']
+    wjson(f'{BP}/spawn_rules/cave_weaver.json', cw)
     wjson(f'{BP}/spawn_rules/sporeling.json', monster_rule('sporeling', 26, (2, 4), ['lush_caves', 'mangrove_swamp', 'swamp', 'roofed', 'mooshroom_island']))
 
 
