@@ -2,6 +2,24 @@
 
 All notable changes to **Survival++ | Eclipsed Realms** (Tech Bytes Design). Versions follow `major.minor.patch`; the pack version is set in `tools/version.json`.
 
+## [1.3.0] - "Adventure Update" (Version 1 final)
+
+### Added
+- **Ten adventure structures** that generate naturally in new chunks, with tiered loot, traps and monster spawners:
+  Bandit Lookout, Sunken Well (easy) - Ruined Watch Keep, Dune Vault, Thorn Shrine, Frost Cairn (medium) - Highland Bastion, Sunken Crypt, Pyre Bastion (Nether), Eclipse Vault (End) (hard).
+- Traps: TNT-under-pressure-plate floors, fall-in shafts, spike pits, powder-snow pits, lava vaults/moats, silverfish (infested) walls, cobwebs and spawners that use the pack's own monsters (Revenant, Gravewalker, Cave Weaver, Ashen Warg, Voidweaver).
+- 20 new chest loot tables in five tiers (food and iron up to netherite, Elytra, Totems, enchanted gear, Azurite/Pyrelite/Eclipsite, boss relics at rising odds).
+- **Bug-sweep tooling:** structure block/state validator against Mojang's vanilla block data (`lint3`), entity + spawn-rule schemas, Molang/animation/geometry/texture/biome-tag/loot/lang cross-checks (`lint4`), a runtime smoke test that boots every script against a fake game and fires events through each module (`python tools/dev.py test`), isometric structure previews.
+- New docs page: Adventure Structures.
+
+### Fixed
+- **Chests in structures used a block state that does not exist** (`facing_direction`, so the chest orientation was probably ignored); they now use `minecraft:cardinal_direction` (also fixed in the v1 End shrine and the v1.2 structures).
+- **Sporeling spawn rule used a biome tag that no biome has** (`mushroom_island`), now `mooshroom_island`; Highland Yak can spawn on snow layers.
+- Removed animations that were generated but never used.
+
+### Verified (offline)
+Build, official-schema lint, structure palette lint, entity/spawn schemas, TypeScript check of all scripts and a runtime smoke test all pass. In-game behaviour (placement, trap mechanics, particles) could not be tested in this environment.
+
 ## [1.2.0] - 2026-10-21 - "Overworld Update"
 
 ### Added

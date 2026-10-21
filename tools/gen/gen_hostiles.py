@@ -231,7 +231,7 @@ def spawns():
                                                              extra={'minecraft:spawns_on_block_filter': ['minecraft:grass_block', 'minecraft:dirt', 'minecraft:podzol', 'minecraft:coarse_dirt', 'minecraft:moss_block']}))
     wjson(f'{BP}/spawn_rules/revenant.json', monster_rule('revenant', 22, (1, 2), ['extreme_hills', 'mountains', 'taiga', 'caves', 'plains']))
     wjson(f'{BP}/spawn_rules/cave_weaver.json', monster_rule('cave_weaver', 30, (1, 2), ['monster'], surface=False))
-    wjson(f'{BP}/spawn_rules/sporeling.json', monster_rule('sporeling', 26, (2, 4), ['lush_caves', 'mangrove_swamp', 'swamp', 'roofed', 'mushroom_island']))
+    wjson(f'{BP}/spawn_rules/sporeling.json', monster_rule('sporeling', 26, (2, 4), ['lush_caves', 'mangrove_swamp', 'swamp', 'roofed', 'mooshroom_island']))
 
 
 # ----------------------------------------------------------------------------- build
@@ -247,8 +247,8 @@ def build():
                       ['idle', {'walk': 'q.modified_move_speed > 0.02'}, 'look', {'puff': "q.property('ecr:puffing')"}]),
     }
     anim_sets = {
-        'gravewalker': anims2.biped('gravewalker', arm=-72, sway=[f'strip{i}' for i in range(5)], leg='leg', shamble=1.4),
-        'revenant': anims2.biped('revenant', arm=-80, sway=[f'rag{i}' for i in range(5)], leg='leg', shin='shin', legamp=42, bow=True),
+        'gravewalker': anims2.biped('gravewalker', arm=-72, sway=[f'strip{i}' for i in range(5)], leg='leg', shamble=1.4, cast=False),
+        'revenant': anims2.biped('revenant', arm=-80, sway=[f'rag{i}' for i in range(5)], leg='leg', shin='shin', legamp=42, bow=True, cast=False),
         'cave_weaver': anims2.spider('cave_weaver'),
         'sporeling': anims2.spores('sporeling'),
     }

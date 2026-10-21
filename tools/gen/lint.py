@@ -157,7 +157,10 @@ def read_nbt(path):
         n = rd('<H'); s = b[pos[0]:pos[0] + n].decode(); pos[0] += n; return s
     def payload(t):
         if t == 1: return rd('<b')
+        if t == 2: return rd('<h')
         if t == 3: return rd('<i')
+        if t == 4: return rd('<q')
+        if t == 5: return rd('<f')
         if t == 8: return rstr()
         if t == 9:
             et = rd('<b'); n = rd('<i'); return [payload(et) for _ in range(n)]

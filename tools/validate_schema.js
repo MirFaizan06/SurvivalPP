@@ -11,7 +11,7 @@ const rootSchema=JSON.parse(fs.readFileSync(path.join(dir,root),'utf8'));
 let bad=0;
 for(const f of files){
   let j; try{ let t=fs.readFileSync(f,'utf8'); j=JSON.parse(t);}catch(e){console.log('JSON PARSE FAIL',f,e.message);bad++;continue}
-  const doc=j['minecraft:block']||j['minecraft:item']||j['minecraft:entity']||j;
+  const doc=j['minecraft:block']||j['minecraft:item']||j['minecraft:entity']||j['minecraft:spawn_rules']||j;
   const v=ajv.getSchema(rootSchema.$id);
   const ok=v(doc);
   if(!ok){const errs=(v.errors||[]).filter(e=>!(process.env.IGNORE_STATES && /\/description\/states\//.test(e.instancePath)) );

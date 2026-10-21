@@ -13,6 +13,7 @@ REPO = 'https://github.com/MirFaizan06/SurvivalPP'
 PAGES = [  # (file, nav title, page title)
     ('index.html', 'Home', 'Survival++ | Eclipsed Realms'),
     ('world.html', 'World & Survival', 'World & Survival'),
+    ('adventure.html', 'Adventure', 'Adventure Structures'),
     ('creatures.html', 'Creatures', 'Animals, Monsters & Bosses'),
     ('systems.html', 'Systems', 'Stasis Chambers, Sanctum & Crafting'),
     ('changelog.html', 'Changelog', 'Changelog'),

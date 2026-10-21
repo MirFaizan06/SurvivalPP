@@ -16,7 +16,7 @@ docs/                 generated site (served by GitHub Pages, main /docs)
 releases/             packaged .mcaddon per version (commit the new one)
 README.md CHANGELOG.md CLAUDE.md
 ```
-Key generators (`tools/gen/`): `common.py` (paths, palettes, helpers), `registry.py` (lang + texture registries), `geo.py`/`paint.py` (Blockbench-style model builder + procedural painter + software renderer), `anims.py`/`anims2.py` (Molang animation sets), `mob_*.py` (models), `gen_*.py` (entities/items/blocks/world), `structures*.py` (.mcstructure NBT writer + designs), `tex_*.py` (textures), `lint.py`/`lint2.py` (checks).
+Key generators (`tools/gen/`): `common.py` (paths, palettes, helpers), `registry.py` (lang + texture registries), `geo.py`/`paint.py` (Blockbench-style model builder + procedural painter + software renderer), `anims.py`/`anims2.py` (Molang animation sets), `mob_*.py` (models), `gen_*.py` (entities/items/blocks/world), `structures*.py` (.mcstructure NBT writer + designs), `tex_*.py` (textures), `lint.py`/`lint2.py`/`lint3.py`/`lint4.py` (checks: refs+schemas / components / structure palettes vs vanilla block data / entity+spawn schemas, Molang, animations, biome tags, lang), `sbuild.py` (structure builder DSL), `structures3.py`/`structures4.py` (the ten adventure structures), `gen_world3.py` (their world-gen rules + tiered loot), `preview_structures.py` (isometric plan renders).
 Build order lives in `build.py: generate()` - add new modules there.
 
 ## Commands
@@ -25,8 +25,9 @@ python tools/dev.py setup       # once: clones Mojang/bedrock-samples + npm typi
 python tools/dev.py build       # regenerate everything into <build>/out/ECR_BP and ECR_RP
 python tools/dev.py lint        # cross-reference lint + official JSON-schema validation (must be 0 problems)
 python tools/dev.py typecheck   # tsc over tools/scripts against real @minecraft/server typings (must be clean)
+python tools/dev.py test        # runtime smoke test: tools/test/mock_run.mjs boots the packaged scripts against a fake @minecraft/server (must print 0 problems)
 python tools/dev.py package     # zip -> releases/SurvivalPlusPlus_EclipsedRealms_v<ver>.mcaddon
-python tools/dev.py all
+python tools/dev.py all            # build + lint + typecheck + test + package
 ```
 Env overrides: `BEDROCK_SAMPLES` (bedrock-samples path), `SPP_NPM` (dir with node_modules), `SPP_BUILD` (build output dir).
 **On Windows put `SPP_BUILD` outside OneDrive** (e.g. `C:/ter/build_out`) - OneDrive locks files and `rmtree` fails with WinError 5. Known-good setup used so far:
@@ -34,13 +35,13 @@ Env overrides: `BEDROCK_SAMPLES` (bedrock-samples path), `SPP_NPM` (dir with nod
 Known/expected lint output: `items checked N bad 12` (tool `destroy_speeds` false positives) with **LINT 0 / LINT2 0 problems**.
 
 ## Release checklist (every update)
-1. Bump `tools/version.json`. 2. Implement in generators/scripts. 3. `build` -> `lint` -> `typecheck` all clean. 4. `package`. 5. Update `CHANGELOG.md` (Added/Changed/Fixed), `README.md`, docs fragments in `tools/docs/pages/`, run `python tools/docs/build_docs.py`. 6. Commit, tag `vX.Y.Z`, push `main`. GitHub Pages (Settings -> Pages -> `main` / `/docs`) updates itself. 7. Tell the user honestly what was *not* tested in-game.
+1. Bump `tools/version.json`. 2. Implement in generators/scripts. 3. `build` -> `lint` -> `typecheck` -> `test` all clean. 4. `package`. 5. Update `CHANGELOG.md` (Added/Changed/Fixed), `README.md`, docs fragments in `tools/docs/pages/`, run `python tools/docs/build_docs.py`. 6. Commit, tag `vX.Y.Z`, push `main`. GitHub Pages (Settings -> Pages -> `main` / `/docs`) updates itself. 7. Tell the user honestly what was *not* tested in-game.
 
 ## How to add things
 - **Item**: `gen_items2.py` (DROPS / RELICS dicts) + sprite in `tex_items2.py` + recipes via `shaped()/shapeless()` from `gen_items.py`.
 - **Block**: `gen_blocks.write_block` (format 1.26.30; custom components are flattened into `components` as `"ecr:name": {}`).
 - **Animal / hostile / boss**: model in `mob_animals.py` / `mob_hostiles.py` / `mob_bosses2.py` (`MODELS` dict) -> preview with `python tools/gen/preview_models.py <module> <key> <scale> <centerY>` -> entity builder in `gen_animals.py` / `gen_hostiles.py` / `gen_bosses.py` (client entity, behaviour entity, loot, spawn rules, lang) -> animations in `anims2.py` -> behaviours in `tools/scripts/mobs2.js` / `bosses2.js` -> death messages in `deaths.js`.
-- **Structure**: design in `structures2.py` (set `ground_level` index = grass layer), register feature + rule + chest loot in `gen_world2.py`.
+- **Structure**: build it with the `B` DSL in `sbuild.py` (see `structures3.py`/`structures4.py`): ground-relative y, strict bounds, `chest()`, `spawner()`, `tnt_trap()`; set `ground_level` = base index; register feature + rule + loot table in `gen_world3.py`; check the plan with `python tools/gen/preview_structures.py <name>` (CUTX=1 for a side cutaway). Block names AND states are validated by `lint3` against `mojang-blocks.json` - chests use `minecraft:cardinal_direction`, stairs `weirdo_direction`/`upside_down_bit`, slabs `minecraft:vertical_half`, snow block is `minecraft:snow`, cobweb is `minecraft:web`.
 - **World gen rule**: `gen_world.feature()/rule()`; surface features use `q.heightmap`, underground use `dist_underground`.
 
 ## Conventions & gotchas (learned the hard way)
@@ -57,5 +58,5 @@ Known/expected lint output: `items checked N bad 12` (tool `destroy_speeds` fals
 - Always validate vanilla ids (lint knows the list); item ids differ from block ids (e.g. `minecraft:normal_stone_slab`, `minecraft:noteblock`).
 - **Honesty**: the environment cannot launch Minecraft. Say plainly that in-game behaviour (especially new world-gen rules, underground structures, particles and animations) is validated against schemas/typings only.
 
-## Content map (v1.2.0)
-Ores Azurite/Pyrelite/Eclipsite (+tools, armour) · stones Marlstone/Slate/Verdite/Umbrastone · 5 trees (Jacaranda, Frostpine, Amberwood, Sunwood, Mireweep) · crops Tomato/Corn/Strawberry/Chili/Oats + foods · animals Meadow Deer/Highland Yak/Wild Boar/Pheasant · hostiles Gravewalker/Revenant/Cave Weaver/Sporeling · mobs Ashen Warg/Voidweaver · bosses Eclipse Sovereign, Hollow King, Mosswood Colossus, Silkqueen · structures Pyre Spire, Eclipse Obelisk/Shrine, Forgotten Graveyard, Verdant Shrine, Silk Nest, Hunter's Camp, Mossy Boulder · systems: stasis chambers (`stasis.js`), Sanctum Warden (`sanctum.js`), custom death messages (`deaths.js`).
+## Content map (v1.3.0)
+Ores Azurite/Pyrelite/Eclipsite (+tools, armour) · stones Marlstone/Slate/Verdite/Umbrastone · 5 trees (Jacaranda, Frostpine, Amberwood, Sunwood, Mireweep) · crops Tomato/Corn/Strawberry/Chili/Oats + foods · animals Meadow Deer/Highland Yak/Wild Boar/Pheasant · hostiles Gravewalker/Revenant/Cave Weaver/Sporeling · mobs Ashen Warg/Voidweaver · bosses Eclipse Sovereign, Hollow King, Mosswood Colossus, Silkqueen · structures Pyre Spire, Eclipse Obelisk/Shrine, Forgotten Graveyard, Verdant Shrine, Silk Nest, Hunter's Camp, Mossy Boulder + ten adventure structures (Bandit Lookout, Sunken Well, Watch Keep, Dune Vault, Thorn Shrine, Frost Cairn, Highland Bastion, Sunken Crypt, Pyre Bastion, Eclipse Vault) · systems: stasis chambers (`stasis.js`), Sanctum Warden (`sanctum.js`), custom death messages (`deaths.js`).

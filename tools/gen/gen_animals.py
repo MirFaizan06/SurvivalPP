@@ -166,7 +166,7 @@ LOOT = {
 
 SPAWN = {
     'meadow_deer': dict(blocks=['minecraft:grass_block', 'minecraft:podzol'], weight=8, herd=(2, 4), tags=['forest', 'meadow', 'taiga', 'cherry_grove']),
-    'highland_yak': dict(blocks=['minecraft:grass_block', 'minecraft:snow', 'minecraft:stone', 'minecraft:gravel'], weight=7, herd=(2, 3), tags=['extreme_hills', 'mountains']),
+    'highland_yak': dict(blocks=['minecraft:grass_block', 'minecraft:snow', 'minecraft:snow_layer', 'minecraft:stone', 'minecraft:gravel'], weight=7, herd=(2, 3), tags=['extreme_hills', 'mountains']),
     'wild_boar': dict(blocks=['minecraft:grass_block', 'minecraft:podzol', 'minecraft:coarse_dirt'], weight=7, herd=(2, 4), tags=['forest', 'taiga', 'jungle']),
     'pheasant': dict(blocks=['minecraft:grass_block'], weight=9, herd=(1, 3), tags=['plains', 'forest', 'meadow', 'savanna']),
 }

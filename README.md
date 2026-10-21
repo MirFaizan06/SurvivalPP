@@ -1,7 +1,7 @@
 # Survival++ | Eclipsed Realms
 
 **A survival expansion for Minecraft Bedrock - new ores, stones, trees, crops, foods, animals, monsters and bosses, plus pearl stasis chambers and a claim-protection block.**
-Made by **Tech Bytes Design** · Current version **1.2.0** · Needs Minecraft Bedrock **1.26.50 or newer** · No experimental toggles required
+Made by **Tech Bytes Design** · Current version **1.3.0** · Needs Minecraft Bedrock **1.26.50 or newer** · No experimental toggles required
 
 📖 **Full illustrated guide:** <https://mirfaizan06.github.io/SurvivalPP/> · 📋 **Changelog:** [CHANGELOG.md](CHANGELOG.md)
 
@@ -9,7 +9,7 @@ Made by **Tech Bytes Design** · Current version **1.2.0** · Needs Minecraft Be
 
 ## Install (30 seconds)
 
-1. Download **`SurvivalPlusPlus_EclipsedRealms_v1.2.0.mcaddon`** from the [`releases/`](releases) folder.
+1. Download **`SurvivalPlusPlus_EclipsedRealms_v1.3.0.mcaddon`** from the [`releases/`](releases) folder.
 2. Open it - Minecraft imports the Behavior Pack *and* the Resource Pack.
 3. Create a **new world** (or edit an existing one and enable both packs). 
 4. New terrain only: ores, structures, stones, crops and animals appear in chunks generated **after** the pack is enabled. Explore somewhere new.
@@ -29,7 +29,7 @@ Made by **Tech Bytes Design** · Current version **1.2.0** · Needs Minecraft Be
 | **4 animals** | Meadow Deer, Highland Yak, Wild Boar, Pheasant - breed them, hunt them, cook them. |
 | **4 new monsters** | Gravewalker, Revenant, Cave Weaver, Sporeling - better versions of zombie / skeleton / spider, and a new fungus pest. |
 | **4 bosses** | Overworld: **Hollow King**, **Mosswood Colossus**, **Silkqueen** - and the End/Nether-tier **Eclipse Sovereign**. Nether **Ashen Warg** and End **Voidweaver** mobs return from v1. |
-| **Structures** | Forgotten Graveyards, Verdant Shrines, Silk Nests, Hunter's Camps, Mossy Boulders (plus the Nether Pyre Spires and End Obelisks/Shrines). |
+| **15 structures** | **Ten adventure strongholds** (easy to brutal, loot chests, traps, monster spawners) in the Overworld, Nether and End, plus Forgotten Graveyards, Verdant Shrines, Silk Nests, Hunter's Camps, Mossy Boulders, Pyre Spires and Eclipse Obelisks/Shrines. |
 | **Stasis chambers** | Java-style pearl stasis with a fishing rod, across any distance and dimension. |
 | **Sanctum Warden** | A "chunk ban" claim block: protect an area, choose how intruders are punished. |
 
@@ -82,10 +82,24 @@ Each needs a **relic** (crafted from the monsters' drops), a **ritual block** an
 All three have boss bars, three phases and great loot: the Hollow King drops a **Totem of Undying** and the **Hollow Crown** (wear it: night vision), the Colossus drops the **Heartwood Core** (right-click: big absorption/regeneration burst), the Silkqueen drops **Silkqueen's Fang** (a venom sword). Relics also turn up (rarely) in structure chests.
 
 ### Structures
-* **Forgotten Graveyard** - fenced cemetery with a crypt, loot chest and a ready-made bone-block ritual plinth.
-* **Verdant Shrine** - moss ring with a Moss Block altar, wild crops and a chest.
-* **Silk Nest** - sealed web-filled chamber in solid rock with an altar cobweb and loot.
-* **Hunter's Camp** - tent, campfire and a chest of food and arrows. **Mossy Boulders** dress up forests and mountains.
+**Adventure structures** (new in 1.3) generate on their own in fresh chunks, like outposts and mansions - the harder the build, the better the loot:
+
+| Difficulty | Structure | Where | Traps / guards | Loot |
+|---|---|---|---|---|
+| Easy | **Bandit Lookout** | Plains, savanna, forest, meadow, taiga | none | tier 1 (2 chests) |
+| Easy | **Sunken Well** | Plains, savanna, desert, forest, taiga | silverfish niche, webs | tier 1-2 (3 chests) |
+| Medium | **Ruined Watch Keep** | Plains, forest, taiga, swamp, savanna | TNT plate, Gravewalker spawner | tier 2 (3 chests) |
+| Medium | **Dune Vault** | Desert, mesa | fall-in shaft, 9-TNT plate, Husk spawner | tier 2-3 (5 chests) |
+| Medium | **Thorn Shrine** | Jungle, swamp, mangrove | spike pit, wither roses, Cave Spider spawner | tier 3 (2 chests) |
+| Medium | **Frost Cairn** | Frozen biomes | powder-snow pit, Stray spawner | tier 3 (2 chests) |
+| Hard | **Highland Bastion** | Windswept hills, mountains | 3 TNT plates, 5 spawners, lava vault | tier 3-5 (9 chests) |
+| Hard | **Sunken Crypt** | Underground, anywhere | 3 TNT plates, 3 spawners, lava moat | tier 4-5 (6 chests) |
+| Hard | **Pyre Bastion** | Nether | lava ring, TNT plate, Warg + Wither Skeleton spawners | Nether tier (3 chests) |
+| Hard | **Eclipse Vault** | The End | 3 TNT plates, Voidweaver + Endermite spawners | End tier (3 chests) |
+
+Tips: a lone **stone pressure plate** hides TNT (dig around it), torches stop spawners, **Silk Touch** takes silverfish blocks safely, bring a **water bucket** for lava, **leather boots** for powder snow. Deep chests can hold boss relics, Totems of Undying and Elytra. Full details and plan renders: the [Adventure page](https://mirfaizan06.github.io/SurvivalPP/adventure.html).
+
+**Smaller sites:** Forgotten Graveyard (crypt + ready-made Hollow King plinth), Verdant Shrine (Moss Block altar), Silk Nest (underground, altar cobweb), Hunter's Camp, Mossy Boulders.
 
 ### Stasis chambers (Java behaviour)
 1. Craft a **Stasis Chamber** and a **Stasis Trigger Plate**.
@@ -117,12 +131,13 @@ Works on servers **without any operators**:
 | Problem | Fix |
 |---|---|
 | Nothing new generates | Only **new chunks** get new content. Use a new world or travel to unexplored land. |
-| Item won't craft in the 2x2 inventory grid | Update to v1.2.0 - single-ingredient recipes (log → planks…) were fixed. |
+| Item won't craft in the 2x2 inventory grid | Update to v1.3.0 - single-ingredient recipes (log → planks…) were fixed. |
 | Bosses won't summon | Read the on-screen hint: each needs the right block, time and height. |
+| No structures found | They only generate in new chunks. Hard ones are rare (about 1 per 400 chunks); the Sunken Crypt is underground. |
 | Scripts seem dead | Check the content log for `[Survival++ : Eclipsed Realms] ready`. A failed module is named there. |
 
 ## For developers
 
-Everything (textures, models, animations, JSON, scripts) is generated from source in [`tools/`](tools): `python tools/dev.py all` rebuilds, lints against Mojang's schemas, type-checks the scripts and packages the `.mcaddon`. See [CLAUDE.md](CLAUDE.md) for the full workflow and conventions.
+Everything (textures, models, animations, JSON, scripts) is generated from source in [`tools/`](tools): `python tools/dev.py all` rebuilds, lints against Mojang's schemas and vanilla block data, type-checks the scripts, runs a runtime smoke test and packages the `.mcaddon`. See [CLAUDE.md](CLAUDE.md) for the full workflow and conventions.
 
 *© Tech Bytes Design. Not an official Minecraft product; not approved by or associated with Mojang or Microsoft.*

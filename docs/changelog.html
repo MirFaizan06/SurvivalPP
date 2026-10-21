@@ -6,8 +6,26 @@
 <body>
 <header class="site"><div class="bar">
 <a class="brand" href="index.html"><img src="img/icon_1024.png" alt=""><span>Survival++ <small>Eclipsed Realms</small></span></a>
-<nav><a href="index.html">Home</a><a href="world.html">World & Survival</a><a href="creatures.html">Creatures</a><a href="systems.html">Systems</a><a href="changelog.html" class=on>Changelog</a></nav></div></header>
+<nav><a href="index.html">Home</a><a href="world.html">World & Survival</a><a href="adventure.html">Adventure</a><a href="creatures.html">Creatures</a><a href="systems.html">Systems</a><a href="changelog.html" class=on>Changelog</a></nav></div></header>
 <main><h1>Changelog</h1><p class="lead">Every release, newest first. Version numbers are <code>major.minor.patch</code>.</p><div class="log">
+<h2>[1.3.0] - &quot;Adventure Update&quot; (Version 1 final)</h2>
+<h3>Added</h3>
+<ul>
+<li><strong>Ten adventure structures</strong> that generate naturally in new chunks, with tiered loot, traps and monster spawners:</li>
+<p>  Bandit Lookout, Sunken Well (easy) - Ruined Watch Keep, Dune Vault, Thorn Shrine, Frost Cairn (medium) - Highland Bastion, Sunken Crypt, Pyre Bastion (Nether), Eclipse Vault (End) (hard).</p>
+<li>Traps: TNT-under-pressure-plate floors, fall-in shafts, spike pits, powder-snow pits, lava vaults/moats, silverfish (infested) walls, cobwebs and spawners that use the pack&#x27;s own monsters (Revenant, Gravewalker, Cave Weaver, Ashen Warg, Voidweaver).</li>
+<li>20 new chest loot tables in five tiers (food and iron up to netherite, Elytra, Totems, enchanted gear, Azurite/Pyrelite/Eclipsite, boss relics at rising odds).</li>
+<li><strong>Bug-sweep tooling:</strong> structure block/state validator against Mojang&#x27;s vanilla block data (<code>lint3</code>), entity + spawn-rule schemas, Molang/animation/geometry/texture/biome-tag/loot/lang cross-checks (<code>lint4</code>), a runtime smoke test that boots every script against a fake game and fires events through each module (<code>python tools/dev.py test</code>), isometric structure previews.</li>
+<li>New docs page: Adventure Structures.</li>
+</ul>
+<h3>Fixed</h3>
+<ul>
+<li><strong>Chests in structures used a block state that does not exist</strong> (<code>facing_direction</code>, so the chest orientation was probably ignored); they now use <code>minecraft:cardinal_direction</code> (also fixed in the v1 End shrine and the v1.2 structures).</li>
+<li><strong>Sporeling spawn rule used a biome tag that no biome has</strong> (<code>mushroom_island</code>), now <code>mooshroom_island</code>; Highland Yak can spawn on snow layers.</li>
+<li>Removed animations that were generated but never used.</li>
+</ul>
+<h3>Verified (offline)</h3>
+<p>Build, official-schema lint, structure palette lint, entity/spawn schemas, TypeScript check of all scripts and a runtime smoke test all pass. In-game behaviour (placement, trap mechanics, particles) could not be tested in this environment.</p>
 <h2>[1.2.0] - 2026-10-21 - &quot;Overworld Update&quot;</h2>
 <h3>Added</h3>
 <ul>
@@ -57,6 +75,6 @@
 <li>World generation for Overworld, Nether and End; Pyre Spires, Eclipse Obelisks and Shrines.</li>
 </ul>
 </div></main>
-<footer>Survival++ | Eclipsed Realms v1.2.0 &middot; by Tech Bytes Design &middot; <a href="https://github.com/MirFaizan06/SurvivalPP">GitHub</a> &middot;
+<footer>Survival++ | Eclipsed Realms v1.3.0 &middot; by Tech Bytes Design &middot; <a href="https://github.com/MirFaizan06/SurvivalPP">GitHub</a> &middot;
 Not an official Minecraft product; not approved by or associated with Mojang or Microsoft.</footer>
 </body></html>

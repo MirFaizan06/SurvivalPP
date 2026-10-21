@@ -5,8 +5,9 @@
     python tools/dev.py build       # regenerate every texture / model / JSON / script into build/out
     python tools/dev.py lint        # cross-reference lint + official JSON-schema validation
     python tools/dev.py typecheck   # type-check tools/scripts against the real @minecraft/server typings
+    python tools/dev.py test        # runtime smoke test of the scripts against a fake game (tools/test/mock_run.mjs)
     python tools/dev.py package     # zip build/out into releases/<name>.mcaddon
-    python tools/dev.py all         # build + lint + typecheck + package
+    python tools/dev.py all         # build + lint + typecheck + test + package
 
 Environment overrides: BEDROCK_SAMPLES (path to Mojang/bedrock-samples), SPP_NPM (dir containing node_modules).
 """
@@ -47,6 +48,14 @@ def build():
 def lint():
     run([sys.executable, str(GEN / 'lint.py')], cwd=GEN)
     run([sys.executable, str(GEN / 'lint2.py')], cwd=GEN)
+    run([sys.executable, str(GEN / 'lint3.py')], cwd=GEN)
+    run([sys.executable, str(GEN / 'lint4.py')], cwd=GEN)
+
+
+def test():
+    """runtime smoke test: loads the packaged scripts against a fake @minecraft/server and fires events through every module"""
+    build_dir = Path(os.environ.get('SPP_BUILD') or ROOT / 'build')
+    run(['node', str(ROOT / 'tools' / 'test' / 'mock_run.mjs'), str(build_dir / 'out' / 'ECR_BP' / 'scripts'), str(build_dir / 'mock')])
 
 
 def typecheck():
@@ -74,8 +83,8 @@ def package():
 
 def main():
     cmd = sys.argv[1] if len(sys.argv) > 1 else 'all'
-    steps = {'setup': [setup], 'build': [build], 'lint': [lint], 'typecheck': [typecheck], 'package': [package],
-             'all': [build, lint, typecheck, package]}
+    steps = {'setup': [setup], 'build': [build], 'lint': [lint], 'typecheck': [typecheck], 'test': [test], 'package': [package],
+             'all': [build, lint, typecheck, test, package]}
     for fn in steps[cmd]:
         fn()
 

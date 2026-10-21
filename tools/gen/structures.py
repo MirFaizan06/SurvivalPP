@@ -106,6 +106,17 @@ class Structure:
             'structure_world_origin': tag_list([struct.pack('<i', 0)] * 3, 3),
         })
         write_nbt(root, path)
+        # record the palette so lint can validate block names + states against Mojang's data
+        import json, os
+        pal_dir = f'{BUILD}/structure_palettes'
+        ensure(f'{pal_dir}/x')
+        with open(f'{pal_dir}/{os.path.splitext(os.path.basename(path))[0]}.json', 'w') as f:
+            json.dump([[n, st] for n, st in self.palette], f)
+        vox_dir = f'{BUILD}/structure_voxels'
+        ensure(f'{vox_dir}/x')
+        with open(f'{vox_dir}/{os.path.splitext(os.path.basename(path))[0]}.json', 'w') as f:
+            json.dump({'size': self.size, 'palette': [n for n, st in self.palette],
+                       'voxels': [[x, y, z, i] for (x, y, z), i in self.grid.items()]}, f)
 
 
 # ----------------------------------------------------------------------------- designs
@@ -239,7 +250,7 @@ def eclipse_shrine(path, seed=3):
             S.set(px + dx, base + 1, pz + dz, BR)
     # entrance steps + loot chest behind the altar
     chest = (c, base + 1, c + 4)
-    S.set(*chest, 'minecraft:chest', {'facing_direction': 2})
+    S.set(*chest, 'minecraft:chest', {'minecraft:cardinal_direction': 'north'})
     S.block_data[chest] = tag_compound({
         'id': tag_string('Chest'), 'isMovable': tag_byte(1), 'LootTable': tag_string('loot_tables/chests/ecr_eclipse_shrine.json'),
         'LootTableSeed': tag_int(0), 'x': tag_int(chest[0]), 'y': tag_int(chest[1]), 'z': tag_int(chest[2]),

@@ -81,7 +81,7 @@ def bird(name):
     return out
 
 
-def biped(name, arm=-70, sway=(), leg='leg', shin=None, arm_lo='forearm', shamble=1.0, legamp=38, bob=0.5, bow=False):
+def biped(name, arm=-70, sway=(), leg='leg', shin=None, arm_lo='forearm', shamble=1.0, legamp=38, bob=0.5, bow=False, cast=True):
     """humanoid: arms held forward, legs swing, hem/rag bones sway"""
     A = f'animation.ecr_{name}.'
     out = {}
@@ -114,12 +114,13 @@ def biped(name, arm=-70, sway=(), leg='leg', shin=None, arm_lo='forearm', shambl
         'arm_r': {'rotation': R(f'-18 + math.sin({T}*900 + 180)*10', 0, 0)} if not bow else {'rotation': R(-88, 4, 0)},
         'head': {'rotation': R(10)},
     })
-    out[A + 'cast'] = anim({
-        'arm_l': {'rotation': R(f'-150 + math.sin({T}*400)*6', 0, 14)},
-        'arm_r': {'rotation': R(f'-150 + math.sin({T}*400 + 90)*6', 0, -14)},
-        'head': {'rotation': R(-18)},
-        'body': {'rotation': R(-6)},
-    })
+    if cast:
+        out[A + 'cast'] = anim({
+            'arm_l': {'rotation': R(f'-150 + math.sin({T}*400)*6', 0, 14)},
+            'arm_r': {'rotation': R(f'-150 + math.sin({T}*400 + 90)*6', 0, -14)},
+            'head': {'rotation': R(-18)},
+            'body': {'rotation': R(-6)},
+        })
     out[A + 'attack'] = anim({
         'arm_l': {'rotation': R(f'-70 + math.sin(q.life_time*1500)*55')},
         'arm_r': {'rotation': R(f'-70 + math.sin(q.life_time*1500 + 90)*55')},

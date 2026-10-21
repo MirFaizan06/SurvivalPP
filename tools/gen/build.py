@@ -114,6 +114,8 @@ def copy_scripts():
 
 def generate():
     clean()
+    import shutil
+    shutil.rmtree(f'{BUILD}/structure_palettes', ignore_errors=True)
     import tex_blocks, tex_wood, tex_special, tex_items
     tex_blocks.build_all(); tex_wood.build(); tex_special.build(); tex_special.build_sanctum()
     tex_items.build_materials(); tex_items.build_special(); tex_items.build_armor_layers()
@@ -143,6 +145,8 @@ def generate():
     gen_world.build_all()
     import gen_world2
     gen_world2.build_all()
+    import gen_world3
+    gen_world3.build_all()
     registry.write_registries()
     copy_scripts()
     manifests()

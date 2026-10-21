@@ -7,7 +7,7 @@ STRUCT_DIR = f'{BP}/structures/ecr'
 
 
 def chest(S, pos, table, facing=2):
-    S.set(*pos, 'minecraft:chest', {'facing_direction': facing})
+    S.set(*pos, 'minecraft:chest', {'minecraft:cardinal_direction': {2: 'north', 3: 'south', 4: 'west', 5: 'east'}.get(facing, 'south')})
     S.block_data[pos] = tag_compound({
         'id': tag_string('Chest'), 'isMovable': tag_byte(1), 'LootTable': tag_string(f'loot_tables/chests/{table}.json'),
         'LootTableSeed': tag_int(0), 'x': tag_int(pos[0]), 'y': tag_int(pos[1]), 'z': tag_int(pos[2]),

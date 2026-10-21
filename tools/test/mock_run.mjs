@@ -1,0 +1,320 @@
+// Runtime smoke test: loads the packaged add-on scripts against a fake @minecraft/server, boots them exactly like the game does
+// (startup event -> deferred initAll -> intervals) and fires a battery of fake events through every module.
+// Any exception that a script swallows (they log "[ecr] label: message") or lets escape fails the run.
+//   node tools/test/mock_run.mjs <path to ECR_BP/scripts> <work dir>
+import fs from 'node:fs';
+import path from 'node:path';
+import { pathToFileURL } from 'node:url';
+
+const [, , SCRIPTS, WORK] = process.argv;
+if (!SCRIPTS || !WORK) { console.error('usage: mock_run.mjs <scripts dir> <work dir>'); process.exit(2); }
+
+// ------------------------------------------------------------------ build the work dir with a mock @minecraft/server
+fs.rmSync(WORK, { recursive: true, force: true });
+fs.mkdirSync(path.join(WORK, 'scripts'), { recursive: true });
+for (const f of fs.readdirSync(SCRIPTS)) fs.copyFileSync(path.join(SCRIPTS, f), path.join(WORK, 'scripts', f));
+fs.writeFileSync(path.join(WORK, 'package.json'), '{"type":"module"}');
+const imported = { server: new Set(), ui: new Set() };
+for (const f of fs.readdirSync(SCRIPTS)) {
+    const src = fs.readFileSync(path.join(SCRIPTS, f), 'utf8');
+    for (const m of src.matchAll(/import\s*\{([^}]+)\}\s*from\s*'@minecraft\/(server|server-ui)'/g)) {
+        for (const n of m[1].split(',').map((s) => s.trim()).filter(Boolean)) imported[m[2] === 'server' ? 'server' : 'ui'].add(n);
+    }
+}
+const CLASSES = new Set(['ItemStack', 'BlockPermutation', 'ModalFormData']);
+const mk = (pkg, names, extra) => {
+    const dir = path.join(WORK, 'node_modules', '@minecraft', pkg);
+    fs.mkdirSync(dir, { recursive: true });
+    fs.writeFileSync(path.join(dir, 'package.json'), '{"name":"x","type":"module","exports":"./index.js"}');
+    let code = 'const M = globalThis.__mock;\n';
+    for (const n of names) code += CLASSES.has(n) ? `export const ${n} = M.classes.${n};\n` : (n === 'world' || n === 'system') ? `export const ${n} = M.${n};\n` : `export const ${n} = M.enumProxy('${n}');\n`;
+    fs.writeFileSync(path.join(dir, 'index.js'), code + (extra || ''));
+};
+mk('server', [...imported.server]);
+mk('server-ui', [...imported.ui]);
+
+// ------------------------------------------------------------------ fakes
+const logs = [];
+const origWarn = console.warn;
+console.warn = (...a) => { logs.push(a.join(' ')); };
+const failures = [];
+const note = (m) => failures.push(m);
+
+const handlers = { before: {}, after: {}, intervals: [], timeouts: [], runs: [] };
+const signal = (bucket) => new Proxy({}, { get: (t, k) => ({ subscribe(fn) { (bucket[k] ||= []).push(fn); return fn; }, unsubscribe() {} }) });
+const dyn = new Map();
+const snake = (k) => 'minecraft:' + k.replace(/([a-z0-9])([A-Z])/g, '$1_$2').toLowerCase();
+const enumProxy = (name) => new Proxy({}, { get: (t, k) => (typeof k !== 'string' ? undefined : (name === 'EntityComponentTypes' || name === 'ItemComponentTypes') ? snake(k) : k) });
+
+let tick = 1000;
+let timeOfDay = 14000;
+const fakeLoc = (x = 0, y = 64, z = 0) => ({ x, y, z });
+
+class FakePerm {
+    constructor(id, states = {}) { this.type = { id }; this.states = states; }
+    getState(n) { return this.states[n]; }
+    withState(n, v) { return new FakePerm(this.type.id, { ...this.states, [n]: v }); }
+}
+class FakeBlock {
+    constructor(typeId, loc, dim) { this.typeId = typeId; this.location = loc; this.dimension = dim; this.permutation = new FakePerm(typeId); this.isLiquid = false; this.isWaterlogged = false; }
+    get isAir() { return this.typeId === 'minecraft:air'; }
+    center() { return { x: this.location.x + 0.5, y: this.location.y + 0.5, z: this.location.z + 0.5 }; }
+    setType(t) { this.typeId = typeof t === 'string' ? t : t.id; this.permutation = new FakePerm(this.typeId); }
+    setPermutation(p) { this.permutation = p; this.typeId = p.type.id; }
+    getLightLevel() { return 12; }
+    below() { return new FakeBlock('minecraft:farmland', fakeLoc(this.location.x, this.location.y - 1, this.location.z), this.dimension); }
+    above() { return new FakeBlock('minecraft:air', fakeLoc(this.location.x, this.location.y + 1, this.location.z), this.dimension); }
+    north() { return this.above(); } south() { return this.above(); } east() { return this.above(); } west() { return this.above(); }
+    getComponent() { return undefined; }
+    getItemStack(n = 1) { return new ItemStack(this.typeId, n); }
+    canBeDestroyedByLiquidSpread() { return false; }
+}
+class ItemStack {
+    constructor(typeId, amount = 1) { this.typeId = typeId; this.amount = amount; this.props = {}; this.lore = []; this.nameTag = undefined; this.maxAmount = 64; }
+    getComponent(n) {
+        if (n === 'minecraft:durability') return { damage: 0, maxDurability: 100 };
+        if (n === 'minecraft:enchantable') return { getEnchantments: () => [], hasEnchantment: () => 0, getEnchantment: () => undefined, addEnchantment() {} };
+        return undefined;
+    }
+    getDynamicProperty(k) { return this.props[k]; } setDynamicProperty(k, v) { this.props[k] = v; }
+    setLore(l) { this.lore = l; } getLore() { return this.lore; }
+    clone() { const c = new ItemStack(this.typeId, this.amount); c.props = { ...this.props }; return c; }
+    hasTag() { return false; } getTags() { return []; }
+}
+class ModalFormData {
+    title() { return this; } dropdown() { return this; } toggle() { return this; } textField() { return this; } slider() { return this; } submitButton() { return this; }
+    show() { return Promise.resolve({ canceled: true }); }
+}
+class FakeEntity {
+    constructor(typeId, dim, loc) {
+        this.typeId = typeId; this.dimension = dim; this.location = loc || fakeLoc(); this.id = `${typeId}#${Math.floor(Math.random() * 1e6)}`; this.isValid = true; this.nameTag = '';
+        this.tags = new Set(); this.props = { 'ecr:phase': 0, 'ecr:puffing': true }; this.effects = []; this.events = []; this.health = 100;
+    }
+    getComponent(n) {
+        if (n === 'minecraft:health') return { currentValue: this.health, effectiveMax: 100, setCurrentValue: (v) => { this.health = v; } };
+        if (n === 'minecraft:inventory') return { container: { size: 36, getItem: () => undefined, setItem() {}, addItem() {} } };
+        if (n === 'minecraft:equippable') return { getEquipment: () => undefined, setEquipment() {} };
+        return undefined;
+    }
+    hasComponent() { return true; }
+    addEffect(e, d, o) { this.effects.push([e, d, o]); } removeEffect() {} getEffect() { return undefined; }
+    hasTag(t) { return this.tags.has(t); } addTag(t) { this.tags.add(t); } removeTag(t) { this.tags.delete(t); }
+    triggerEvent(e) { this.events.push(e); }
+    getProperty(k) { return this.props[k]; } setProperty(k, v) { this.props[k] = v; }
+    applyDamage() { return true; } applyKnockback() {} setOnFire() {} teleport(l) { this.location = l; } kill() {} remove() {} runCommand() { return { successCount: 1 }; }
+    getRotation() { return { x: 0, y: 0 }; } getViewDirection() { return { x: 0, y: 0, z: 1 }; }
+    getDynamicProperty(k) { return this.props[`dp:${k}`]; } setDynamicProperty(k, v) { this.props[`dp:${k}`] = v; }
+}
+class FakePlayer extends FakeEntity {
+    constructor(dim, name = 'Steve', id = 'p1') {
+        super('minecraft:player', dim, fakeLoc(0, 64, 0));
+        this.name = name; this.id = id; this.isSneaking = false; this.commandPermissionLevel = 0; this.mode = 'survival'; this.sent = [];
+        this.onScreenDisplay = { setActionBar: (m) => this.sent.push(['bar', m]), setTitle: (t) => this.sent.push(['title', t]) };
+        this.inv = new Map(); this.equip = new Map();
+    }
+    getGameMode() { return this.mode; }
+    getBlockFromViewDirection() { return { block: new FakeBlock('ecr:stasis_plate', fakeLoc(70, 64, 70), this.dimension), face: 'Up' }; }
+    addExperience() {} addLevels() {} getTotalXp() { return 0; }
+    isOp() { return false; }
+    sendMessage(m) { this.sent.push(['msg', m]); }
+    getSpawnPoint() { return undefined; }
+    getComponent(n) {
+        if (n === 'minecraft:inventory') return { container: { size: 36, getItem: (i) => this.inv.get(i), setItem: (i, it) => { if (it) this.inv.set(i, it); else this.inv.delete(i); }, addItem() {} } };
+        if (n === 'minecraft:equippable') return { getEquipment: (s) => this.equip.get(s), setEquipment: (s, it) => { if (it) this.equip.set(s, it); else this.equip.delete(s); } };
+        return super.getComponent(n);
+    }
+}
+class FakeDim {
+    constructor(id) { this.id = id; this.blocks = new Map(); this.entities = []; this.players = []; this.spawned = []; }
+    getBlock(l) {
+        const k = `${Math.floor(l.x)},${Math.floor(l.y)},${Math.floor(l.z)}`;
+        if (!this.blocks.has(k)) this.blocks.set(k, new FakeBlock(l.y < 60 ? 'minecraft:stone' : 'minecraft:air', { x: Math.floor(l.x), y: Math.floor(l.y), z: Math.floor(l.z) }, this));
+        return this.blocks.get(k);
+    }
+    setBlock(b) { this.blocks.set(`${b.location.x},${b.location.y},${b.location.z}`, b); }
+    getTopmostBlock(l) { return this.getBlock({ x: l.x, y: 63, z: l.z }); }
+    getEntities(o = {}) {
+        let r = this.entities.slice();
+        if (o.type) r = r.filter((e) => e.typeId === o.type);
+        return r;
+    }
+    getPlayers() { return this.players; }
+    spawnEntity(t, l) { const e = new FakeEntity(t, this, l); this.entities.push(e); this.spawned.push(t); return e; }
+    spawnItem(i, l) { this.spawned.push(`item:${i.typeId}`); return new FakeEntity('minecraft:item', this, l); }
+    spawnParticle() {} playSound() {} runCommand() { return { successCount: 1 }; } createExplosion() { return true; }
+}
+const dims = {};
+const getDim = (id) => (dims[id] ||= new FakeDim(id));
+const player = new FakePlayer(getDim('minecraft:overworld'));
+getDim('minecraft:overworld').players.push(player);
+
+const world = {
+    beforeEvents: signal(handlers.before), afterEvents: signal(handlers.after),
+    getDimension: (id) => getDim(id), getAllPlayers: () => [player], getPlayers: () => [player],
+    getTimeOfDay: () => timeOfDay, getDefaultSpawnLocation: () => fakeLoc(0, 64, 0),
+    getDynamicProperty: (k) => dyn.get(k), setDynamicProperty: (k, v) => { if (v === undefined) dyn.delete(k); else dyn.set(k, v); },
+    getDynamicPropertyIds: () => [...dyn.keys()], sendMessage: (m) => logs.push(`[chat] ${m}`),
+    gameRules: { showDeathMessages: true }, structureManager: { place() {}, get: () => undefined },
+    tickingAreaManager: { hasTickingArea: () => false, createTickingArea: async () => {}, removeTickingArea() {}, getAllTickingAreas: () => [], maxChunkCount: 100, chunkCount: 0 },
+    getEntity: () => undefined,
+};
+const system = {
+    beforeEvents: signal(handlers.before), afterEvents: signal(handlers.after),
+    get currentTick() { return tick; },
+    runInterval(fn, t = 1) { handlers.intervals.push([fn, t]); return handlers.intervals.length; },
+    runTimeout(fn, t = 0) { handlers.timeouts.push([fn, t]); return handlers.timeouts.length; },
+    run(fn) { handlers.runs.push(fn); return 0; }, clearRun() {}, waitTicks: () => Promise.resolve(),
+};
+globalThis.__mock = { world, system, enumProxy, classes: { ItemStack, BlockPermutation: { resolve: (id, st) => new FakePerm(id, st) }, ModalFormData } };
+
+// ------------------------------------------------------------------ helpers to drive the game loop
+const flush = () => {
+    for (let i = 0; i < 5; i++) {
+        const t = handlers.timeouts.splice(0); const r = handlers.runs.splice(0);
+        for (const [fn] of t) call(fn, 'timeout'); for (const fn of r) call(fn, 'run');
+    }
+};
+const call = (fn, label, ...args) => {
+    try { const r = fn(...args); if (r && r.catch) r.catch((e) => note(`${label}: async ${e && e.stack ? e.stack : e}`)); return r; } catch (e) { note(`${label}: ${e && e.stack ? e.stack.split('\n').slice(0, 3).join(' | ') : e}`); }
+};
+const fire = (kind, name, ev) => { for (const fn of handlers[kind][name] || []) call(fn, `${kind}.${name}`, ev); flush(); };
+const runTicks = (n) => { for (let i = 0; i < n; i++) { tick += 10; for (const [fn, t] of handlers.intervals) if (tick % Math.max(1, t) < 10) call(fn, 'interval'); flush(); } };
+
+// ------------------------------------------------------------------ boot
+const registered = {};
+await import(pathToFileURL(path.join(WORK, 'scripts', 'main.js')).href);
+const startup = handlers.before.startup || [];
+if (!startup.length) note('main.js did not subscribe to system.beforeEvents.startup');
+for (const fn of startup) call(fn, 'startup', { blockComponentRegistry: { registerCustomComponent: (n, c) => { registered[n] = c; } }, itemComponentRegistry: { registerCustomComponent() {} } });
+flush();
+const ready = logs.find((l) => l.includes('ready - Tech Bytes Design'));
+if (!ready) note('no "ready" line logged: modules did not initialise');
+else if (/failed modules/.test(ready)) note(`module init failure: ${ready}`);
+console.log(`registered block components: ${Object.keys(registered).length} (${Object.keys(registered).join(', ')})`);
+console.log(`intervals: ${handlers.intervals.length}, event handlers: ${Object.values(handlers.before).flat().length} before / ${Object.values(handlers.after).flat().length} after`);
+
+// ------------------------------------------------------------------ scenarios
+const ow = getDim('minecraft:overworld');
+const blockAt = (id, x, y, z) => { const b = new FakeBlock(id, fakeLoc(x, y, z), ow); ow.setBlock(b); return b; };
+const hold = (id, n = 1) => { const it = new ItemStack(id, n); player.equip.set('Mainhand', it); player.inv.set(0, it); return it; };
+
+runTicks(40);                                                                   // let every interval run a few times with an empty world
+
+// 1) sanctum: place, configure menu, intruder logic, limit, lapse + claim
+const warden = blockAt('ecr:sanctum_warden', 10, 64, 10);
+registered['ecr:sanctum'].onPlace({ block: warden, dimension: ow });
+fire('after', 'playerPlaceBlock', { player, block: warden });
+registered['ecr:sanctum'].onPlayerInteract({ player, block: warden, dimension: ow });
+const intruder = new FakePlayer(ow, 'Alex', 'p2'); intruder.location = fakeLoc(11, 64, 10); ow.players.push(intruder);
+const oldAll = world.getAllPlayers; world.getAllPlayers = () => [player, intruder];
+runTicks(60);
+if (!intruder.sent.some((m) => m[0] === 'title')) note('sanctum: an intruder in a fresh zone got no warning title');
+registered['ecr:sanctum'].onPlayerInteract({ player: intruder, block: warden, dimension: ow });
+fire('before', 'playerBreakBlock', { player: intruder, block: warden, cancel: false });
+fire('before', 'playerInteractWithBlock', { player: intruder, block: blockAt('minecraft:chest', 12, 64, 10), itemStack: undefined, isFirstEvent: true, cancel: false });
+for (let i = 0; i < 4; i++) { const w = blockAt('ecr:sanctum_warden', 30 + i * 3, 64, 30); fire('after', 'playerPlaceBlock', { player, block: w }); }
+const zkeys = JSON.parse(dyn.get('ecr:sanctum_idx') || '[]');
+if (zkeys.length !== 3) note(`sanctum: expected exactly 3 zones after 5 placements, got ${zkeys.length}`);
+const realNow = Date.now;
+Date.now = () => realNow() + 22 * 86400000;                                  // the owner has been gone for 22 days
+const lapsedKey = 'minecraft:overworld|10|64|10';
+registered['ecr:sanctum'].onPlayerInteract({ player: intruder, block: warden, dimension: ow });
+const claimed = JSON.parse(dyn.get(`ecr:sz|${lapsedKey}`) || 'null');
+if (!claimed || claimed.o !== 'p2') note('sanctum: a lapsed (owner gone 22 days) zone could not be claimed by another player');
+Date.now = realNow;
+world.getAllPlayers = oldAll;
+
+// 2) bosses: ritual conditions
+for (const [relic, blk] of [['ecr:grave_sigil', 'minecraft:bone_block'], ['ecr:verdant_heart', 'minecraft:moss_block'], ['ecr:silk_idol', 'minecraft:web']]) {
+    const b = blockAt(blk, 50, relic === 'ecr:silk_idol' ? 30 : 64, 50);
+    timeOfDay = relic === 'ecr:verdant_heart' ? 6000 : 14000;
+    hold(relic);
+    const evb = { player, block: b, itemStack: player.equip.get('Mainhand'), isFirstEvent: true, cancel: false };
+    fire('before', 'playerInteractWithBlock', evb);
+    if (!evb.cancel) note(`ritual: ${relic} on ${blk} was not intercepted`);
+    if (player.equip.get('Mainhand')) note(`ritual: ${relic} was not consumed under valid conditions`);
+    tick += 40;
+}
+runTicks(80);
+timeOfDay = 6000;                                                               // wrong time for the Hollow King: must keep the relic
+{
+    const b = blockAt('minecraft:bone_block', 55, 70, 55);
+    hold('ecr:grave_sigil');
+    fire('before', 'playerInteractWithBlock', { player, block: b, itemStack: player.equip.get('Mainhand'), isFirstEvent: true, cancel: false });
+    if (!player.equip.get('Mainhand')) note('ritual: Grave Sigil consumed in daylight above ground (should be refused)');
+    if (!player.sent.some((m) => m[0] === 'msg' && String(m[1]).includes('Bone Block'))) note('ritual: no hint shown for failed conditions');
+    timeOfDay = 14000;
+}
+for (const t of ['ecr:hollow_king', 'ecr:mosswood_colossus', 'ecr:silkqueen', 'ecr:eclipse_sovereign']) {
+    const boss = ow.spawnEntity(t, fakeLoc(0, 64, 0));
+    boss.health = 40;                                                           // phase 3
+    runTicks(80);
+    boss.health = 0;
+    fire('after', 'entityDie', { deadEntity: boss, damageSource: { cause: 'entityAttack', damagingEntity: player } });
+}
+for (const t of ['ecr:gravewalker', 'ecr:revenant', 'ecr:cave_weaver', 'ecr:sporeling']) ow.spawnEntity(t, fakeLoc(2, 64, 2));
+
+// 3) mobs2 behaviours
+const spore = ow.entities.find((e) => e.typeId === 'ecr:sporeling');
+fire('after', 'entityHurt', { hurtEntity: spore, damage: 2, damageSource: {} });
+fire('after', 'entityDie', { deadEntity: spore, damageSource: {} });
+const bolt = new FakeEntity('ecr:web_bolt', ow, fakeLoc(0, 64, 0));
+fire('after', 'projectileHitEntity', { projectile: bolt, location: fakeLoc(1, 64, 1), getEntityHit: () => ({ entity: player }) });
+fire('after', 'projectileHitBlock', { projectile: bolt, location: fakeLoc(1, 64, 1), getBlockHit: () => ({ block: blockAt('minecraft:stone', 1, 63, 1) }) });
+hold('ecr:queens_fang');
+fire('after', 'entityHitEntity', { damagingEntity: player, hitEntity: new FakeEntity('minecraft:zombie', ow) });
+hold('ecr:colossus_core', 2);
+fire('after', 'itemUse', { source: player, itemStack: player.equip.get('Mainhand') });
+player.equip.set('Head', new ItemStack('ecr:hollow_crown'));
+runTicks(30);
+
+// 4) deaths: player killed by each custom mob / projectile
+for (const t of ['ecr:gravewalker', 'ecr:revenant', 'ecr:cave_weaver', 'ecr:sporeling', 'ecr:hollow_king', 'ecr:mosswood_colossus', 'ecr:silkqueen', 'ecr:ashen_warg', 'ecr:voidweaver', 'ecr:eclipse_sovereign']) {
+    const killer = new FakeEntity(t, ow);
+    for (const projType of [undefined, 'ecr:bone_shard']) {
+        fire('after', 'entityDie', { deadEntity: player, damageSource: { cause: 'entityAttack', damagingEntity: killer, damagingProjectile: projType ? new FakeEntity(projType, ow) : undefined } });
+    }
+}
+const chat = logs.filter((l) => l.startsWith('[chat]'));
+if (chat.length < 20) note(`deaths: expected a custom message per mob, only ${chat.length} chat lines`);
+if (chat.some((l) => l.includes('%v') || l.includes('undefined'))) note('deaths: a message still has a placeholder or undefined');
+
+// 5) crops, blocks, mining, tools, stasis, trees events with a spread of fake interactions
+const crop = blockAt('ecr:tomato_crop', 60, 64, 60);
+registered['ecr:crop'].onRandomTick({ block: crop, dimension: ow });
+registered['ecr:crop'].onPlayerInteract({ block: crop, player, dimension: ow });
+hold('minecraft:bone_meal', 5);
+fire('before', 'playerInteractWithBlock', { player, block: crop, itemStack: player.equip.get('Mainhand'), isFirstEvent: true, cancel: false });
+hold('ecr:tomato_seeds', 3);
+fire('before', 'playerInteractWithBlock', { player, block: blockAt('minecraft:farmland', 61, 63, 60), itemStack: player.equip.get('Mainhand'), isFirstEvent: true, cancel: false });
+hold('minecraft:ender_pearl');
+fire('before', 'playerInteractWithBlock', { player, block: blockAt('ecr:stasis_chamber', 70, 64, 70), itemStack: player.equip.get('Mainhand'), isFirstEvent: true, cancel: false });
+hold('minecraft:fishing_rod');
+fire('after', 'itemUse', { source: player, itemStack: player.equip.get('Mainhand') });
+hold('ecr:pyrelite_sword');
+fire('after', 'entityHitEntity', { damagingEntity: player, hitEntity: new FakeEntity('minecraft:zombie', ow) });
+fire('after', 'playerBreakBlock', { player, block: blockAt('ecr:azurite_ore', 80, 20, 80), brokenBlockPermutation: new FakePerm('ecr:azurite_ore'), itemStackBeforeBreak: player.equip.get('Mainhand'), dimension: ow });
+fire('before', 'playerBreakBlock', { player, block: blockAt('ecr:azurite_ore', 81, 20, 80), itemStack: new ItemStack('minecraft:iron_pickaxe'), cancel: false });
+fire('after', 'itemCompleteUse', { source: player, itemStack: new ItemStack('ecr:tomato_soup') });
+fire('after', 'playerPlaceBlock', { player, block: blockAt('ecr:jacaranda_sapling', 90, 64, 90) });
+for (const n of ['ecr:altar', 'ecr:stasis_chamber', 'ecr:stasis_plate', 'ecr:openable', 'ecr:plate', 'ecr:button', 'ecr:leaves', 'ecr:sapling']) {
+    if (registered[n]) for (const evn of ['onPlayerInteract', 'onStepOn', 'onStepOff', 'onRandomTick', 'onTick', 'onPlace', 'onPlayerBreak', 'onEntityFallOn', 'beforeOnPlayerPlace']) {
+        if (registered[n][evn]) call(registered[n][evn], `${n}.${evn}`, { block: blockAt('ecr:jacaranda_door', 95, 64, 95), player, dimension: ow, entity: player, face: 'Up' });
+    }
+}
+flush();
+runTicks(120);
+
+// ------------------------------------------------------------------ verdict
+const swallowed = logs.filter((l) => l.startsWith('[ecr]'));
+for (const l of swallowed) note(`swallowed error ${l}`);
+const other = logs.filter((l) => !l.startsWith('[chat]') && !l.startsWith('[ecr]') && !l.includes('ready - Tech Bytes Design'));
+console.warn = origWarn;
+for (const l of other) console.log('  log:', l);
+console.log(`spawned during run: ${ow.spawned.length} entities/items (${[...new Set(ow.spawned)].slice(0, 12).join(', ')}...)`);
+if (failures.length) {
+    console.log(`\nMOCK RUN: ${failures.length} problem(s)`);
+    for (const f of failures) console.log('  X', f);
+    process.exit(1);
+}
+console.log('\nMOCK RUN: 0 problem(s)');
