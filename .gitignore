@@ -1,0 +1,10 @@
+build/
+.ref/
+node_modules/
+__pycache__/
+*.pyc
+tools/gen/_patch_*.py
+tools/gen/make_portable.py
+tools/scratch_*.py
+.claude/
+Thumbs.db

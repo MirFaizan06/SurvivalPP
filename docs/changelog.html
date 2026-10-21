@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Changelog - Survival++</title>
+<meta name="description" content="Survival++ | Eclipsed Realms - a survival expansion for Minecraft Bedrock by Tech Bytes Design.">
+<link rel="icon" href="img/icon_1024.png"><link rel="stylesheet" href="style.css"></head>
+<body>
+<header class="site"><div class="bar">
+<a class="brand" href="index.html"><img src="img/icon_1024.png" alt=""><span>Survival++ <small>Eclipsed Realms</small></span></a>
+<nav><a href="index.html">Home</a><a href="world.html">World & Survival</a><a href="creatures.html">Creatures</a><a href="systems.html">Systems</a><a href="changelog.html" class=on>Changelog</a></nav></div></header>
+<main><h1>Changelog</h1><p class="lead">Every release, newest first. Version numbers are <code>major.minor.patch</code>.</p><div class="log">
+<h2>[1.2.0] - 2026-10-21 - &quot;Overworld Update&quot;</h2>
+<h3>Added</h3>
+<ul>
+<li><strong>Bosses (3, Overworld):</strong> Hollow King, Mosswood Colossus, Silkqueen - custom models, glow textures, animations, 3 phases, boss bars, unique abilities, loot and custom death messages. Condition-based summoning (relic + ritual block + time/place).</li>
+<li><strong>Hostile mobs (4):</strong> Gravewalker, Revenant (ranged/melee, Bone Shard projectile), Cave Weaver (climbs, Web Bolt projectile that leaves temporary webs), Sporeling (spore clouds).</li>
+<li><strong>Animals (4):</strong> Meadow Deer (stags have antlers), Highland Yak (milkable), Wild Boar (defends its herd), Pheasant (sheds feathers). Breeding, babies, panic/defence behaviour, loot, biome spawn rules, spawn eggs.</li>
+<li><strong>Stones (4):</strong> Marlstone, Slate, Verdite, Umbrastone - generate in blobs inside normal stone plus biome boosts; polished / bricks / stairs / slabs / double slabs; crafting + stonecutter recipes.</li>
+<li><strong>Crops (5) and wild plants:</strong> Tomato, Corn, Strawberry, Chili, Oats - 4 growth stages, light + hydrated-farmland rules, bone meal, right-click harvest &amp; replant, Fortune, wild patches in the world.</li>
+<li><strong>Foods (13):</strong> Roasted Corn, Oat Bread, Strawberry Pie, Tomato Soup, Oat Porridge, Chili Stew, Hunter&#x27;s Stew, raw/cooked Venison, Yak Meat and Pheasant - with buff effects.</li>
+<li><strong>Items:</strong> Boar Tusk, Grave Dust, Hollow Bone, Silk Gland, Spore Cluster; relics Grave Sigil, Verdant Heart, Silk Idol; trophies Hollow Crown (wearable, night vision), Heartwood Core (consumable), Silkqueen&#x27;s Fang (venom sword).</li>
+<li><strong>Structures &amp; world generation:</strong> Forgotten Graveyard, Verdant Shrine, Silk Nest (underground), Hunter&#x27;s Camp, Mossy Boulder, each with chest loot (relics can appear rarely).</li>
+<li><strong>Docs:</strong> rewritten README, this changelog, CLAUDE.md developer guide and a GitHub Pages site (<code>docs/</code>).</li>
+<li><strong>Dev tooling:</strong> <code>tools/dev.py</code> (setup / build / lint / typecheck / package / all), portable build, deterministic generators.</li>
+</ul>
+<h3>Changed</h3>
+<ul>
+<li><strong>Sanctum Warden recipe is now endgame-hard:</strong> Netherite Ingots, Eclipsite Ingots, Pyrelite Ingots, Obsidian, a <strong>Totem of Undying</strong> and an <strong>Eclipse Core</strong> (Eclipse Sovereign drop).</li>
+<li><strong>Sanctum Warden is fully server-safe (no operators needed):</strong> limit of 3 wardens per player, zones lapse after the owner is offline for 21 real days (anyone may then claim them), ownerless wardens can be claimed, zone data is stored per zone (no size limit), operator bypass kept but optional.</li>
+<li>All recipes are now <code>AlwaysUnlocked</code> (visible in the recipe book from the start).</li>
+<li>Lint now validates entity components against the 1.26.50 schemas.</li>
+</ul>
+<h3>Fixed</h3>
+<ul>
+<li><strong>Logs / stripped logs / wood could not be turned into planks in the 2x2 inventory grid</strong> (and the same for every other single-ingredient recipe: ingot ← block, seeds ← produce, buttons, ...). Single-ingredient recipes are now written as vanilla does (1x1 shaped).</li>
+<li><strong>Our woods could not be used for most wood recipes:</strong> explicit recipes added for crafting table, chest, barrel, bowl, bookshelf, wooden tools, jukebox, note block, composter, lectern, grindstone, loom, cartography / fletching / smithing tables, tripwire hook, campfire; logs and wood now smelt into charcoal.</li>
+<li>Removed a bogus &quot;two slabs -&gt; planks&quot; recipe.</li>
+</ul>
+<h2>[1.0.1] - &quot;It actually starts now&quot;</h2>
+<h3>Fixed</h3>
+<ul>
+<li><strong>Scripts never started</strong> (used APIs unavailable during early startup): everything now initialises one tick after startup, each module isolated.</li>
+<li>Saplings: bone meal + natural growth rewritten.</li>
+<li>Wood blocks are fuel, carry vanilla tags and have 3D inventory icons; stairs/slabs/fences/trapdoors waterlog; doors/gates/trapdoors react to redstone; Silk Touch on leaves.</li>
+<li>Pressure plates polled (mobs/items); Sanctum owner recorded from the placing player; Sanctum <strong>test mode</strong> added.</li>
+<li>Stasis chambers: fishing-rod linking and cross-dimension triggering repaired.</li>
+</ul>
+<h3>Added</h3>
+<ul>
+<li>Custom death messages for all mobs and projectiles; new pack thumbnail.</li>
+</ul>
+<h2>[1.0.0] - &quot;Base&quot;</h2>
+<ul>
+<li>Azurite / Pyrelite / Eclipsite ores with full tool and armour sets (Netherite-pickaxe-gated).</li>
+<li>Ashen Warg, Voidweaver and the Eclipse Sovereign boss.</li>
+<li>5 tree species with complete wood sets and biome-correct generation.</li>
+<li>Java-style stasis chambers across dimensions; Sanctum Warden claim block.</li>
+<li>World generation for Overworld, Nether and End; Pyre Spires, Eclipse Obelisks and Shrines.</li>
+</ul>
+</div></main>
+<footer>Survival++ | Eclipsed Realms v1.2.0 &middot; by Tech Bytes Design &middot; <a href="https://github.com/MirFaizan06/SurvivalPP">GitHub</a> &middot;
+Not an official Minecraft product; not approved by or associated with Mojang or Microsoft.</footer>
+</body></html>

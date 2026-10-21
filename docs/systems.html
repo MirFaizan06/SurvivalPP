@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Stasis Chambers, Sanctum &amp; Crafting - Survival++</title>
+<meta name="description" content="Survival++ | Eclipsed Realms - a survival expansion for Minecraft Bedrock by Tech Bytes Design.">
+<link rel="icon" href="img/icon_1024.png"><link rel="stylesheet" href="style.css"></head>
+<body>
+<header class="site"><div class="bar">
+<a class="brand" href="index.html"><img src="img/icon_1024.png" alt=""><span>Survival++ <small>Eclipsed Realms</small></span></a>
+<nav><a href="index.html">Home</a><a href="world.html">World & Survival</a><a href="creatures.html">Creatures</a><a href="systems.html" class=on>Systems</a><a href="changelog.html">Changelog</a></nav></div></header>
+<main><h1>Systems &amp; Crafting</h1>
+<p class="lead" style="color:var(--muted)">Pearl stasis chambers, the Sanctum Warden and a crafting cheat-sheet.</p>
+<div class="toc"><a href="#stasis">Stasis chambers</a><a href="#sanctum">Sanctum Warden</a><a href="#crafting">Crafting reference</a><a href="#faq">FAQ</a></div>
+
+<h2 id="stasis">Stasis chambers</h2>
+<p>Bedrock pearls despawn when you leave the dimension, and add-ons cannot change engine chunk loading - so this pack re-creates Java stasis with blocks and script using <strong>vanilla</strong> pearls and fishing rods.</p>
+<ol class="steps">
+<li>Craft a <strong>Stasis Chamber</strong> and a <strong>Stasis Trigger Plate</strong>.</li>
+<li>Hold an <strong>Ender Pearl</strong> and use the chamber: the pearl is bound to you inside (sneak + empty hand takes it back).</li>
+<li><strong>Use a fishing rod aimed at the plate</strong> (or the chamber) to link it; the lore shows where. Sneak + use clears the link.</li>
+<li>Anywhere, in any dimension: <strong>cast</strong> the rod = plate pressed (fires every chamber within 6 blocks of the plate and powers redstone); <strong>reel</strong> = released. You teleport to the chamber, take 5 pearl damage and the pearl is consumed.</li>
+<li>Chambers also fire from any redstone signal.</li>
+</ol>
+<div class="callout">Placing a chamber or plate registers a <strong>ticking area</strong> for its chunk (re-created every world load) so it stays active. Bedrock limits ticking chunks per pack; if capacity runs out, the rod tells you.</div>
+
+<h2 id="sanctum">Sanctum Warden</h2>
+<img class="shot" src="img/sanctum.png" alt="Sanctum Warden block">
+<p>A "chunk ban" block for Bedrock: place it and you own a protected zone.</p>
+<h3>How to get it (endgame)</h3>
+<pre>N E N      N = Netherite Ingot      C = Eclipse Core  (dropped by the Eclipse Sovereign)
+O C O      E = Eclipsite Ingot      T = Totem of Undying
+R T R      O = Obsidian             R = Pyrelite Ingot</pre>
+<h3>How it works</h3>
+<ul>
+<li><strong>Right-click</strong> your Warden: range (whole chunk or 8-48 blocks), intruder response, block &amp; container protection, trusted players (comma separated names), boundary preview, and a <strong>TEST</strong> toggle that treats you as an intruder for 30 s.</li>
+<li><strong>Responses:</strong> Warn only &middot; Repel &middot; Expel to spawn &middot; Seize items + Expel (items drop at the Warden - nothing is destroyed) &middot; Seize + Expel + Kick.</li>
+<li>Intruders get a title and a <strong>3-second grace period</strong>. Exempt: the owner, trusted names, holders of an attuned <strong>Sanctum Pass</strong> (paper + azurite ingot + ender pearl; use it on the Warden), operators, and players tagged <code>ecr_sanctum_bypass</code>.</li>
+<li>Only the owner can break the Warden. With block protection on, strangers cannot break, place or use things inside the zone.</li>
+</ul>
+<h3>Servers without operators (Aternos &amp; co.)</h3>
+<ul>
+<li>Nothing needs OP. Owners configure everything themselves.</li>
+<li>Each player can keep <strong>3</strong> Wardens.</li>
+<li>If the owner is offline for <strong>21 real days</strong>, the zone lapses: protection stops and the next player to right-click the Warden can claim it. Wardens placed without an owner can be claimed the same way.</li>
+<li>Data is saved per zone, so big servers do not hit script storage limits.</li>
+</ul>
+
+<h2 id="crafting">Crafting reference</h2>
+<div class="tablewrap"><table>
+<tr><th>Item</th><th>Recipe</th></tr>
+<tr><td>Grave Sigil</td><td>4 Hollow Bone (corners) + 4 Grave Dust (edges) + Gold Block (centre)</td></tr>
+<tr><td>Verdant Heart</td><td>4 Spore Cluster (corners) + 4 Moss Block (edges) + Emerald Block (centre)</td></tr>
+<tr><td>Silk Idol</td><td>4 Silk Gland (corners) + 4 Cobweb (edges) + Diamond (centre)</td></tr>
+<tr><td>Eclipse Sigil</td><td>4 Void Essence + 4 Pyrelite Ingot + Nether Star</td></tr>
+<tr><td>Sanctum Warden</td><td>See above</td></tr>
+<tr><td>Stasis Chamber</td><td>4 Iron Ingot + 4 Glass + Ender Eye</td></tr>
+<tr><td>Boar Tusk</td><td>&rarr; 3 Bone Meal</td></tr>
+<tr><td>Silk Gland</td><td>&rarr; 4 String</td></tr>
+<tr><td>Hollow Bone / Grave Dust / Spore Cluster</td><td>&rarr; Bone Meal (4 / 1 / 2)</td></tr>
+</table></div>
+<p>Wood from our trees crafts everything vanilla planks do (log &rarr; 4 planks works in the 2x2 inventory grid).</p>
+
+<h2 id="faq">FAQ</h2>
+<h3>Why is nothing new in my old world?</h3><p>New content generates in <strong>new chunks</strong> only. Fly or ride to unexplored land, or make a new world.</p>
+<h3>A boss won't summon.</h3><p>Read the on-screen hint: block, time of day and height all matter. Your relic is kept if conditions fail.</p>
+<h3>How do I know the scripts loaded?</h3><p>The content log prints <code>[Survival++ : Eclipsed Realms] ready</code>; a failed module is named in the same line.</p>
+<h3>Do my death messages disappear?</h3><p>While one of the pack's monsters is near a player the vanilla death message is replaced by a custom one; the setting is restored right afterwards.</p>
+</main>
+<footer>Survival++ | Eclipsed Realms v1.2.0 &middot; by Tech Bytes Design &middot; <a href="https://github.com/MirFaizan06/SurvivalPP">GitHub</a> &middot;
+Not an official Minecraft product; not approved by or associated with Mojang or Microsoft.</footer>
+</body></html>
