@@ -21,7 +21,7 @@ for (const f of fs.readdirSync(SCRIPTS)) {
         for (const n of m[1].split(',').map((s) => s.trim()).filter(Boolean)) imported[m[2] === 'server' ? 'server' : 'ui'].add(n);
     }
 }
-const CLASSES = new Set(['ItemStack', 'BlockPermutation', 'ModalFormData']);
+const CLASSES = new Set(['ItemStack', 'BlockPermutation', 'ModalFormData', 'ActionFormData']);
 const mk = (pkg, names, extra) => {
     const dir = path.join(WORK, 'node_modules', '@minecraft', pkg);
     fs.mkdirSync(dir, { recursive: true });
@@ -94,6 +94,7 @@ class FakeEntity {
         if (n === 'minecraft:health') return { currentValue: this.health, effectiveMax: 100, setCurrentValue: (v) => { this.health = v; } };
         if (n === 'minecraft:inventory') return { container: { size: 36, getItem: () => undefined, setItem() {}, addItem() {} } };
         if (n === 'minecraft:equippable') return { getEquipment: () => undefined, setEquipment() {} };
+        if (n === 'minecraft:projectile') return { shoot() {}, owner: undefined };
         return undefined;
     }
     hasComponent() { return true; }
@@ -101,7 +102,7 @@ class FakeEntity {
     hasTag(t) { return this.tags.has(t); } addTag(t) { this.tags.add(t); } removeTag(t) { this.tags.delete(t); }
     triggerEvent(e) { this.events.push(e); }
     getProperty(k) { return this.props[k]; } setProperty(k, v) { this.props[k] = v; }
-    applyDamage() { return true; } applyKnockback() {} setOnFire() {} teleport(l) { this.location = l; } kill() {} remove() {} runCommand() { return { successCount: 1 }; }
+    applyDamage() { return true; } applyKnockback() {} setOnFire() {} teleport(l) { this.location = l; } kill() { this.isValid = false; } remove() {} runCommand(c) { (this.cmds ||= []).push(c); return { successCount: 1 }; }
     getRotation() { return { x: 0, y: 0 }; } getViewDirection() { return { x: 0, y: 0, z: 1 }; }
     getDynamicProperty(k) { return this.props[`dp:${k}`]; } setDynamicProperty(k, v) { this.props[`dp:${k}`] = v; }
 }
@@ -119,7 +120,7 @@ class FakePlayer extends FakeEntity {
     sendMessage(m) { this.sent.push(['msg', m]); }
     getSpawnPoint() { return undefined; }
     getComponent(n) {
-        if (n === 'minecraft:inventory') return { container: { size: 36, getItem: (i) => this.inv.get(i), setItem: (i, it) => { if (it) this.inv.set(i, it); else this.inv.delete(i); }, addItem() {} } };
+        if (n === 'minecraft:inventory') return { container: { size: 36, getItem: (i) => this.inv.get(i), setItem: (i, it) => { if (it) this.inv.set(i, it); else this.inv.delete(i); }, addItem: (it) => { for (let i = 0; i < 36; i++) if (!this.inv.has(i)) { this.inv.set(i, it); return undefined; } return it; } } };
         if (n === 'minecraft:equippable') return { getEquipment: (s) => this.equip.get(s), setEquipment: (s, it) => { if (it) this.equip.set(s, it); else this.equip.delete(s); } };
         return super.getComponent(n);
     }
@@ -134,11 +135,12 @@ class FakeDim {
     setBlock(b) { this.blocks.set(`${b.location.x},${b.location.y},${b.location.z}`, b); }
     getTopmostBlock(l) { return this.getBlock({ x: l.x, y: 63, z: l.z }); }
     getEntities(o = {}) {
-        let r = this.entities.slice();
+        let r = this.entities.filter((e) => e.isValid);
         if (o.type) r = r.filter((e) => e.typeId === o.type);
         return r;
     }
     getPlayers() { return this.players; }
+    getBiome() { return { id: this.biome || 'minecraft:plains' }; }
     spawnEntity(t, l) { const e = new FakeEntity(t, this, l); this.entities.push(e); this.spawned.push(t); return e; }
     spawnItem(i, l) { this.spawned.push(`item:${i.typeId}`); return new FakeEntity('minecraft:item', this, l); }
     spawnParticle() {} playSound() {} runCommand() { return { successCount: 1 }; } createExplosion() { return true; }
@@ -165,7 +167,9 @@ const system = {
     runTimeout(fn, t = 0) { handlers.timeouts.push([fn, t]); return handlers.timeouts.length; },
     run(fn) { handlers.runs.push(fn); return 0; }, clearRun() {}, waitTicks: () => Promise.resolve(),
 };
-globalThis.__mock = { world, system, enumProxy, classes: { ItemStack, BlockPermutation: { resolve: (id, st) => new FakePerm(id, st) }, ModalFormData } };
+const formQueue = [];
+class ActionFormData extends ModalFormData { body() { return this; } button() { return this; } show() { return Promise.resolve(formQueue.length ? { canceled: false, selection: formQueue.shift() } : { canceled: true }); } }
+globalThis.__mock = { world, system, enumProxy, classes: { ItemStack, BlockPermutation: { resolve: (id, st) => new FakePerm(id, st) }, ModalFormData, ActionFormData } };
 
 // ------------------------------------------------------------------ helpers to drive the game loop
 const flush = () => {
@@ -304,6 +308,76 @@ for (const n of ['ecr:altar', 'ecr:stasis_chamber', 'ecr:stasis_plate', 'ecr:ope
 }
 flush();
 runTicks(120);
+
+
+// 6) story: journal gift, grove -> kills -> offerings -> altar -> Hanae (all three phases, fog, mercy) -> Sovereign chapter
+const hero = new FakePlayer(ow, 'Wayfarer', 'p9');
+ow.players.push(hero);
+world.getAllPlayers = () => [hero];
+fire('after', 'playerSpawn', { player: hero, initialSpawn: true });
+if (![...hero.inv.values()].some((i) => i.typeId === 'ecr:wayfarers_journal')) note('story: a new player did not receive the Wayfarer\'s Journal');
+const story = () => JSON.parse(hero.props['dp:ecr:story'] || '{"step":0}');
+const tickAll = async (n) => { runTicks(n); await new Promise((r) => setTimeout(r, 0)); };
+hero.equip.set('Mainhand', [...hero.inv.values()].find((i) => i.typeId === 'ecr:wayfarers_journal'));
+fire('after', 'itemUse', { source: hero, itemStack: hero.equip.get('Mainhand') });
+await tickAll(1);
+ow.biome = 'minecraft:cherry_grove';
+await tickAll(200);
+if (story().step !== 1) note(`story: lingering in a cherry grove should reach step 1, got ${JSON.stringify(story())}`);
+for (let i = 0; i < 3; i++) fire('after', 'entityDie', { deadEntity: new FakeEntity('ecr:gravewalker', ow), damageSource: { cause: 'entityAttack', damagingEntity: hero } });
+for (let i = 0; i < 2; i++) fire('after', 'entityDie', { deadEntity: new FakeEntity('ecr:cave_weaver', ow), damageSource: { cause: 'entityAttack', damagingEntity: hero } });
+if (story().step !== 2) note(`story: 3 Gravewalkers + 2 Cave Weavers should reach step 2, got ${JSON.stringify(story())}`);
+// offerings: first refuse (nothing in the pack), then accept
+formQueue.push(0); hero.equip.set('Mainhand', [...hero.inv.values()].find((i) => i.typeId === 'ecr:wayfarers_journal'));
+fire('after', 'itemUse', { source: hero, itemStack: hero.equip.get('Mainhand') }); await tickAll(1);
+if (story().step !== 2) note('story: offerings were accepted with an empty pack');
+let slot = 20;
+for (const [id, n] of [['minecraft:pink_petals', 16], ['ecr:silk_gland', 1], ['ecr:hollow_bone', 1], ['ecr:spore_cluster', 1]]) hero.inv.set(slot++, new ItemStack(id, n));
+formQueue.push(0);
+fire('after', 'itemUse', { source: hero, itemStack: hero.equip.get('Mainhand') }); await tickAll(1);
+if (story().step !== 3) note(`story: presenting the offerings should reach step 3, got ${JSON.stringify(story())}`);
+if (![...hero.inv.values()].some((i) => i.typeId === 'ecr:veiled_mirror')) note('story: no Veiled Mirror was granted');
+// altar: day refuses, step 3 -> 4, night + cherry grove + mirror starts the fight
+const altar = blockAt('ecr:blossom_altar', 100, 64, 100);
+const mirror = [...hero.inv.values()].find((i) => i.typeId === 'ecr:veiled_mirror');
+hero.equip.set('Mainhand', mirror);
+timeOfDay = 6000;
+registered['ecr:blossom_altar'].onPlayerInteract({ player: hero, block: altar, dimension: ow });
+if (story().step !== 4) note('story: touching the altar at step 3 should reach step 4');
+if (!hero.equip.get('Mainhand')) note('story: the mirror was spent in daylight');
+timeOfDay = 14000;
+registered['ecr:blossom_altar'].onPlayerInteract({ player: hero, block: altar, dimension: ow });
+if (hero.equip.get('Mainhand')) note('story: the mirror was not consumed by the ritual');
+await tickAll(120);
+const hanae = ow.entities.find((e) => e.typeId === 'ecr:veiled_blossom');
+if (!hanae) note('boss: the Veiled Blossom did not spawn after the ritual');
+else {
+    hero.health = 100;
+    const bladesBefore = ow.spawned.filter((t) => t === 'ecr:petal_blade').length;
+    hanae.health = 90; await tickAll(160);                                       // phase 2 (Falling Blossoms, vexes)
+    hanae.health = 20; await tickAll(160);                                       // phase 3 (Eclipse Bloom, spiral)
+    const bladesMid = ow.spawned.filter((t) => t === 'ecr:petal_blade').length;
+    if (bladesMid <= bladesBefore) note('boss: Hanae never fired a petal');
+    for (const t of ['ecr:blossom_vex', 'ecr:blossom_echo']) if (!ow.spawned.includes(t)) note(`boss: Hanae never summoned ${t}`);
+    if (!(hero.cmds || []).some((c) => c.startsWith('fog @s push ecr:blossom_veil'))) note('boss: the fog was never pushed to the player');
+    if (!(hero.cmds || []).some((c) => c.startsWith('fog @s push ecr:eclipse_bloom'))) note('boss: the Eclipse Bloom fog was never pushed');
+    // mercy: a nearly dead player stops all attacks
+    hero.health = 4; await tickAll(20);
+    const bladesBeforeMercy = ow.spawned.filter((t) => t === 'ecr:petal_blade').length;
+    await tickAll(60);
+    if (ow.spawned.filter((t) => t === 'ecr:petal_blade').length !== bladesBeforeMercy) note('boss: Hanae attacked a player who was almost dead (mercy rule failed)');
+    hero.health = 100;
+    hanae.health = 0; hanae.isValid = false;
+    fire('after', 'entityDie', { deadEntity: hanae, damageSource: { cause: 'entityAttack', damagingEntity: hero } });
+    await tickAll(2);
+    if (!(hero.cmds || []).some((c) => c.startsWith('fog @s remove ecr_hanae'))) note('boss: the fog was not removed when Hanae fell');
+    if (story().step !== 5) note(`story: defeating Hanae should reach step 5, got ${JSON.stringify(story())}`);
+}
+fire('after', 'entityDie', { deadEntity: new FakeEntity('ecr:eclipse_sovereign', ow), damageSource: { cause: 'entityAttack', damagingEntity: hero } });
+await tickAll(2);
+if (story().step !== 6) note(`story: defeating the Eclipse Sovereign should complete chapter II, got ${JSON.stringify(story())}`);
+if (!(story().pages || []).includes('eclipse_sovereign') || !(story().pages || []).includes('veiled_blossom')) note('story: boss lore pages were not unlocked');
+world.getAllPlayers = oldAll;
 
 // ------------------------------------------------------------------ verdict
 const swallowed = logs.filter((l) => l.startsWith('[ecr]'));

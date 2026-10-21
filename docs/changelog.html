@@ -1,21 +1,43 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Changelog - Survival++</title>
-<meta name="description" content="Survival++ | Eclipsed Realms - a survival expansion for Minecraft Bedrock by Tech Bytes Design.">
+<title>Changelog - Eclipsed Realms</title>
+<meta name="description" content="Eclipsed Realms: Chronicles of the Seven Seals - a story-driven adventure add-on for Minecraft Bedrock by Tech Bytes Design.">
 <link rel="icon" href="img/icon_1024.png"><link rel="stylesheet" href="style.css"></head>
 <body>
 <header class="site"><div class="bar">
-<a class="brand" href="index.html"><img src="img/icon_1024.png" alt=""><span>Survival++ <small>Eclipsed Realms</small></span></a>
-<nav><a href="index.html">Home</a><a href="world.html">World & Survival</a><a href="adventure.html">Adventure</a><a href="creatures.html">Creatures</a><a href="systems.html">Systems</a><a href="changelog.html" class=on>Changelog</a></nav></div></header>
+<a class="brand" href="index.html"><img src="img/icon_1024.png" alt=""><span>Eclipsed Realms <small>Chronicles of the Seven Seals</small></span></a>
+<nav><a href="index.html">Home</a><a href="world.html">World & Survival</a><a href="adventure.html">Adventure</a><a href="creatures.html">Creatures</a><a href="lore.html">Lore</a><a href="systems.html">Systems</a><a href="changelog.html" class=on>Changelog</a></nav></div></header>
 <main><h1>Changelog</h1><p class="lead">Every release, newest first. Version numbers are <code>major.minor.patch</code>.</p><div class="log">
-<h2>[1.3.0] - &quot;Adventure Update&quot; (Version 1 final)</h2>
+<h2>[1.4.0] - "Chronicles Update"</h2>
+<h3>Renamed</h3>
+<ul>
+<li>**Survival++ | Eclipsed Realms is now *Eclipsed Realms: Chronicles of the Seven Seals*** - it is a story-driven add-on. The release file is <code>EclipsedRealms_v1.4.0.mcaddon</code>. (The GitHub repository keeps its old URL.)</li>
+</ul>
+<h3>Added</h3>
+<ul>
+<li><strong>The story:</strong> the <strong>Wayfarer's Journal</strong> (given once to every player; progress saved per player; re-craftable) with one clue at a time, a progress tracker, an offerings step and unlockable <strong>lore pages</strong>. Chapter I leads to the Veiled Blossom, Chapter II to the Eclipse Sovereign. Chapters are data, so more can be added easily. Full history in <code>LORE.md</code> and on the docs site.</li>
+<li><strong>The Veiled Blossom (Hanae)</strong> - the first main boss: a gentle early-game fight (260 HP) with a floating shrine-maiden model, three phases, petal fans, Mirror Step, Veiled Echoes, custom <strong>Blossom Vexes</strong>, falling-blossom rings, a petal spiral, <strong>fog that changes per phase</strong>, pentatonic shrine bells, spoken warnings, and a mercy rule (she stops when a player is badly hurt). A corrupted texture appears in her last phase.</li>
+<li><strong>Hanae's Shrine</strong> (torii gate, path, pavilion, pond, blossom trees, loot) generating in Cherry Groves, and the <strong>Blossom Altar</strong> block.</li>
+<li><strong>Veilbloom Regalia</strong> (Crown, Haori, Hakama, Geta): pink armour with netherite-level protection, set bonus, repaired with <strong>Veilbloom Shards</strong>; <strong>Veiled Mirror</strong>, <strong>Seal of the Blossom</strong> and the journal as items.</li>
+<li><strong>Custom 3D armour for every tier</strong> (Azurite crystal, Pyrelite horned, Eclipsite void, Veilbloom) - real geometry and painted textures instead of recoloured vanilla layers; inventory icons are renders of the pieces.</li>
+<li><strong>Custom sword designs</strong> for Azurite, Pyrelite and Eclipsite (32x32 sprites).</li>
+<li><strong>Themed boss health bars</strong> for the Eclipse Sovereign, Hollow King, Mosswood Colossus, Silkqueen and the Veiled Blossom (vanilla bar stays underneath as a fallback).</li>
+<li><strong>New thumbnail</strong> featuring the Veiled Blossom.</li>
+<li>Lore pages for the Hollow Lords, Hanae and the Eclipse Sovereign. The side bosses are now canon "Hollow Lords"; the Eclipse Sovereign is the second main boss.</li>
+</ul>
+<h3>Tooling</h3>
+<ul>
+<li>Story + boss runtime tests in the mock run (journal gift, grove, kills, offerings, altar, all three boss phases, fog push/remove, mercy rule, Chapter II).</li>
+<li>Lint: UI textures, fog definitions pushed by scripts, <code>entity_alphablend</code>.</li>
+</ul>
+<h2>[1.3.0] - "Adventure Update" (Version 1 final)</h2>
 <h3>Added</h3>
 <ul>
 <li><strong>Ten adventure structures</strong> that generate naturally in new chunks, with tiered loot, traps and monster spawners:</li>
 <p>  Bandit Lookout, Sunken Well (easy) - Ruined Watch Keep, Dune Vault, Thorn Shrine, Frost Cairn (medium) - Highland Bastion, Sunken Crypt, Pyre Bastion (Nether), Eclipse Vault (End) (hard).</p>
-<li>Traps: TNT-under-pressure-plate floors, fall-in shafts, spike pits, powder-snow pits, lava vaults/moats, silverfish (infested) walls, cobwebs and spawners that use the pack&#x27;s own monsters (Revenant, Gravewalker, Cave Weaver, Ashen Warg, Voidweaver).</li>
+<li>Traps: TNT-under-pressure-plate floors, fall-in shafts, spike pits, powder-snow pits, lava vaults/moats, silverfish (infested) walls, cobwebs and spawners that use the pack's own monsters (Revenant, Gravewalker, Cave Weaver, Ashen Warg, Voidweaver).</li>
 <li>20 new chest loot tables in five tiers (food and iron up to netherite, Elytra, Totems, enchanted gear, Azurite/Pyrelite/Eclipsite, boss relics at rising odds).</li>
-<li><strong>Bug-sweep tooling:</strong> structure block/state validator against Mojang&#x27;s vanilla block data (<code>lint3</code>), entity + spawn-rule schemas, Molang/animation/geometry/texture/biome-tag/loot/lang cross-checks (<code>lint4</code>), a runtime smoke test that boots every script against a fake game and fires events through each module (<code>python tools/dev.py test</code>), isometric structure previews.</li>
+<li><strong>Bug-sweep tooling:</strong> structure block/state validator against Mojang's vanilla block data (<code>lint3</code>), entity + spawn-rule schemas, Molang/animation/geometry/texture/biome-tag/loot/lang cross-checks (<code>lint4</code>), a runtime smoke test that boots every script against a fake game and fires events through each module (<code>python tools/dev.py test</code>), isometric structure previews.</li>
 <li>New docs page: Adventure Structures.</li>
 </ul>
 <h3>Fixed</h3>
@@ -26,7 +48,7 @@
 </ul>
 <h3>Verified (offline)</h3>
 <p>Build, official-schema lint, structure palette lint, entity/spawn schemas, TypeScript check of all scripts and a runtime smoke test all pass. In-game behaviour (placement, trap mechanics, particles) could not be tested in this environment.</p>
-<h2>[1.2.0] - 2026-10-21 - &quot;Overworld Update&quot;</h2>
+<h2>[1.2.0] - 2026-10-21 - "Overworld Update"</h2>
 <h3>Added</h3>
 <ul>
 <li><strong>Bosses (3, Overworld):</strong> Hollow King, Mosswood Colossus, Silkqueen - custom models, glow textures, animations, 3 phases, boss bars, unique abilities, loot and custom death messages. Condition-based summoning (relic + ritual block + time/place).</li>
@@ -34,9 +56,9 @@
 <li><strong>Animals (4):</strong> Meadow Deer (stags have antlers), Highland Yak (milkable), Wild Boar (defends its herd), Pheasant (sheds feathers). Breeding, babies, panic/defence behaviour, loot, biome spawn rules, spawn eggs.</li>
 <li><strong>Stones (4):</strong> Marlstone, Slate, Verdite, Umbrastone - generate in blobs inside normal stone plus biome boosts; polished / bricks / stairs / slabs / double slabs; crafting + stonecutter recipes.</li>
 <li><strong>Crops (5) and wild plants:</strong> Tomato, Corn, Strawberry, Chili, Oats - 4 growth stages, light + hydrated-farmland rules, bone meal, right-click harvest &amp; replant, Fortune, wild patches in the world.</li>
-<li><strong>Foods (13):</strong> Roasted Corn, Oat Bread, Strawberry Pie, Tomato Soup, Oat Porridge, Chili Stew, Hunter&#x27;s Stew, raw/cooked Venison, Yak Meat and Pheasant - with buff effects.</li>
-<li><strong>Items:</strong> Boar Tusk, Grave Dust, Hollow Bone, Silk Gland, Spore Cluster; relics Grave Sigil, Verdant Heart, Silk Idol; trophies Hollow Crown (wearable, night vision), Heartwood Core (consumable), Silkqueen&#x27;s Fang (venom sword).</li>
-<li><strong>Structures &amp; world generation:</strong> Forgotten Graveyard, Verdant Shrine, Silk Nest (underground), Hunter&#x27;s Camp, Mossy Boulder, each with chest loot (relics can appear rarely).</li>
+<li><strong>Foods (13):</strong> Roasted Corn, Oat Bread, Strawberry Pie, Tomato Soup, Oat Porridge, Chili Stew, Hunter's Stew, raw/cooked Venison, Yak Meat and Pheasant - with buff effects.</li>
+<li><strong>Items:</strong> Boar Tusk, Grave Dust, Hollow Bone, Silk Gland, Spore Cluster; relics Grave Sigil, Verdant Heart, Silk Idol; trophies Hollow Crown (wearable, night vision), Heartwood Core (consumable), Silkqueen's Fang (venom sword).</li>
+<li><strong>Structures &amp; world generation:</strong> Forgotten Graveyard, Verdant Shrine, Silk Nest (underground), Hunter's Camp, Mossy Boulder, each with chest loot (relics can appear rarely).</li>
 <li><strong>Docs:</strong> rewritten README, this changelog, CLAUDE.md developer guide and a GitHub Pages site (<code>docs/</code>).</li>
 <li><strong>Dev tooling:</strong> <code>tools/dev.py</code> (setup / build / lint / typecheck / package / all), portable build, deterministic generators.</li>
 </ul>
@@ -51,9 +73,9 @@
 <ul>
 <li><strong>Logs / stripped logs / wood could not be turned into planks in the 2x2 inventory grid</strong> (and the same for every other single-ingredient recipe: ingot ← block, seeds ← produce, buttons, ...). Single-ingredient recipes are now written as vanilla does (1x1 shaped).</li>
 <li><strong>Our woods could not be used for most wood recipes:</strong> explicit recipes added for crafting table, chest, barrel, bowl, bookshelf, wooden tools, jukebox, note block, composter, lectern, grindstone, loom, cartography / fletching / smithing tables, tripwire hook, campfire; logs and wood now smelt into charcoal.</li>
-<li>Removed a bogus &quot;two slabs -&gt; planks&quot; recipe.</li>
+<li>Removed a bogus "two slabs -&gt; planks" recipe.</li>
 </ul>
-<h2>[1.0.1] - &quot;It actually starts now&quot;</h2>
+<h2>[1.0.1] - "It actually starts now"</h2>
 <h3>Fixed</h3>
 <ul>
 <li><strong>Scripts never started</strong> (used APIs unavailable during early startup): everything now initialises one tick after startup, each module isolated.</li>
@@ -66,7 +88,7 @@
 <ul>
 <li>Custom death messages for all mobs and projectiles; new pack thumbnail.</li>
 </ul>
-<h2>[1.0.0] - &quot;Base&quot;</h2>
+<h2>[1.0.0] - "Base"</h2>
 <ul>
 <li>Azurite / Pyrelite / Eclipsite ores with full tool and armour sets (Netherite-pickaxe-gated).</li>
 <li>Ashen Warg, Voidweaver and the Eclipse Sovereign boss.</li>
@@ -75,6 +97,6 @@
 <li>World generation for Overworld, Nether and End; Pyre Spires, Eclipse Obelisks and Shrines.</li>
 </ul>
 </div></main>
-<footer>Survival++ | Eclipsed Realms v1.3.0 &middot; by Tech Bytes Design &middot; <a href="https://github.com/MirFaizan06/SurvivalPP">GitHub</a> &middot;
+<footer>Eclipsed Realms: Chronicles of the Seven Seals v1.4.0 &middot; by Tech Bytes Design &middot; <a href="https://github.com/MirFaizan06/SurvivalPP">GitHub</a> &middot;
 Not an official Minecraft product; not approved by or associated with Mojang or Microsoft.</footer>
 </body></html>

@@ -14,7 +14,7 @@ VERSION = _V['version']                      # bump in tools/version.json for ev
 ENGINE = [1, 26, 50]
 TITLE = _V['title']
 VSTR = '.'.join(str(x) for x in VERSION)
-DESC = f'End++  Nether++  Vanilla++  -  by Tech Bytes Design.  v{VSTR}: new ores, stones, mobs, bosses, crops, foods, animals, trees & stasis chambers.'
+DESC = f'A story-driven Bedrock adventure by Tech Bytes Design.  v{VSTR}: the Seven Seals saga, bosses, adventure structures, new ores, stones, crops, animals, trees & stasis chambers.'
 OUT_NAME = f"{_V['file_stem']}_v{VSTR}"
 
 
@@ -88,15 +88,15 @@ def manifests():
         'format_version': 2,
         'header': {'name': TITLE + ' [BP]', 'description': DESC, 'uuid': BP_UUID, 'version': VERSION, 'min_engine_version': ENGINE},
         'modules': [
-            {'type': 'data', 'description': 'Survival++ Eclipsed Realms data', 'uuid': BP_DATA, 'version': VERSION},
-            {'type': 'script', 'language': 'javascript', 'description': 'Survival++ Eclipsed Realms scripts', 'uuid': BP_SCRIPT, 'version': VERSION, 'entry': 'scripts/main.js'}],
+            {'type': 'data', 'description': 'Eclipsed Realms data', 'uuid': BP_DATA, 'version': VERSION},
+            {'type': 'script', 'language': 'javascript', 'description': 'Eclipsed Realms scripts', 'uuid': BP_SCRIPT, 'version': VERSION, 'entry': 'scripts/main.js'}],
         'dependencies': [{'uuid': RP_UUID, 'version': VERSION}, {'module_name': '@minecraft/server', 'version': '2.6.0'}, {'module_name': '@minecraft/server-ui', 'version': '2.0.0'}],
         'metadata': {'authors': ['Tech Bytes Design'], 'license': 'All rights reserved - Tech Bytes Design', 'url': ''},
     }
     rp = {
         'format_version': 2,
         'header': {'name': TITLE + ' [RP]', 'description': DESC, 'uuid': RP_UUID, 'version': VERSION, 'min_engine_version': ENGINE},
-        'modules': [{'type': 'resources', 'description': 'Survival++ Eclipsed Realms resources', 'uuid': RP_RES, 'version': VERSION}],
+        'modules': [{'type': 'resources', 'description': 'Eclipsed Realms resources', 'uuid': RP_RES, 'version': VERSION}],
         'metadata': {'authors': ['Tech Bytes Design'], 'license': 'All rights reserved - Tech Bytes Design', 'url': ''},
     }
     wjson(f'{BP}/manifest.json', bp)
@@ -118,7 +118,7 @@ def generate():
     shutil.rmtree(f'{BUILD}/structure_palettes', ignore_errors=True)
     import tex_blocks, tex_wood, tex_special, tex_items
     tex_blocks.build_all(); tex_wood.build(); tex_special.build(); tex_special.build_sanctum()
-    tex_items.build_materials(); tex_items.build_special(); tex_items.build_armor_layers()
+    tex_items.build_materials(); tex_items.build_special()
     tex_wood.build_icons()
     import tex_stone
     tex_stone.build()
@@ -135,6 +135,8 @@ def generate():
     gen_crops.build_all()
     import gen_items2
     gen_items2.build_all()
+    import gen_armor2
+    gen_armor2.build()
     gen_mobs.build()
     import gen_animals
     gen_animals.build()
@@ -142,6 +144,10 @@ def generate():
     gen_hostiles.build()
     import gen_bosses
     gen_bosses.build()
+    import gen_blossom
+    gen_blossom.build()
+    import gen_ui
+    gen_ui.build()
     gen_world.build_all()
     import gen_world2
     gen_world2.build_all()
@@ -161,7 +167,7 @@ def package():
     if os.path.exists(path):
         os.remove(path)
     with zipfile.ZipFile(path, 'w', zipfile.ZIP_DEFLATED) as z:
-        for root_dir, label in ((BP, 'SurvivalPP_EclipsedRealms_BP'), (RP, 'SurvivalPP_EclipsedRealms_RP')):
+        for root_dir, label in ((BP, 'EclipsedRealms_BP'), (RP, 'EclipsedRealms_RP')):
             for dp, dn, fn in os.walk(root_dir):
                 for f in fn:
                     full = os.path.join(dp, f)

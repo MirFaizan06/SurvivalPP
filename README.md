@@ -1,15 +1,17 @@
-# Survival++ | Eclipsed Realms
+# Eclipsed Realms: Chronicles of the Seven Seals
 
-**A survival expansion for Minecraft Bedrock - new ores, stones, trees, crops, foods, animals, monsters and bosses, plus pearl stasis chambers and a claim-protection block.**
-Made by **Tech Bytes Design** · Current version **1.3.0** · Needs Minecraft Bedrock **1.26.50 or newer** · No experimental toggles required
+**A story-driven adventure for Minecraft Bedrock - follow the Wayfarer's Journal, fight bosses with their own fog and health bars, loot fifteen structures, and survive with new ores, stones, crops, animals and monsters.**
+Made by **Tech Bytes Design** · Current version **1.4.0** · Needs Minecraft Bedrock **1.26.50 or newer** · No experimental toggles required
 
-📖 **Full illustrated guide:** <https://mirfaizan06.github.io/SurvivalPP/> · 📋 **Changelog:** [CHANGELOG.md](CHANGELOG.md)
+📖 **Illustrated guide:** <https://mirfaizan06.github.io/SurvivalPP/> · 📜 **The full lore (spoilers):** [LORE.md](LORE.md) · 📋 **Changelog:** [CHANGELOG.md](CHANGELOG.md)
+
+> *Formerly "Survival++ | Eclipsed Realms". It grew into a full story, so it has a new name.*
 
 ---
 
 ## Install (30 seconds)
 
-1. Download **`SurvivalPlusPlus_EclipsedRealms_v1.3.0.mcaddon`** from the [`releases/`](releases) folder.
+1. Download **`EclipsedRealms_v1.4.0.mcaddon`** from the [`releases/`](releases) folder.
 2. Open it - Minecraft imports the Behavior Pack *and* the Resource Pack.
 3. Create a **new world** (or edit an existing one and enable both packs). 
 4. New terrain only: ores, structures, stones, crops and animals appear in chunks generated **after** the pack is enabled. Explore somewhere new.
@@ -17,6 +19,17 @@ Made by **Tech Bytes Design** · Current version **1.3.0** · Needs Minecraft Be
 > **Servers (Aternos, BDS, Realms-style hosts):** upload the same packs, enable both in the world, and make sure the server allows the `@minecraft/server` and `@minecraft/server-ui` script modules (hosts do by default). **Nobody needs to be an operator** - everything, including the Sanctum Warden, works for normal players.
 
 ---
+
+## The story in one minute
+
+Long ago the world had one sky and one dawn that never ended. Then the **Eclipse** - the Hollow Sun - swallowed the First Dawn and broke the world into three Realms and **Seven Shards**. Seven Keepers bound the Shards into **Seven Seals**, and slowly became the thing they guard.
+
+When you first join you receive the **Wayfarer's Journal**, written by someone who walked this road before you. It gives you **one clue at a time**:
+
+1. **Chapter I - The Veiled Blossom.** Find a Cherry Grove, thin the Hollow Court, gather offerings, find a hidden shrine and call **Hanae**, Keeper of the First Seal. She is a gentle early boss who never wanted to hurt you - she wanted you to turn back.
+2. **Chapter II - The Second Seal.** The journey continues to the End and the **Eclipse Sovereign**, the second main boss.
+
+The Hollow King, Mosswood Colossus and Silkqueen are **side bosses** (Hollow Lords): loot, relics and lore pages, but not on the main road. Read the whole history, with spoilers, in [LORE.md](LORE.md).
 
 ## What you get
 
@@ -28,7 +41,9 @@ Made by **Tech Bytes Design** · Current version **1.3.0** · Needs Minecraft Be
 | **5 crops + 13 foods** | Tomato, Corn, Strawberry, Chili, Oats - real farming, wild patches in the world, and dishes with buffs. |
 | **4 animals** | Meadow Deer, Highland Yak, Wild Boar, Pheasant - breed them, hunt them, cook them. |
 | **4 new monsters** | Gravewalker, Revenant, Cave Weaver, Sporeling - better versions of zombie / skeleton / spider, and a new fungus pest. |
-| **4 bosses** | Overworld: **Hollow King**, **Mosswood Colossus**, **Silkqueen** - and the End/Nether-tier **Eclipse Sovereign**. Nether **Ashen Warg** and End **Voidweaver** mobs return from v1. |
+| **Story + 5 bosses** | **Chapter I:** the **Veiled Blossom** (first main boss). **Chapter II:** the **Eclipse Sovereign** (second main boss). Side bosses: **Hollow King**, **Mosswood Colossus**, **Silkqueen**. Nether **Ashen Warg** and End **Voidweaver** mobs return from v1. |
+| **Custom gear** | Hand-built 3D armour and sword designs for every tier, plus the pink **Veilbloom Regalia** (netherite-strength boss drop). |
+| **Boss bars & atmosphere** | Themed health bars for our five bosses; the Veiled Blossom changes your fog through her three phases. |
 | **15 structures** | **Ten adventure strongholds** (easy to brutal, loot chests, traps, monster spawners) in the Overworld, Nether and End, plus Forgotten Graveyards, Verdant Shrines, Silk Nests, Hunter's Camps, Mossy Boulders, Pyre Spires and Eclipse Obelisks/Shrines. |
 | **Stasis chambers** | Java-style pearl stasis with a fishing rod, across any distance and dimension. |
 | **Sanctum Warden** | A "chunk ban" claim block: protect an area, choose how intruders are punished. |
@@ -70,7 +85,12 @@ Plant the **sapling** on dirt/grass; give it light and space, or use **bone meal
 * **Cave Weaver** - big cave spider; poison bite, climbs walls and spits **webs** that slow you.
 * **Sporeling** - small fungus; harmless-looking, but puffs **nausea spores** and bursts when killed.
 
-### Bosses (Overworld)
+### The Veiled Blossom (Chapter I)
+Reach her through the journal, not by luck: **find a Cherry Grove → slay 3 Gravewalkers and 2 Cave Weavers → present 16 Pink Petals, a Silk Gland, a Hollow Bone and a Spore Cluster (you receive the Veiled Mirror) → find Hanae's Shrine and touch the Blossom Altar → at night, use the mirror on the altar.**
+
+She is a **gentle early-game boss** (260 HP, small damage) with a unique fight: fans of petal blades, a *Mirror Step* that puts her behind you, shielding *Veiled Echoes*, custom *Blossom Vexes*, falling-blossom rings and a slow petal spiral - while the fog thickens and darkens. If you are badly hurt she lowers her parasol and **stops attacking**. She drops the **Veilbloom Regalia** (armour as strong as netherite, Speed + Jump Boost set bonus), Veilbloom Shards, the Seal of the Blossom and a Chapter II clue.
+
+### Hollow Lords (side bosses)
 Each needs a **relic** (crafted from the monsters' drops), a **ritual block** and the **right conditions**. Using the relic with the wrong conditions tells you what is missing and keeps your relic.
 
 | Boss | Relic | Use it on | Conditions | Signature |
@@ -134,7 +154,8 @@ Works on servers **without any operators**:
 | Item won't craft in the 2x2 inventory grid | Update to v1.3.0 - single-ingredient recipes (log → planks…) were fixed. |
 | Bosses won't summon | Read the on-screen hint: each needs the right block, time and height. |
 | No structures found | They only generate in new chunks. Hard ones are rare (about 1 per 400 chunks); the Sunken Crypt is underground. |
-| Scripts seem dead | Check the content log for `[Survival++ : Eclipsed Realms] ready`. A failed module is named there. |
+| I lost my journal | Craft a new one (Book + Ink Sac + Pink Petals). Progress is saved on you, not on the book. |
+| Scripts seem dead | Check the content log for `[Eclipsed Realms] ready`. A failed module is named there. |
 
 ## For developers
 

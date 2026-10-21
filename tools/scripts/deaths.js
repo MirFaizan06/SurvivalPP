@@ -134,6 +134,28 @@ const MOBS = {
             '§5☠ §f%v §dwas bound and bled by the §5§lSilkqueen',
         ],
     },
+    [`${NS}:veiled_blossom`]: {
+        name: 'The Veiled Blossom',
+        melee: [
+            '§d☠ §f%v §fwas gently, sadly put down by §d§lHanae',
+            '§d☠ §f%v §fignored every warning from §d§lThe Veiled Blossom',
+            '§d☠ §f%v §fwalked a road that §d§lHanae §fbegged them to leave',
+        ],
+        ranged: [
+            '§d☠ §f%v §fdrowned in §d§lHanae§r§f\u2019s falling petals',
+            '§d☠ §f%v §fwas not turned back by the §d§lVeiled Blossom',
+        ],
+    },
+    [`${NS}:blossom_vex`]: {
+        name: 'Blossom Vex',
+        melee: ['§d☠ §f%v §fwas swarmed by Blossom Vexes', '§d☠ §f%v §fwas carried off by a Blossom Vex'],
+        ranged: ['§d☠ §f%v §fwas pecked to pieces by petal spirits'],
+    },
+    [`${NS}:blossom_echo`]: {
+        name: 'Veiled Echo',
+        melee: ['§d☠ §f%v §fshattered a Veiled Echo too close to their face'],
+        ranged: ['§d☠ §f%v §fwas caught in a burst of reflected petals'],
+    },
 };
 
 const PROJECTILES = {
@@ -142,6 +164,7 @@ const PROJECTILES = {
     [`${NS}:ember_spit`]: `${NS}:ashen_warg`,
     [`${NS}:bone_shard`]: `${NS}:revenant`,
     [`${NS}:web_bolt`]: `${NS}:cave_weaver`,
+    [`${NS}:petal_blade`]: `${NS}:veiled_blossom`,
 };
 
 const FALLBACK = {

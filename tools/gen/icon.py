@@ -1,190 +1,149 @@
-import os
-"""Pack thumbnail: cinematic key art rendered from the real mob models."""
-import math, random, sys
+"""Pack thumbnail: key art of the Veiled Blossom under a blossom-pink eclipse, rendered from the real model (no text, reads at 256px)."""
+import math, os, random, sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import numpy as np
-from PIL import Image, ImageDraw, ImageFilter, ImageFont, ImageChops
+from PIL import Image, ImageDraw, ImageFilter
 from common import *
 import geo
-import mob_boss, mob_warg, mob_voidweaver
+import mob_hanae
 
-W = 1024   # design resolution, exported at 256 and 512
+W = 1024
 
 
-def model(mod):
-    m = mod.build()
+def hanae_shot(scale, yaw, pitch, cy=22, gain=1.05):
+    m = mob_hanae.hanae()
     m.pack()
-    base, _ = m.paint(mod.materials())
-    return m, base
-
-
-def shot(m, tex, yaw, pitch, scale, cy, ycen=0.6, gain=2.1):
+    base, glow = m.paint(mob_hanae.hanae_materials(False))
     geo.GAIN = gain
-    return geo.render(m, tex, None, yaw=yaw, pitch=pitch, scale=scale, size=(W, W), center=(0, cy, 0), rgba=True, ycen=ycen)
+    return geo.render(m, base, None, yaw=yaw, pitch=pitch, scale=scale, size=(W, W), center=(0, cy, 0), rgba=True, ycen=0.56)
 
 
-def bloom(img, thresh=215, radius=18, strength=1.1):
+def bloom(img, thresh=238, radius=14, strength=0.32):
     a = np.array(img.convert('RGB')).astype(np.float32)
     mx = a.max(axis=2)
-    sat = mx - a.min(axis=2)
-    mask = ((mx > thresh) & (sat > 40)) | (mx > 245)
+    mask = mx > thresh
     glow = np.zeros_like(a)
     glow[mask] = a[mask]
     g = Image.fromarray(glow.astype(np.uint8)).filter(ImageFilter.GaussianBlur(radius))
-    g2 = Image.fromarray(glow.astype(np.uint8)).filter(ImageFilter.GaussianBlur(radius * 2.6))
-    out = np.array(img.convert('RGB')).astype(np.float32)
-    out += np.array(g).astype(np.float32) * strength + np.array(g2).astype(np.float32) * strength * 0.8
+    g2 = Image.fromarray(glow.astype(np.uint8)).filter(ImageFilter.GaussianBlur(radius * 2.8))
+    out = a + np.array(g).astype(np.float32) * strength + np.array(g2).astype(np.float32) * strength * 0.7
     return Image.fromarray(np.clip(out, 0, 255).astype(np.uint8))
 
 
-def background():
-    img = Image.new('RGB', (W, W))
-    px = np.zeros((W, W, 3), np.float32)
+def background(rng):
     yy, xx = np.mgrid[0:W, 0:W].astype(np.float32)
-    # night-sky gradient with violet horizon glow
+    px = np.zeros((W, W, 3), np.float32)
     t = yy / W
-    px[..., 0] = 6 + 26 * (t ** 2.2)
-    px[..., 1] = 3 + 8 * (t ** 2.2)
-    px[..., 2] = 16 + 58 * (t ** 1.8)
-    # eclipse behind the boss
-    cx, cy = W * 0.5, W * 0.30
+    top, mid, low = np.array([8, 4, 28]), np.array([66, 22, 78]), np.array([150, 62, 118])
+    k = np.clip(t * 1.25, 0, 1)[..., None]
+    px[:] = np.where(k < 0.55, top + (mid - top) * (k / 0.55), mid + (low - mid) * ((k - 0.55) / 0.45))
+    cx, cy = W * 0.5, W * 0.33
     d = np.hypot(xx - cx, yy - cy)
-    corona = np.exp(-((d - 190) / 110.0) ** 2)
-    px[..., 0] += 150 * corona; px[..., 1] += 40 * corona; px[..., 2] += 190 * corona
-    ring = np.exp(-((d - 168) / 7.0) ** 2)
-    px[..., 0] += 255 * ring; px[..., 1] += 190 * ring; px[..., 2] += 255 * ring
-    disc = d < 166
-    px[disc] = px[disc] * 0.0 + np.array([3, 1, 8])
-    # radial rays
+    corona = np.exp(-((d - 190) / 120.0) ** 2)
+    px += corona[..., None] * np.array([150, 50, 120])
+    ring = np.exp(-((d - 160) / 6.0) ** 2)
+    px += ring[..., None] * np.array([255, 190, 225])
     ang = np.arctan2(yy - cy, xx - cx)
-    rays = (np.abs(np.sin(ang * 14)) ** 18) * np.exp(-np.clip(d - 170, 0, None) / 160.0) * (d > 168)
-    px[..., 0] += 110 * rays; px[..., 1] += 50 * rays; px[..., 2] += 160 * rays
+    rays = (np.abs(np.sin(ang * 12)) ** 20) * np.exp(-np.clip(d - 165, 0, None) / 190.0) * (d > 162)
+    px += rays[..., None] * np.array([230, 120, 190]) * 0.32
+    px[d < 158] = np.array([6, 2, 14])                                       # the eclipse disc
     img = Image.fromarray(np.clip(px, 0, 255).astype(np.uint8))
-    # stars + drifting embers
     d_ = ImageDraw.Draw(img)
-    rng = random.Random(11)
-    for _ in range(260):
-        x, y = rng.randrange(W), rng.randrange(int(W * 0.8))
-        b = rng.choice([110, 160, 220, 255])
-        r = rng.choice([1, 1, 1, 2])
-        col = (b, b, min(255, b + 30))
-        d_.ellipse([x - r, y - r, x + r, y + r], fill=col)
-    # floor fog
-    fog = Image.new('RGB', (W, W), (0, 0, 0))
-    fd = ImageDraw.Draw(fog)
-    fd.ellipse([-200, W * 0.78, W + 200, W * 1.25], fill=(70, 30, 120))
-    fog = fog.filter(ImageFilter.GaussianBlur(60))
-    img = ImageChops.add(img, fog)
+    for _ in range(140):                                                      # stars in the upper sky
+        x, y = rng.randint(0, W), rng.randint(0, int(W * 0.35))
+        if math.hypot(x - cx, y - cy) > 215:
+            c = rng.randint(150, 255)
+            d_.point((x, y), fill=(c, c, 255))
     return img
 
 
-def text_outline(draw, xy, txt, font, fill, outline, width, anchor='mm'):
-    x, y = xy
-    for dx in range(-width, width + 1):
-        for dy in range(-width, width + 1):
-            if dx * dx + dy * dy <= width * width:
-                draw.text((x + dx, y + dy), txt, font=font, fill=outline, anchor=anchor)
-    draw.text(xy, txt, font=font, fill=fill, anchor=anchor)
+def torii(img):
+    layer = Image.new('RGBA', (W, W), (0, 0, 0, 0))
+    d = ImageDraw.Draw(layer)
+    col = (70, 14, 40, 235)
+    x0, x1, base, top = 150, 874, 640, 470
+    for px_ in (330, 694):
+        d.rectangle([px_ - 17, top, px_ + 17, base], fill=col)
+    d.polygon([(x0, top - 8), (x1, top - 8), (x1 - 34, top + 22), (x0 + 34, top + 22)], fill=col)
+    d.rectangle([x0 + 70, top + 52, x1 - 70, top + 78], fill=col)
+    layer = layer.filter(ImageFilter.GaussianBlur(2.2))
+    img.alpha_composite(layer)
 
 
-def gradient_text(img, xy, txt, font, top, bottom, outline, width, glow=(190, 70, 230)):
-    layer = Image.new('RGBA', img.size, (0, 0, 0, 0))
-    ld = ImageDraw.Draw(layer)
-    text_outline(ld, xy, txt, font, (255, 255, 255, 255), outline + (255,), width)
-    mask = Image.new('L', img.size, 0)
-    ImageDraw.Draw(mask).text(xy, txt, font=font, fill=255, anchor='mm')
-    grad = Image.new('RGBA', img.size, (0, 0, 0, 0))
-    gp = grad.load()
-    bb = mask.getbbox()
-    for y in range(bb[1], bb[3] + 1):
-        t = (y - bb[1]) / max(1, bb[3] - bb[1])
-        c = tuple(int(top[i] + (bottom[i] - top[i]) * t) for i in range(3)) + (255,)
-        for x in range(bb[0], bb[2] + 1):
-            gp[x, y] = c
-    # glow behind
-    gl = Image.new('RGBA', img.size, (0, 0, 0, 0))
-    ImageDraw.Draw(gl).text(xy, txt, font=font, fill=glow + (255,), anchor='mm')
-    gl = gl.filter(ImageFilter.GaussianBlur(14))
-    base = img.convert('RGBA')
-    base.alpha_composite(gl)
-    base.alpha_composite(layer)
-    fillmask = grad.copy()
-    fillmask.putalpha(ImageChops.multiply(grad.getchannel('A'), mask))
-    base.alpha_composite(fillmask)
-    return base
+def petal_poly(cx, cy, size, ang):
+    pts = []
+    for k in range(12):
+        t = k / 11 * math.tau
+        r = size * (0.55 + 0.45 * abs(math.sin(t / 2)))
+        pts.append((cx + math.cos(t + ang) * r * 0.62, cy + math.sin(t + ang) * r))
+    return pts
 
 
-def place(comp, im, cx, bottom, height):
-    """scale a transparent render so its visible height == height, centre it on cx and rest it on `bottom`"""
-    bb = im.getbbox()
-    c = im.crop(bb)
-    sc = height / c.height
-    c = c.resize((max(1, int(c.width * sc)), height), Image.LANCZOS)
-    x, y = int(cx - c.width / 2), int(bottom - c.height)
-    a = c.getchannel('A').filter(ImageFilter.GaussianBlur(24))
-    glow = Image.new('RGBA', c.size, (120, 50, 200, 0))
-    glow.putalpha(a.point(lambda v: int(v * 0.45)))
-    comp.alpha_composite(glow, (max(0, x), max(0, y)))
-    comp.alpha_composite(c, (x, y))
+def blossom_branch(img, rng, side):
+    layer = Image.new('RGBA', (W, W), (0, 0, 0, 0))
+    d = ImageDraw.Draw(layer)
+    pts = []
+    for k in range(9):
+        t = k / 8
+        x = (20 + 400 * t) if side < 0 else (W - 20 - 400 * t)
+        y = 40 + 150 * math.sin(t * 2.0) - 20 * t
+        pts.append((x, y))
+    for i in range(len(pts) - 1):
+        d.line([pts[i], pts[i + 1]], fill=(28, 14, 22, 255), width=int(26 - i * 2.4))
+    for (x, y) in pts:
+        for _ in range(7):
+            bx, by = x + rng.uniform(-70, 70), y + rng.uniform(-60, 70)
+            for k in range(5):
+                a = k / 5 * math.tau
+                d.polygon(petal_poly(bx + math.cos(a) * 12, by + math.sin(a) * 12, 17, a + 1.57), fill=(rng.choice([(236, 150, 190), (248, 190, 215), (222, 120, 172)]) + (235,)))
+            d.ellipse([bx - 3, by - 3, bx + 3, by + 3], fill=(255, 214, 110, 255))
+    layer = layer.filter(ImageFilter.GaussianBlur(1.1))
+    img.alpha_composite(layer)
 
 
-def gem(comp, name, x, y, s, tint):
-    ic = Image.open(f'{RP}/textures/items/{name}.png').convert('RGBA').resize((16 * s, 16 * s), Image.NEAREST)
-    pad = 60
-    layer = Image.new('RGBA', (ic.width + pad * 2, ic.height + pad * 2), (0, 0, 0, 0))
-    layer.alpha_composite(ic, (pad, pad))
-    halo = layer.getchannel('A').filter(ImageFilter.GaussianBlur(26))
-    g = Image.new('RGBA', layer.size, tint + (0,))
-    g.putalpha(halo.point(lambda v: int(v * 0.9)))
-    comp.alpha_composite(g, (x - pad, y - pad))
-    comp.alpha_composite(layer, (x - pad, y - pad))
+def petals(img, rng, count, blur, size_rng, alpha):
+    layer = Image.new('RGBA', (W, W), (0, 0, 0, 0))
+    d = ImageDraw.Draw(layer)
+    for _ in range(count):
+        x, y = rng.uniform(0, W), rng.uniform(0, W)
+        s = rng.uniform(*size_rng)
+        d.polygon(petal_poly(x, y, s, rng.uniform(0, math.tau)), fill=(rng.choice([(255, 190, 215), (255, 225, 238), (240, 150, 195)]) + (alpha,)))
+    if blur:
+        layer = layer.filter(ImageFilter.GaussianBlur(blur))
+    img.alpha_composite(layer)
 
 
 def compose():
-    bg = background().convert('RGBA')
-    boss, bt = model(mob_boss)
-    warg, wt = model(mob_warg)
-    voidw, vt = model(mob_voidweaver)
-    shot_boss = shot(boss, bt, yaw=12, pitch=-6, scale=7.0, cy=56, ycen=0.52, gain=1.55)
-    shot_warg = shot(warg, wt, yaw=-42, pitch=-10, scale=9.0, cy=14, ycen=0.60, gain=2.3)
-    shot_void = shot(voidw, vt, yaw=28, pitch=-8, scale=8.0, cy=24, ycen=0.60, gain=2.0)
-
-    comp = bg.copy()
-    place(comp, shot_boss, W * 0.5, 800, 640)
-    place(comp, shot_warg, W * 0.20, 770, 300)
-    place(comp, shot_void, W * 0.81, 790, 400)
-    comp = bloom(comp.convert('RGB'), thresh=238, radius=10, strength=0.55).convert('RGBA')
-
-    gem(comp, 'azurite_ingot', 70, 300, 7, (40, 120, 255))
-    gem(comp, 'pyrelite_ingot', 850, 250, 7, (255, 110, 30))
-    gem(comp, 'eclipsite_ingot', 905, 480, 6, (200, 70, 240))
-
-    band = Image.new('RGBA', (W, W), (0, 0, 0, 0))
-    bp = band.load()
-    for y in range(int(W * 0.70), W):
-        t = max(0.0, (y - W * 0.70) / (W * 0.30))
-        a = int(238 * min(1, t * 1.3) ** 1.2)
-        for x in range(W):
-            bp[x, y] = (4, 2, 12, a)
-    comp.alpha_composite(band)
-
-    f_title = ImageFont.truetype('C:/Windows/Fonts/impact.ttf', 176)
-    f_sub = ImageFont.truetype('C:/Windows/Fonts/bahnschrift.ttf', 64)
-    f_tag = ImageFont.truetype('C:/Windows/Fonts/bahnschrift.ttf', 42)
-    comp = gradient_text(comp, (W // 2, 812), 'SURVIVAL++', f_title, (255, 244, 190), (255, 150, 60), (30, 8, 50), 9)
-    d = ImageDraw.Draw(comp)
-    sub = 'ECLIPSED REALMS'
-    total = sum(d.textlength(c, font=f_sub) + 14 for c in sub) - 14
-    x = (W - total) / 2
-    for c in sub:
-        for dx in (-3, 3):
-            for dy in (-3, 3):
-                d.text((x + dx, 918 + dy), c, font=f_sub, fill=(20, 5, 40), anchor='lm')
-        d.text((x, 918), c, font=f_sub, fill=(216, 170, 255), anchor='lm')
-        x += d.textlength(c, font=f_sub) + 14
-    d.text((W // 2, 978), 'END++  \u2022  NETHER++  \u2022  VANILLA++', font=f_tag, fill=(150, 235, 255), anchor='mm')
-    d.text((W // 2, 1008), 'by Tech Bytes Design', font=ImageFont.truetype('C:/Windows/Fonts/bahnschrift.ttf', 24), fill=(190, 175, 220), anchor='mm')
-    return comp.convert('RGB')
+    rng = random.Random(2026)
+    img = background(rng).convert('RGBA')
+    torii(img)
+    # misty ground
+    mist = Image.new('RGBA', (W, W), (0, 0, 0, 0))
+    md = ImageDraw.Draw(mist)
+    for k in range(40):
+        y = int(W * 0.66 + k * 9)
+        md.ellipse([-200, y, W + 200, y + 90], fill=(240, 170, 210, 3 + k // 9))
+    img.alpha_composite(mist.filter(ImageFilter.GaussianBlur(26)))
+    # reflections: two translucent echoes either side
+    for sx, yaw in ((-300, 38), (300, -38)):
+        echo = hanae_shot(9.0, yaw, -4)
+        r, g, b, a = echo.split()
+        echo = Image.merge('RGBA', (r.point(lambda v: int(v * 0.8 + 40)), g.point(lambda v: int(v * 0.85 + 40)), b.point(lambda v: min(255, int(v * 0.9 + 80))), a.point(lambda v: int(v * 0.34))))
+        img.alpha_composite(echo, (sx, 120))
+    petals(img, rng, 26, 9, (30, 54), 150)
+    hero = hanae_shot(15.5, 24, -6)
+    shadow = Image.new('RGBA', (W, W), (0, 0, 0, 0))
+    img.alpha_composite(hero, (0, -6))
+    blossom_branch(img, rng, -1)
+    blossom_branch(img, rng, 1)
+    petals(img, rng, 80, 0, (6, 15), 215)
+    petals(img, rng, 10, 5, (44, 74), 120)
+    out = bloom(img)
+    # vignette
+    yy, xx = np.mgrid[0:W, 0:W].astype(np.float32)
+    v = 1 - 0.55 * (np.hypot(xx - W / 2, yy - W / 2) / (W * 0.72)) ** 2.4
+    arr = np.array(out).astype(np.float32) * np.clip(v, 0.25, 1)[..., None]
+    return Image.fromarray(np.clip(arr, 0, 255).astype(np.uint8))
 
 
 def build():

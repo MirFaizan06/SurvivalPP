@@ -1,6 +1,26 @@
 # Changelog
 
-All notable changes to **Survival++ | Eclipsed Realms** (Tech Bytes Design). Versions follow `major.minor.patch`; the pack version is set in `tools/version.json`.
+All notable changes to **Eclipsed Realms: Chronicles of the Seven Seals** (formerly "Survival++ | Eclipsed Realms") (Tech Bytes Design). Versions follow `major.minor.patch`; the pack version is set in `tools/version.json`.
+
+## [1.4.0] - "Chronicles Update"
+
+### Renamed
+- **Survival++ | Eclipsed Realms is now *Eclipsed Realms: Chronicles of the Seven Seals*** - it is a story-driven add-on. The release file is `EclipsedRealms_v1.4.0.mcaddon`. (The GitHub repository keeps its old URL.)
+
+### Added
+- **The story:** the **Wayfarer's Journal** (given once to every player; progress saved per player; re-craftable) with one clue at a time, a progress tracker, an offerings step and unlockable **lore pages**. Chapter I leads to the Veiled Blossom, Chapter II to the Eclipse Sovereign. Chapters are data, so more can be added easily. Full history in `LORE.md` and on the docs site.
+- **The Veiled Blossom (Hanae)** - the first main boss: a gentle early-game fight (260 HP) with a floating shrine-maiden model, three phases, petal fans, Mirror Step, Veiled Echoes, custom **Blossom Vexes**, falling-blossom rings, a petal spiral, **fog that changes per phase**, pentatonic shrine bells, spoken warnings, and a mercy rule (she stops when a player is badly hurt). A corrupted texture appears in her last phase.
+- **Hanae's Shrine** (torii gate, path, pavilion, pond, blossom trees, loot) generating in Cherry Groves, and the **Blossom Altar** block.
+- **Veilbloom Regalia** (Crown, Haori, Hakama, Geta): pink armour with netherite-level protection, set bonus, repaired with **Veilbloom Shards**; **Veiled Mirror**, **Seal of the Blossom** and the journal as items.
+- **Custom 3D armour for every tier** (Azurite crystal, Pyrelite horned, Eclipsite void, Veilbloom) - real geometry and painted textures instead of recoloured vanilla layers; inventory icons are renders of the pieces.
+- **Custom sword designs** for Azurite, Pyrelite and Eclipsite (32x32 sprites).
+- **Themed boss health bars** for the Eclipse Sovereign, Hollow King, Mosswood Colossus, Silkqueen and the Veiled Blossom (vanilla bar stays underneath as a fallback).
+- **New thumbnail** featuring the Veiled Blossom.
+- Lore pages for the Hollow Lords, Hanae and the Eclipse Sovereign. The side bosses are now canon "Hollow Lords"; the Eclipse Sovereign is the second main boss.
+
+### Tooling
+- Story + boss runtime tests in the mock run (journal gift, grove, kills, offerings, altar, all three boss phases, fog push/remove, mercy rule, Chapter II).
+- Lint: UI textures, fog definitions pushed by scripts, `entity_alphablend`.
 
 ## [1.3.0] - "Adventure Update" (Version 1 final)
 

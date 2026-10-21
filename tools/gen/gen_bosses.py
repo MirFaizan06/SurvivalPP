@@ -13,6 +13,9 @@ BOSSES = {
                               family=['mosswood_colossus'], melee=26, reach=3.6),
     'silkqueen': dict(title='Silkqueen', hp=400, box=(3.4, 2.0), speed=0.31, xp=900, egg=('#1c1638', '#f2c744'),
                       family=['silkqueen', 'arthropod'], melee=10, reach=2.4),
+    # the first story boss: model, animations and client files live in gen_blossom.py
+    'veiled_blossom': dict(title='The Veiled Blossom', hp=260, box=(1.0, 2.7), speed=0.25, xp=800, egg=('#f6a8c8', '#8a1428'),
+                           family=['veiled_blossom'], melee=4, reach=2.6, custom=True),
 }
 
 LOOT = {
@@ -22,6 +25,10 @@ LOOT = {
     'mosswood_colossus': [entry('ecr:colossus_core', 1, 1, looting=0), entry('ecr:spore_cluster', 8, 14, looting=0), entry('minecraft:moss_block', 16, 24, looting=0),
                           entry('minecraft:diamond', 4, 8, looting=0), entry('minecraft:enchanted_golden_apple', 1, 1, looting=0),
                           entry('minecraft:netherite_scrap', 1, 2, looting=0, chance=0.5)],
+    'veiled_blossom': [entry('ecr:sakura_helmet', 1, 1, looting=0), entry('ecr:sakura_chestplate', 1, 1, looting=0), entry('ecr:sakura_leggings', 1, 1, looting=0),
+                       entry('ecr:sakura_boots', 1, 1, looting=0), entry('ecr:sakura_shard', 6, 10, looting=0), entry('ecr:blossom_seal', 1, 1, looting=0),
+                       entry('minecraft:diamond', 4, 8, looting=0), entry('minecraft:enchanted_golden_apple', 1, 1, looting=0), entry('minecraft:experience_bottle', 10, 16, looting=0),
+                       entry('minecraft:pink_petals', 16, 32, looting=0)],
     'silkqueen': [entry('ecr:queens_fang', 1, 1, looting=0), entry('ecr:silk_gland', 6, 10, looting=0), entry('minecraft:string', 16, 32, looting=0),
                   entry('minecraft:spider_eye', 6, 10, looting=0), entry('minecraft:diamond', 3, 6, looting=0), entry('minecraft:ender_pearl', 4, 8, looting=0),
                   entry('minecraft:enchanted_golden_apple', 1, 1, looting=0, chance=0.5)],
@@ -72,6 +79,12 @@ def bp(name, b):
         comps['minecraft:navigation.walk'] = {'can_pass_doors': False, 'can_break_doors': True, 'avoid_water': False, 'is_amphibious': True}
         groups['ecr:melee_mode'] = melee
         groups['ecr:ranged_mode'] = {}
+    elif name == 'veiled_blossom':
+        comps['minecraft:navigation.walk'] = {'can_pass_doors': True, 'avoid_water': False, 'is_amphibious': True, 'can_break_doors': False}
+        groups['ecr:melee_mode'] = melee
+        groups['ecr:ranged_mode'] = {
+            'minecraft:behavior.ranged_attack': {'priority': 3, 'attack_interval': {'min': 4.0, 'max': 6.0}, 'attack_range': {'min': 0.0, 'max': 24.0}, 'burst_shots': 2, 'burst_interval': 0.4, 'speed_multiplier': 1.0, 'target_in_sight_time': 0.5, 'in_range_movement_mode': 'follow_target'},
+            'minecraft:shooter': {'def': 'ecr:petal_blade', 'power': 1.4}}
     else:
         comps['minecraft:navigation.climb'] = {'can_path_over_water': True}
         comps['minecraft:can_climb'] = {}
@@ -127,6 +140,8 @@ def build():
                       ['idle', {'walk': biped_walk}, 'look', {'rear': "q.has_target && q.is_delayed_attacking || q.property('ecr:casting')"}]),
     }
     for name, b in BOSSES.items():
+        if b.get('custom'):
+            continue
         builder, mats, gid = mob_bosses2.MODELS[name]
         m = builder()
         m.pack()
@@ -142,7 +157,7 @@ def build():
         wjson(f'{BP}/loot_tables/entities/{name}.json', {'pools': LOOT[name]})
         LANG[f'entity.{NS}:{name}.name'] = b['title']
         LANG[f'item.spawn_egg.entity.{NS}:{name}.name'] = f'{b["title"]} Spawn Egg'
-    wjson(f'{RP}/render_controllers/ecr_bosses2.render_controllers.json', render_controllers(list(BOSSES)))
+    wjson(f'{RP}/render_controllers/ecr_bosses2.render_controllers.json', render_controllers([n for n, b in BOSSES.items() if not b.get('custom')]))
 
 
 if __name__ == '__main__':

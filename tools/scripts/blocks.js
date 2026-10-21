@@ -8,6 +8,7 @@ import { startRitual } from './boss.js';
 import { growTree } from './trees.js';
 import { registerSanctumComponent } from './sanctum.js';
 import { registerCropComponent, boneMealCrop, isCropBlock } from './crops.js';
+import { registerBlossomAltar } from './story.js';
 
 const SIGIL = `${NS}:eclipse_sigil`;
 
@@ -88,6 +89,7 @@ function pollPlates() {
 export function registerBlockComponents(reg) {
     registerSanctumComponent(reg);
     registerCropComponent(reg);
+    registerBlossomAltar(reg);
     reg.registerCustomComponent(`${NS}:altar`, {
         onPlayerInteract(e) {
             const it = mainhand(e.player);

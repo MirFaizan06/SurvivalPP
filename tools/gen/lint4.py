@@ -36,7 +36,7 @@ for p in glob.glob(f'{BEDROCK_SAMPLES}/behavior_pack/biomes/*.biome.json'):
         BIOME_TAGS |= set(re.findall(r'"([a-z_0-9]+)"', m.group(1)))
 MINE = {f'ecr:{os.path.basename(p)[:-5]}' for d in ('blocks', 'items', 'entities') for p in glob.glob(f'{BP}/{d}/*.json')}
 VANILLA_MATERIALS = {'entity', 'entity_alphatest', 'entity_emissive_alpha', 'entity_alphatest_change_color', 'fireball', 'entity_nocull', 'entity_multitexture',
-                     'armor', 'armor_enchanted', 'entity_beam', 'entity_static'}
+                     'armor', 'armor_enchanted', 'entity_beam', 'entity_static', 'entity_alphablend'}
 
 # ------------------------------------------------------------------ official schemas (entities, spawn rules)
 def schema(d, root, files):
@@ -148,6 +148,10 @@ for p in glob.glob(f'{RP}/entity/*.entity.json'):
 for aid in set(anim_defs) - used_anims:
     warn(f'animation {aid} is never used by a client entity')
 
+# ------------------------------------------------------------------ UI json: every texture it names exists
+for p_ in glob.glob(f'{RP}/ui/*.json'):
+    walk_strings(jl(p_), lambda s, path: bad(f'{os.path.basename(p_)}: texture {s} missing') if s.startswith('textures/') and not os.path.exists(f'{RP}/{s}.png') else None)
+
 # ------------------------------------------------------------------ biome tags in spawn rules and feature rules
 def tags_in(o, out):
     if isinstance(o, dict):
@@ -209,13 +213,21 @@ ENT = {e['name'] for e in jl(f'{SM}/vanilladata_modules/mojang-entities.json')['
 PART = set()
 for p_ in glob.glob(f'{BEDROCK_SAMPLES}/resource_pack/particles/*.json'):
     PART |= set(re.findall(r'"identifier"\s*:\s*"(minecraft:[a-z_0-9]+)"', open(p_, encoding='utf-8').read()))
-NOT_IDS = {'minecraft:block_face', 'minecraft:vertical_half', 'minecraft:equippable', 'minecraft:overworld', 'minecraft:nether', 'minecraft:the_end', 'minecraft:player'}
+NOT_IDS = {'minecraft:cherry_grove', 'minecraft:block_face', 'minecraft:vertical_half', 'minecraft:equippable', 'minecraft:overworld', 'minecraft:nether', 'minecraft:the_end', 'minecraft:player'}
 known = VBI | ENT | PART | NOT_IDS
 for p_ in glob.glob(f'{BP}/scripts/*.js'):
     src = open(p_, encoding='utf-8').read()
     for mid in sorted(set(re.findall(r"'(minecraft:[a-z_0-9]+)'", src))):
         if mid not in known:
             bad(f'{os.path.basename(p_)}: "{mid}" is not a known vanilla block/item/entity/particle id')
+
+# ------------------------------------------------------------------ fogs pushed by scripts exist
+fog_ids = {jl(p_)['minecraft:fog_settings']['description']['identifier'] for p_ in glob.glob(f'{RP}/fogs/*.json')}
+src_b = open(f'{BP}/scripts/blossom.js', encoding='utf-8').read()
+m_ = re.search(r'const FOGS = \[(.*?)\];', src_b, re.S)
+for f in re.findall(r'\$\{NS\}:([a-z_]+)', m_.group(1)) if m_ else []:
+    if f'ecr:{f}' not in fog_ids:
+        bad(f'blossom.js pushes fog ecr:{f} but no such fog definition exists')
 
 # ------------------------------------------------------------------ every block / item / entity has a display name
 lang = {}

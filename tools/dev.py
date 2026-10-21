@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-"""Survival++ developer CLI.
+"""Eclipsed Realms developer CLI.
 
     python tools/dev.py setup       # one-time: fetch Mojang bedrock-samples + npm typings/validators into .ref/
     python tools/dev.py build       # regenerate every texture / model / JSON / script into build/out

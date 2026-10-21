@@ -1,6 +1,6 @@
 """v1.3 adventure structures: world-gen rules (rarity, biomes, placement) and tiered chest loot for the ten new structures."""
 from common import *
-import structures3, structures4
+import structures3, structures4, structures5
 from gen_world import feature, rule, tag, anyof, dist_surface, dist_underground
 from gen_world2 import item
 
@@ -52,6 +52,10 @@ END = [item('minecraft:ender_pearl', 14, 3, 8), item('minecraft:diamond', 10, 3,
        item('minecraft:totem_of_undying', 4), item('minecraft:elytra', 2), item('minecraft:shulker_shell', 6, 1, 3), item('minecraft:end_rod', 8, 3, 10),
        ench('minecraft:netherite_sword', 2, levels=(28, 40)), item(f'{N}:eclipse_sigil', 1), item('minecraft:experience_bottle', 10, 4, 10)]
 
+T_SHRINE = [item('minecraft:pink_petals', 20, 8, 24), item('minecraft:cherry_sapling', 10, 1, 3), item('minecraft:bone_meal', 12, 4, 10), item('minecraft:emerald', 10, 1, 4),
+            item('minecraft:golden_apple', 5, 1, 1), book(8), item('minecraft:experience_bottle', 10, 2, 5), item('minecraft:cherry_log', 10, 4, 12), item('minecraft:lantern', 8, 1, 3),
+            item(f'{N}:strawberry_seeds', 8, 1, 3), item('minecraft:honeycomb', 6, 1, 3), item('minecraft:amethyst_shard', 8, 2, 6)]
+
 # table name -> (entries, rolls, rare relic or None)
 TABLES = {
     'ecr_bandit_camp': (T1, (2, 3), None),
@@ -72,6 +76,7 @@ TABLES = {
     'ecr_sunken_crypt_vault': (T5, (6, 9), (f'{N}:grave_sigil', 0.25)),
     'ecr_pyre_bastion': (NETHER, (5, 8), None),
     'ecr_pyre_bastion_core': (NETHER + T5[:6], (7, 10), (f'{N}:eclipse_sigil', 0.1)),
+    'ecr_hanae_shrine': (T_SHRINE, (3, 5), None),
     'ecr_eclipse_vault': (END, (5, 8), None),
     'ecr_eclipse_vault_core': (END + T5[:6], (8, 11), (f'{N}:eclipse_sigil', 0.3)),
 }
@@ -97,6 +102,7 @@ def build_all():
     s = {}
     s.update(structures3.build_all())
     s.update(structures4.build_all())
+    s['hanae_shrine'] = structures5.hanae_shrine()
     base = lambda k: s[k][1]
     # --- Overworld (rarity is per 16x16 chunk: 1/N; bigger = rarer). Easy ones are common, hard ones rare like mansions/outposts.
     structure('bandit_lookout', 'bandit_lookout', base('bandit_lookout'), anyof('plains', 'savanna', 'forest', 'meadow', 'taiga'), 1, 140, adj=5)
@@ -119,6 +125,8 @@ def build_all():
     rule('pyre_bastion_rule', 'pyre_bastion_floor_feature', 'surface_pass', tag('nether'), dist_underground(1, 34, 90, 1, 70))
     # --- End
     structure('eclipse_vault', 'eclipse_vault', base('eclipse_vault'), tag('the_end'), 1, 130, adj=8, steep=6)
+    # Hanae's Shrine: the story's ritual site, only inside cherry groves (the story needs at least one to exist near every grove)
+    structure('hanae_shrine', 'hanae_shrine', base('hanae_shrine'), tag('cherry_grove'), 1, 45, adj=10, steep=6)
     loot()
     return s
 

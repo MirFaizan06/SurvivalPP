@@ -1,4 +1,4 @@
-# CLAUDE.md - developer guide for Survival++ | Eclipsed Realms
+# CLAUDE.md - developer guide for Eclipsed Realms: Chronicles of the Seven Seals
 
 Minecraft Bedrock add-on (BP + RP + JS scripts) by **Tech Bytes Design**. Target: Bedrock **1.26.50+**, `@minecraft/server 2.6.0`, `@minecraft/server-ui 2.0.0`. Repo: `MirFaizan06/SurvivalPP`. The user ships updates incrementally ("v1.2", "v1.3"...) and expects each one to be: built, validated, documented, pushed, with GitHub Pages updated.
 
@@ -25,8 +25,8 @@ python tools/dev.py setup       # once: clones Mojang/bedrock-samples + npm typi
 python tools/dev.py build       # regenerate everything into <build>/out/ECR_BP and ECR_RP
 python tools/dev.py lint        # cross-reference lint + official JSON-schema validation (must be 0 problems)
 python tools/dev.py typecheck   # tsc over tools/scripts against real @minecraft/server typings (must be clean)
-python tools/dev.py test        # runtime smoke test: tools/test/mock_run.mjs boots the packaged scripts against a fake @minecraft/server (must print 0 problems)
-python tools/dev.py package     # zip -> releases/SurvivalPlusPlus_EclipsedRealms_v<ver>.mcaddon
+python tools/dev.py test        # runtime smoke test (incl. the whole story + boss flow): tools/test/mock_run.mjs boots the packaged scripts against a fake @minecraft/server (must print 0 problems)
+python tools/dev.py package     # zip -> releases/EclipsedRealms_v<ver>.mcaddon
 python tools/dev.py all            # build + lint + typecheck + test + package
 ```
 Env overrides: `BEDROCK_SAMPLES` (bedrock-samples path), `SPP_NPM` (dir with node_modules), `SPP_BUILD` (build output dir).
@@ -58,5 +58,15 @@ Known/expected lint output: `items checked N bad 12` (tool `destroy_speeds` fals
 - Always validate vanilla ids (lint knows the list); item ids differ from block ids (e.g. `minecraft:normal_stone_slab`, `minecraft:noteblock`).
 - **Honesty**: the environment cannot launch Minecraft. Say plainly that in-game behaviour (especially new world-gen rules, underground structures, particles and animations) is validated against schemas/typings only.
 
-## Content map (v1.3.0)
+## Story system (v1.4+) - how to extend
+- **Lore source of truth:** `LORE.md` (also built into the docs site). Keep in-game text in `tools/scripts/story.js` consistent with it.
+- **Chapters are data:** `STEPS` (clue text, title, chapter name) and `PAGES` (lore pages unlocked by `at: step` or `boss: <entity id>`) in `story.js`. A step advances through `advance(player, st, toStep)`; add the detection (biome check interval, `entityDie` kill counter, item presentation, altar interaction, boss death) where the existing steps are detected. `COMPLETE` is the final step index.
+- **Per-player state** lives in the dynamic property `ecr:story` (JSON); the journal is only a viewer.
+- **Main bosses vs side bosses:** main = story bosses (Hanae, Eclipse Sovereign, future Keepers); side = Hollow Lords (Hollow King, Mosswood Colossus, Silkqueen). Main bosses are reached only through the journal; side bosses through relics.
+- **Boss recipe (Hanae):** model `mob_hanae.py`, animations `anims2.hanae()`, entities `gen_blossom.py` (+ `gen_bosses.BOSSES[..., custom=True]`), behaviour `blossom.js`, fog JSON in `gen_blossom.fogs()`, boss-bar skin in `gen_ui.SKINS` (matched by the boss name text), death lines in `deaths.js`, mock-run scenario in `tools/test/mock_run.mjs`.
+- **Boss bars:** `gen_ui.py` writes `ui/hud_screen.json` using `modifications` + `insert_back` so the vanilla bar remains as a fallback; skins are selected with the string-subtraction trick on `#bossName`. The boss `minecraft:boss.name` must contain the skin key.
+- **Armour/swords:** `armor_models.py` (per-piece geometry + paint + icon, `DESIGNS`), `gen_armor2.py` (attachables + Veilbloom items), `art_swords.py`. Preview: `python tools/gen/preview_armor.py`.
+- **Balance rule for Chapter I:** early boss, low damage, never lethal on purpose (mercy rule). Later Keepers can be harder.
+
+## Content map (v1.4.0)
 Ores Azurite/Pyrelite/Eclipsite (+tools, armour) · stones Marlstone/Slate/Verdite/Umbrastone · 5 trees (Jacaranda, Frostpine, Amberwood, Sunwood, Mireweep) · crops Tomato/Corn/Strawberry/Chili/Oats + foods · animals Meadow Deer/Highland Yak/Wild Boar/Pheasant · hostiles Gravewalker/Revenant/Cave Weaver/Sporeling · mobs Ashen Warg/Voidweaver · bosses Eclipse Sovereign, Hollow King, Mosswood Colossus, Silkqueen · structures Pyre Spire, Eclipse Obelisk/Shrine, Forgotten Graveyard, Verdant Shrine, Silk Nest, Hunter's Camp, Mossy Boulder + ten adventure structures (Bandit Lookout, Sunken Well, Watch Keep, Dune Vault, Thorn Shrine, Frost Cairn, Highland Bastion, Sunken Crypt, Pyre Bastion, Eclipse Vault) · systems: stasis chambers (`stasis.js`), Sanctum Warden (`sanctum.js`), custom death messages (`deaths.js`).

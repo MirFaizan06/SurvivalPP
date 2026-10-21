@@ -63,6 +63,8 @@ for p in glob.glob(f'{RP}/textures/entity/*.tga'):
     if im.mode != 'RGBA':
         bad.append(f'{p}: mode {im.mode}')
 for p in glob.glob(f'{RP}/textures/**/*.png', recursive=True):
+    if os.sep + 'ui' + os.sep in p or '/ui/' in p:
+        continue                      # UI images are drawn stretched, not atlased: any size is fine
     im = Image.open(p)
     w, h = im.size
     if (w & (w - 1)) or (h & (h - 1)):

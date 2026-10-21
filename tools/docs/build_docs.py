@@ -2,6 +2,7 @@
     python tools/docs/build_docs.py
 Add a page: drop a fragment into pages/, add it to PAGES. The version shown comes from tools/version.json."""
 import html, json, re, shutil
+from mdconv import md_to_html, md_inline
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
@@ -11,35 +12,28 @@ VER = '.'.join(map(str, json.loads((ROOT / 'tools' / 'version.json').read_text()
 REPO = 'https://github.com/MirFaizan06/SurvivalPP'
 
 PAGES = [  # (file, nav title, page title)
-    ('index.html', 'Home', 'Survival++ | Eclipsed Realms'),
+    ('index.html', 'Home', 'Eclipsed Realms: Chronicles of the Seven Seals'),
     ('world.html', 'World & Survival', 'World & Survival'),
     ('adventure.html', 'Adventure', 'Adventure Structures'),
     ('creatures.html', 'Creatures', 'Animals, Monsters & Bosses'),
+    ('lore.html', 'Lore', 'The Chronicles of the Seven Seals'),
     ('systems.html', 'Systems', 'Stasis Chambers, Sanctum & Crafting'),
     ('changelog.html', 'Changelog', 'Changelog'),
 ]
 
 TEMPLATE = '''<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>{title} - Survival++</title>
-<meta name="description" content="Survival++ | Eclipsed Realms - a survival expansion for Minecraft Bedrock by Tech Bytes Design.">
+<title>{title} - Eclipsed Realms</title>
+<meta name="description" content="Eclipsed Realms: Chronicles of the Seven Seals - a story-driven adventure add-on for Minecraft Bedrock by Tech Bytes Design.">
 <link rel="icon" href="img/icon_1024.png"><link rel="stylesheet" href="style.css"></head>
 <body>
 <header class="site"><div class="bar">
-<a class="brand" href="index.html"><img src="img/icon_1024.png" alt=""><span>Survival++ <small>Eclipsed Realms</small></span></a>
+<a class="brand" href="index.html"><img src="img/icon_1024.png" alt=""><span>Eclipsed Realms <small>Chronicles of the Seven Seals</small></span></a>
 <nav>{nav}</nav></div></header>
 <main>{body}</main>
-<footer>Survival++ | Eclipsed Realms v{ver} &middot; by Tech Bytes Design &middot; <a href="{repo}">GitHub</a> &middot;
+<footer>Eclipsed Realms: Chronicles of the Seven Seals v{ver} &middot; by Tech Bytes Design &middot; <a href="{repo}">GitHub</a> &middot;
 Not an official Minecraft product; not approved by or associated with Mojang or Microsoft.</footer>
 </body></html>'''
-
-
-def md_inline(s):
-    s = html.escape(s)
-    s = re.sub(r'`([^`]+)`', r'<code>\1</code>', s)
-    s = re.sub(r'\*\*([^*]+)\*\*', r'<strong>\1</strong>', s)
-    s = re.sub(r'\[([^\]]+)\]\(([^)]+)\)', r'<a href="\2">\1</a>', s)
-    return s
 
 
 def changelog_html():
@@ -71,7 +65,7 @@ def main():
     (OUT / '.nojekyll').write_text('')
     for fname, nav_title, title in PAGES:
         nav = ''.join(f'<a href="{f}"{" class=on" if f == fname else ""}>{n}</a>' for f, n, _ in PAGES)
-        body = changelog_html() if fname == 'changelog.html' else (HERE / 'pages' / fname).read_text(encoding='utf-8').replace('{VER}', VER)
+        body = ('<div class="callout warn"><strong>Spoilers.</strong> This is the full story so far. The same history is revealed piece by piece in the Wayfarer&rsquo;s Journal in game.</div>' + md_to_html((ROOT / 'LORE.md').read_text(encoding='utf-8'), True)) if fname == 'lore.html' else changelog_html() if fname == 'changelog.html' else (HERE / 'pages' / fname).read_text(encoding='utf-8').replace('{VER}', VER)
         (OUT / fname).write_text(TEMPLATE.format(title=html.escape(title), nav=nav, body=body, ver=VER, repo=REPO), encoding='utf-8')
     print('docs built ->', OUT, f'(v{VER})')
 

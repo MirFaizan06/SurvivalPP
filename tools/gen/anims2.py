@@ -183,3 +183,77 @@ def spores(name):
 
 def write(name, anims):
     wjson(f'{RP}/animations/{name}.animation.json', {'format_version': '1.8.0', 'animations': anims})
+
+
+def hanae(name='veiled_blossom'):
+    """a hovering shrine maiden: slow float, trailing hems/hair/sleeves, orbiting petals, parasol thrust, fan-and-arms casting pose"""
+    A = f'animation.ecr_{name}.'
+    out = {}
+    sway = lambda b, ph, amp=6: {'rotation': R(f'math.sin({T}*{70 + ph % 40} + {ph})*{amp}', 0, f'math.sin({T}*{55 + ph % 30} + {ph * 2})*{amp * 0.6}')}
+    idle = {
+        'float': {'position': R(0, f'1.6 + math.sin({T}*80)*1.2', 0)},
+        'body': {'rotation': R(f'math.sin({T}*60)*1.5', f'math.sin({T}*35)*3', f'math.sin({T}*50)*1.5')},
+        'head': {'rotation': R(f'math.sin({T}*70)*2', f'math.sin({T}*30)*5', f'math.sin({T}*45)*2')},
+        'arm_r': {'rotation': R(f'-8 + math.sin({T}*75)*3', 0, f'math.sin({T}*60)*2')},
+        'arm_l': {'rotation': R(f'-12 + math.sin({T}*75 + 90)*3', 0, f'math.sin({T}*60 + 90)*2')},
+        'parasol': {'rotation': R(0, f'math.sin({T}*50)*10', f'38 + math.sin({T}*65)*4')},
+        'fan': {'rotation': R(f'math.sin({T}*90)*4', 0, f'math.sin({T}*70)*5')},
+        'orbit': {'rotation': R(0, f'{T}*55', 0)},
+        'charms': {'rotation': R(0, f'-{T}*38', 0)},
+        'bow': {'rotation': R(f'math.sin({T}*95)*4')},
+        'veil': sway('veil', 17, 8),
+    }
+    for i in range(10):
+        idle[f'hem{i}'] = sway(f'hem{i}', i * 36, 7)
+    for i in range(5):
+        idle[f'hair{i}'] = sway(f'hair{i}', i * 50 + 11, 5)
+    for tag in 'lr':
+        idle[f'sleeve_{tag}'] = sway(f'sleeve_{tag}', 90 if tag == 'l' else 140, 6)
+    out[A + 'idle'] = anim(idle)
+    w = {
+        'body': {'rotation': R(f'6*{SPD}', 0, 0)},
+        'float': {'position': R(0, f'math.abs(math.sin({PH}*0.5))*0.8*{SPD}', 0)},
+        'head': {'rotation': R(f'-4*{SPD}')},
+    }
+    for i in range(10):
+        w[f'hem{i}'] = {'rotation': R(f'-18*{SPD}', 0, f'math.sin({PH}*0.5 + {i * 36})*4*{SPD}')}
+    for i in range(5):
+        w[f'hair{i}'] = {'rotation': R(f'-14*{SPD}')}
+    for tag in 'lr':
+        w[f'sleeve_{tag}'] = {'rotation': R(f'-10*{SPD}')}
+    out[A + 'walk'] = anim(w)
+    out[A + 'look'] = look('head', None, 55, 28)
+    out[A + 'attack'] = anim({
+        'arm_r': {'rotation': R(f'-70 + math.sin(q.life_time*1400)*60', 0, 10)},
+        'body': {'rotation': R(f'math.sin(q.life_time*1400)*10', f'math.sin(q.life_time*1400)*-14')},
+        'parasol': {'rotation': R(f'-20 + math.sin(q.life_time*1400)*30', 0, 30)},
+    })
+    out[A + 'cast'] = anim({
+        'arm_r': {'rotation': R(-130, 0, -20)}, 'arm_l': {'rotation': R(-130, 0, 20)},
+        'parasol': {'rotation': R(0, f'{T}*180', 20)},
+        'fan': {'rotation': R(f'-30 + math.sin({T}*500)*10', 0, f'math.sin({T}*400)*20')},
+        'orbit': {'rotation': R(0, f'{T}*240', 0)}, 'charms': {'rotation': R(0, f'-{T}*180', 0)},
+        'head': {'rotation': R(-14)}, 'body': {'rotation': R(-6)},
+        'float': {'position': R(0, f'5 + math.sin({T}*200)*1.5', 0)},
+    })
+    return out
+
+
+def blossom_vex(name='blossom_vex'):
+    A = f'animation.ecr_{name}.'
+    out = {}
+    out[A + 'idle'] = anim({
+        'body': {'position': R(0, f'math.sin({T}*180)*0.8', 0), 'rotation': R(f'math.sin({T}*90)*4', 0, f'math.sin({T}*70)*5')},
+        'wing_l': {'rotation': R(0, 0, f'-18 + math.sin({T}*1100)*26')},
+        'wing_r': {'rotation': R(0, 0, f'18 - math.sin({T}*1100)*26')},
+        'tail0': {'rotation': R(f'math.sin({T}*160)*10', f'math.sin({T}*110)*8')},
+        'tail1': {'rotation': R(f'math.sin({T}*160 + 60)*12', f'math.sin({T}*110 + 60)*10')},
+        'tail2': {'rotation': R(f'math.sin({T}*160 + 120)*14', f'math.sin({T}*110 + 120)*12')},
+    })
+    out[A + 'charge'] = anim({
+        'body': {'rotation': R(32)}, 'head': {'rotation': R(-12)},
+        'wing_l': {'rotation': R(0, 0, f'-10 + math.sin({T}*1700)*34')}, 'wing_r': {'rotation': R(0, 0, f'10 - math.sin({T}*1700)*34')},
+        'tail0': {'rotation': R(-26)}, 'tail1': {'rotation': R(-20)}, 'tail2': {'rotation': R(-14)},
+    })
+    out[A + 'look'] = look('head', None, 50, 25)
+    return out

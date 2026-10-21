@@ -1,4 +1,4 @@
-// Shared helpers for Survival++ : Eclipsed Realms (Tech Bytes Design)
+// Shared helpers for Eclipsed Realms (Tech Bytes Design)
 import { world, system, ItemStack, EquipmentSlot, GameMode, EntityComponentTypes, ItemComponentTypes } from '@minecraft/server';
 
 export const NS = 'ecr';

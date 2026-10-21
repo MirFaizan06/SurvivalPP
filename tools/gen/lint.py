@@ -316,7 +316,7 @@ for p in glob.glob(f'{BP}/scripts/*.js'):
         n = 'ecr:' + (m.group(1) or m.group(2))
         if n not in mine and n not in ('ecr:needs_netherite_pickaxe',):
             # custom block components / states / props are legitimate non-ids
-            if n.split(':')[1] in ('altar', 'stasis_chamber', 'stasis_plate', 'openable', 'plate', 'button', 'leaves', 'sapling', 'loaded', 'powered', 'open', 'pressed', 'persistent', 'phase', 'casting', 'link', 'db_v1', 'cast_on', 'cast_off', 'enter_phase_2', 'enter_phase_3', 'hinge_right', 'growth', 'sanctum_idx', 'puffing', 'stag', 'roll_stag', 'relic', 'crop', 'wild_crop', 'pass_zone', 'sanctum_v1', 'wplates_v1', 'deathmsg_suppressed', 'sanctum', 'needs_netherite_pickaxe'):
+            if n.split(':')[1] in ('altar', 'stasis_chamber', 'stasis_plate', 'openable', 'plate', 'button', 'leaves', 'sapling', 'loaded', 'powered', 'open', 'pressed', 'persistent', 'phase', 'casting', 'link', 'db_v1', 'cast_on', 'cast_off', 'enter_phase_2', 'enter_phase_3', 'hinge_right', 'growth', 'sanctum_idx', 'blossom_veil', 'blossom_storm', 'eclipse_bloom', 'story', 'journal_given', 'puffing', 'stag', 'roll_stag', 'relic', 'crop', 'wild_crop', 'pass_zone', 'sanctum_v1', 'wplates_v1', 'deathmsg_suppressed', 'sanctum', 'needs_netherite_pickaxe'):
                 continue
             bad(f'{os.path.basename(p)}: unknown id {n}')
 
