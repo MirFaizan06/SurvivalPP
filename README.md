@@ -1,7 +1,7 @@
 # Eclipsed Realms: Chronicles of the Seven Seals
 
-**A story-driven adventure for Minecraft Bedrock - follow the Wayfarer's Journal, watch every great boss arrive in a cinematic, fight them with their own fog, music and health bars, loot twenty-three places, and survive with new ores, stones, crops, animals and monsters.**
-Made by **Tech Bytes Design** · Current version **1.6.0** · Needs Minecraft Bedrock **1.26.50 or newer** · No experimental toggles required
+**A story-driven adventure for Minecraft Bedrock - follow the Wayfarer's Journal, watch every great boss arrive in a cinematic, fight six main Keepers (two of them in the Nether, much harder) with their own fog, music and health bars, loot twenty-seven places, and survive with new ores, stones, crops, animals and monsters.**
+Made by **Tech Bytes Design** · Current version **1.7.0** · Needs Minecraft Bedrock **1.26.50 or newer** · No experimental toggles required
 
 📖 **Illustrated guide:** <https://mirfaizan06.github.io/SurvivalPP/> · 📜 **The full lore (spoilers):** [LORE.md](LORE.md) · 📋 **Changelog:** [CHANGELOG.md](CHANGELOG.md)
 
@@ -11,7 +11,7 @@ Made by **Tech Bytes Design** · Current version **1.6.0** · Needs Minecraft Be
 
 ## Install (30 seconds)
 
-1. Download **`EclipsedRealms_v1.6.0.mcaddon`** from the [`releases/`](releases) folder.
+1. Download **`EclipsedRealms_v1.7.0.mcaddon`** from the [`releases/`](releases) folder.
 2. Open it - Minecraft imports the Behavior Pack *and* the Resource Pack.
 3. Create a **new world** (or edit an existing one and enable both packs). 
 4. New terrain only: ores, structures, stones, crops and animals appear in chunks generated **after** the pack is enabled. Explore somewhere new.
@@ -30,6 +30,8 @@ When you first join you receive the **Wayfarer's Journal**, written by someone w
 2. **Chapter II - The Second Seal.** The journey continues to the End and the **Eclipse Sovereign**, the second main boss.
 3. **Road III - The Silent Choir.** After the First Seal the journal forks. Read four **Verse Stones** in the snow, strike the **chimes of the Frozen Cathedral** in the order of the sun's road, and face **Ysolde, the Frost Cantor**, who fights in 3/4 time.
 4. **Road IV - The Lantern in the Mire.** Gather **Wisp Essence**, solve the sconce riddle of the **Drowned Chapel** (half of it is in a flooded room) and face **Morwen, the Mire Lantern**, whose fen swallows every light you do not carry.
+5. **Road V - The Cinder Bride** (Nether). Make three offerings in the order a vow was spoken at the **Forge of Vows**, find the **Ashen Chapel** and set the **Cinder Ring** on the Bridal Anvil: **Varenna** fights with a forge - blades that shield her until you parry them, brands you must spread out from, a floor that burns.
+6. **Road VI - The Ashen Groom** (Nether). Ring back the bells of the **Toll Tower** from memory, find the **Hollow Hall** and set the Grave Key in the altar: **Corvane** duels in **stances** - Ember (steel only), Soul (arrows and magic only), Hollow (furious).
 
 The Hollow King, Mosswood Colossus and Silkqueen are **side bosses** (Hollow Lords): loot, relics and lore pages, but not on the main road. Read the whole history, with spoilers, in [LORE.md](LORE.md).
 
@@ -43,11 +45,11 @@ The Hollow King, Mosswood Colossus and Silkqueen are **side bosses** (Hollow Lor
 | **5 crops + 13 foods** | Tomato, Corn, Strawberry, Chili, Oats - real farming, wild patches in the world, and dishes with buffs. |
 | **4 animals** | Meadow Deer, Highland Yak, Wild Boar, Pheasant - breed them, hunt them, cook them. |
 | **4 new monsters** | Gravewalker, Revenant, Cave Weaver, Sporeling - better versions of zombie / skeleton / spider, and a new fungus pest. |
-| **Story + 7 bosses** | **Chapter I:** the **Veiled Blossom**. **Chapter II:** the **Eclipse Sovereign**. **Road III:** the **Frost Cantor**. **Road IV:** the **Mire Lantern** (four main bosses, each introduced by a camera scene). Side bosses: **Hollow King**, **Mosswood Colossus**, **Silkqueen**. Nether **Ashen Warg** and End **Voidweaver** mobs return from v1. |
-| **Custom gear** | Hand-built 3D armour and sword designs for every tier, the pink **Veilbloom Regalia**, and three new alloy sets - **Rimesteel** (iron+), **Glacite** (diamond+), **Wispsteel** (netherite+) - plus boss weapons **Frostsong** and the **Mirelight Scythe**. |
+| **Story + 9 bosses** | **Chapter I:** the **Veiled Blossom**. **Chapter II:** the **Eclipse Sovereign**. **Road III:** the **Frost Cantor**. **Road IV:** the **Mire Lantern**. **Road V:** the **Cinder Bride**. **Road VI:** the **Ashen Groom** (six main bosses, each introduced by a camera scene; Roads V and VI are in the Nether and much harder). Side bosses: **Hollow King**, **Mosswood Colossus**, **Silkqueen**. Nether **Ashen Warg** and End **Voidweaver** mobs return from v1. |
+| **Custom gear** | Hand-built 3D armour and sword designs for every tier, the pink **Veilbloom Regalia**, and three new alloy sets - **Rimesteel** (iron+), **Glacite** (diamond+), **Wispsteel** (netherite+) - plus boss weapons **Frostsong**, the **Mirelight Scythe**, **Vowbreaker** and **Grievance**. |
 | **Boss bars, intros & atmosphere** | Themed health bars for all seven bosses (drawn with custom font glyphs, so they show on every client), camera-scripted boss introductions, boss music, phase-changing fog and custom particles. |
 | **4 more undead** | Rimewalker and Hoarbone (snow), Mirewalker and Lanternbone (fen), plus the Mire Wisp. |
-| **23 places** | **Ten adventure strongholds** (easy to brutal, loot chests, traps, monster spawners) in the Overworld, Nether and End, plus Forgotten Graveyards, Verdant Shrines, Silk Nests, Hunter's Camps, Mossy Boulders, Pyre Spires and Eclipse Obelisks/Shrines, and the puzzle places of the new roads: Verse Cairns, the Frozen Cathedral, the Fen Hut, the Drowned Chapel and the Wayfarer's Cairn. |
+| **27 places** | **Ten adventure strongholds** (easy to brutal, loot chests, traps, monster spawners) in the Overworld, Nether and End, plus Forgotten Graveyards, Verdant Shrines, Silk Nests, Hunter's Camps, Mossy Boulders, Pyre Spires and Eclipse Obelisks/Shrines, and the puzzle places of the new roads: Verse Cairns, the Frozen Cathedral, the Fen Hut, the Drowned Chapel, the Wayfarer's Cairn and, in the Nether, the Forge of Vows, the Ashen Chapel, the Toll Tower and the Hollow Hall. |
 | **Stasis chambers** | Java-style pearl stasis with a fishing rod, across any distance and dimension. |
 | **Sanctum Warden** | A "chunk ban" claim block: protect an area, choose how intruders are punished. |
 
@@ -98,6 +100,12 @@ Open *Road III* in the journal (after the First Seal; you receive a **Cantor's T
 
 ### Road IV - Morwen, the Mire Lantern
 Opens when Road III is done. Present **6 Wisp Essence + a Lantern** for the **Keeper's Lantern** → find the **Drowned Chapel** in a swamp, read the **Fen Notes** (one half is in a fen hut, the other in a flooded room reached through the chapel's pool) and light the three sconces in the right order → at night, use the lantern on the **Marsh Altar**. In the fight **carry a light** (torch, lantern, glowstone; the Keeper's Lantern lights the whole party), watch for **Lantern Mirages**. Drops the **Mirelight Scythe** and the Seal of the Lantern.
+
+### Road V - Varenna, the Cinder Bride (Nether, 900 HP)
+Opens after Road IV (you receive an **Ember Compass**). **Forge of Vows:** make the three offerings in the order the vow was spoken - **Gold Ingot, Blaze Rod, Ghast Tear** - for the **Cinder Ring** → **Ashen Chapel:** touch the **Bridal Anvil**, then set the ring on it. **Cut down her Forged Blades** (she is shielded while they live; each one a player kills is a parry), **spread out** from the Cinder Brand, stay out of the **glowing floor sectors**. Drops **Vowbreaker**, the Seal of the Forge, Cinder Hearts.
+
+### Road VI - Corvane, the Ashen Groom (Nether, 1100 HP)
+Opens after Road V. **Toll Tower** (Soul Sand Valley): ring back the bell pattern (3, 4, 5 bells) for the **Grave Key** → **Hollow Hall:** touch the **Grave Altar**, then set the key in it. **Match your weapon to his stance:** Ember (orange) = steel only, Soul (blue) = arrows/tridents/magic only, Hollow (grey) = everything, but he is furious. Jump the Widow's Toll rings. Drops **Grievance**, the Seal of the Vow, Soul Embers.
 
 ### Alloy gear
 Shapeless crafts, no ore hunt: **Rimesteel Ingot** = Iron + 2 Rime Shards, **Glacite Ingot** = Diamond + 2 Glacial Shards, **Wispsteel Ingot** = Gold + Netherite Scrap + 2 Wisp Essence. Full tool and 3D armour sets with set bonuses; see the guide.
@@ -175,6 +183,6 @@ Works on servers **without any operators**:
 
 Everything (textures, models, animations, JSON, scripts) is generated from source in [`tools/`](tools): `python tools/dev.py all` rebuilds, lints against Mojang's schemas and vanilla block data, type-checks the scripts, runs a runtime smoke test and packages the `.mcaddon`. See [CLAUDE.md](CLAUDE.md) for the full workflow and conventions.
 
-**Music credits:** boss themes are CC0 tracks from OpenGameArt by Yoiyami, Juhani Junkala and isaiah658 (see [credits](tools/assets/music/CREDITS.md)).
+**Music credits:** boss themes are CC0 tracks from OpenGameArt by Juhani Junkala, CleytonKauffman, isaiah658 and MintoDog (see [credits](tools/assets/music/CREDITS.md)).
 
 *© Tech Bytes Design. Not an official Minecraft product; not approved by or associated with Mojang or Microsoft.*

@@ -238,7 +238,7 @@ const KINDS = {
 };
 
 /** looks for `ids` in loaded chunks around the player, ring by ring, spread over several ticks */
-function scan(p, ids, done) {
+export function scan(p, ids, done) {
     const dim = p.dimension;
     const cx = Math.floor(p.location.x / 16), cz = Math.floor(p.location.z / 16);
     const cells = [];
@@ -257,7 +257,7 @@ function scan(p, ids, done) {
     }, 1);
 }
 
-function compass(dx, dz) {
+export function compass(dx, dz) {
     const a = (Math.atan2(dx, -dz) * 180) / Math.PI;
     return ['north', 'north-east', 'east', 'south-east', 'south', 'south-west', 'west', 'north-west'][Math.round(((a + 360) % 360) / 45) % 8];
 }

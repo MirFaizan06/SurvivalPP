@@ -13,6 +13,8 @@ SKINS = {
     'veiled_blossom': ('Veiled Blossom', dict(track='#2a0e1e', fill=('#8a2a58', '#f070a8', '#ffe0ee'), edge='#ffc0d8', accent='#ffffff', motif='blossom')),
     'frost_cantor': ('Frost Cantor', dict(track='#06121e', fill=('#1c4f8a', '#62b8f0', '#f0fbff'), edge='#bfe4ff', accent='#ffffff', motif='snowflake')),
     'mire_lantern': ('Mire Lantern', dict(track='#08140c', fill=('#2a6a3a', '#9ae070', '#fff6a0'), edge='#c8b060', accent='#ffe27a', motif='lantern')),
+    'cinder_bride': ('Cinder Bride', dict(track='#120606', fill=('#7a1d00', '#ff8a24', '#fff2b0'), edge='#ffb060', accent='#ffe27a', motif='forge')),
+    'ashen_groom': ('Ashen Groom', dict(track='#060c14', fill=('#0a3a6a', '#3aa8f0', '#e0f8ff'), edge='#8ac8f0', accent='#ffffff', motif='vow')),
 }
 S = 2                                    # texture scale: drawn at 2x for smooth downsampling in the UI
 BAR_W, BAR_H = 182, 7                    # UI size of the fill
@@ -151,6 +153,27 @@ def frame(w, h, p, seed):
         for x in range(bx0 + 24, bx1 - 24, 26):                                         # icicles hanging from the frame
             ln = 8 + (x * 7) % 9
             d.polygon([(x - 4, by1 + 1), (x + 4, by1 + 1), (x, by1 + ln)], fill=hexc('#dff3ff'), outline=hexc('#7ab8e0'))
+    elif motif == 'forge':
+        for side in (-1, 1):
+            sx = w // 2 + side * (bx1 - w // 2 + 6)
+            d.polygon([(sx - 16, cy - 8), (sx + 16, cy - 8), (sx + 12, cy - 2), (sx + 5, cy - 2), (sx + 5, cy + 6), (sx + 11, cy + 10), (sx - 11, cy + 10), (sx - 5, cy + 6), (sx - 5, cy - 2), (sx - 12, cy - 2)], fill=hexc('#1c1c26'), outline=edge)
+            d.line([(sx - 12, cy - 6), (sx + 12, cy - 6)], fill=accent, width=2)
+            for k in range(4):
+                d.ellipse([sx - 14 + k * 9, cy - 20 - (k % 2) * 4, sx - 10 + k * 9, cy - 16 - (k % 2) * 4], fill=hexc('#ff8a24'))
+        cx = w // 2
+        for k in range(7):
+            x = bx0 + 30 + k * 52
+            d.polygon([(x - 3, by1 + 1), (x + 3, by1 + 1), (x, by1 + 9 + (k % 3) * 3)], fill=hexc('#ff6a1c'), outline=hexc('#7a1d00'))
+    elif motif == 'vow':
+        for side in (-1, 1):
+            sx = w // 2 + side * (bx1 - w // 2 + 6)
+            d.ellipse([sx - 17, cy - 11, sx + 3, cy + 9], outline=hexc('#cfe8f8'), width=3)
+            d.ellipse([sx - 3, cy - 11, sx + 17, cy + 9], outline=edge, width=3)
+            d.ellipse([sx - 6, cy - 16, sx + 6, cy - 6], fill=hexc('#5ac8ff'))
+        cx = w // 2
+        for k in range(5):
+            x = cx - 60 + k * 30
+            d.polygon([(x, by0 - 12 - (k % 2) * 5), (x + 4, by0 - 4), (x - 4, by0 - 4)], fill=hexc('#5ac8ff'))
     elif motif == 'lantern':
         for side in (-1, 1):
             sx = w // 2 + side * (bx1 - w // 2 + 6)
@@ -229,6 +252,15 @@ def emblem(motif, p):
                 for sg in (-1, 1):
                     d.line([(bx, by), (bx + math.cos(a + sg * 0.9) * 11, by + math.sin(a + sg * 0.9) * 11)], fill=edge, width=3)
         d.ellipse([c - 5, c - 5, c + 5, c + 5], fill=dark, outline=accent, width=2)
+    elif motif == 'forge':
+        d.polygon([(6, 18), (58, 18), (50, 30), (40, 30), (40, 40), (52, 50), (12, 50), (24, 40), (24, 30), (14, 30)], fill=hexc('#2a2a36'), outline=edge)
+        d.line([(12, 22), (52, 22)], fill=accent, width=3)
+        for k in range(3):
+            d.ellipse([12 + k * 16, 6 - (k % 2) * 3, 20 + k * 16, 14 - (k % 2) * 3], fill=hexc('#ff8a24'))
+    elif motif == 'vow':
+        d.ellipse([6, 18, 38, 50], outline=hexc('#cfe8f8'), width=5)
+        d.ellipse([26, 18, 58, 50], outline=edge, width=5)
+        d.ellipse([26, 6, 38, 18], fill=hexc('#5ac8ff'))
     elif motif == 'lantern':
         d.rectangle([c - 14, 8, c + 14, 16], fill=hexc('#3a2e14'), outline=edge, width=2)
         d.rectangle([c - 14, 50, c + 14, 58], fill=hexc('#3a2e14'), outline=edge, width=2)

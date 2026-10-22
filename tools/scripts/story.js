@@ -52,6 +52,28 @@ const ROADS = {
               clue: "§o'The lectern is awake. The Third Keeper has been conducting this song for longer than I have been alive. Do not strike a note you cannot finish.'§r\n\n§bUse the §fTuning Fork§b on the §fCantor's Lectern§b and face Ysolde, the Frost Cantor." },
         ],
     },
+    c5: {
+        name: 'Road V - The Cinder Bride', short: 'The Cinder Bride', opens: (st) => st.c4 >= 3, hint: 'the Nether, netherite-grade kit, fire resistance, a stack of arrows and a good shield',
+        steps: [
+            { title: 'The Vows Left Unsaid',
+              clue: "§o'Morwen's lamp showed me a road down into the Burning Deep. There is a forge there where a wedding was interrupted at the vows. Three pedestals wait for an offering each, and a tablet carved by someone who was not in a hurry.'§r\n\n§6Find the §fForge of Vows§6 in the Nether, read the Vow Tablets and make the three offerings (a Gold Ingot, a Blaze Rod, a Ghast Tear) in the order the vow was spoken." },
+            { title: 'The Bridal Anvil',
+              clue: "§o'The forge gave me a ring and a compass that burns. The ring has a twin, and the twin is on the anvil of a ruined chapel. A guest, they say, must bring the ring.'§r\n\n§6Use the §fEmber Compass§6 to find the §fAshen Chapel§6 and touch the §fBridal Anvil§6." },
+            { title: 'The Wedding',
+              clue: "§o'The anvil has a hollow in the shape of a ring. She is not a monster. She is a bride who has been waiting longer than the Shard has been bound.'§r\n\n§6Set the §fCinder Ring§6 on the Bridal Anvil and face Varenna, the Cinder Bride. Cut down her blades, keep apart when she brands you." },
+        ],
+    },
+    c6: {
+        name: 'Road VI - The Ashen Groom', short: 'The Ashen Groom', opens: (st) => st.c5 >= 3, hint: 'bring a bow or trident AND a good sword - he demands both',
+        steps: [
+            { title: "The Widower's Toll",
+              clue: "§o'Varenna asked me to tell him she kept the veil. The bells of Soul Sand Valley have been tolling since before I arrived - and they ring the same pattern every time I get close. I think they are asking a question.'§r\n\n§bUse the §fEmber Compass§b to find the §fToll Tower§b in a Soul Sand Valley, touch its core and ring back the pattern three times." },
+            { title: "The Groom's Grave",
+              clue: "§o'The tower dropped a key. The compass now points at a hall of broken pews and a single altar. The veil on his arm is hers. The ring on his finger is hers. I did not have the heart to take either.'§r\n\n§bFind the §fHollow Hall§b and touch the §fGrave Altar§b." },
+            { title: 'The Last Vow',
+              clue: "§o'I will fight the groom the way he asks: with steel when he burns, with arrows when he is blue. Whatever he is when he falls, tell him the ring still fits.'§r\n\n§bSet the §fGrave Key§b into the Grave Altar and face Corvane, the Ashen Groom. Match your weapons to his stance." },
+        ],
+    },
     c4: {
         name: 'Road IV - The Lantern in the Mire', short: 'The Lantern in the Mire', opens: (st) => st.c3 >= 3, hint: 'bring torches or lanterns - light is a weapon here',
         steps: [
@@ -80,6 +102,12 @@ const PAGES = {
     frozen_choir: { title: 'The Frozen Choir', road: 'c3', at: 0, text: "Where the Eclipse could not reach the sky, it reached the snow. The dead of the high country - Rimewalkers, Hoarbones - are the Choir's missing voices, taught to sing without breath.\n\nTheir shards of rime make a good alloy: iron that remembers winter." },
     fen_lights: { title: 'The Lights of the Fen', road: 'c4', at: 0, text: "Morwen hung a lantern in every window of the fen so that no traveller would wander into the dark. The Shard learned the trick. Now the lights lead the other way.\n\nMire Wisps are the travellers who followed the wrong light. Their essence is warm, and it remembers the way home." },
     lantern_riddle: { title: 'The Sconces', road: 'c4', at: 2, text: "The eye must watch before the star can guide;\nthe moon leads home, and comes last.\n\nLight them as you would leave a lantern for a lost friend." },
+    forge_vows: { title: 'The Forge of Vows', road: 'c5', at: 0, text: "In the Burning Deep a smith-queen forged the Fifth Seal into her own wedding ring, so that it could not be taken from her hand without taking the hand.\n\nShe was to be married that night. The Cracking interrupted the vows - all three of them: gold, flame and tears. Nobody told the bride." },
+    bridal_anvil: { title: 'The Bridal Anvil', road: 'c5', at: 2, text: "A ruined chapel, an aisle of black carpet with a single white thread, and an anvil where an altar should be. The ring she wears has a twin. A guest, the tablets say, must bring the other." },
+    toll_tower: { title: 'The Toll Tower', road: 'c6', at: 0, text: "The groom could not leave the valley, so he hung bells in a tower and tolled for every one who did not return. After a while the bells began tolling without hands.\n\nThe tower asks a question in bell-notes and expects the same answer back." },
+    two_rings: { title: 'Two Rings', road: 'c6', at: 2, text: "Her ring is on his finger. His veil is on her arm. To free one of them, the other must fall - the cruelest arithmetic of the Seals. The Wayfarer found no way around it. Neither will you." },
+    cinder_bride: { title: 'Varenna, Keeper of the Fifth Seal', boss: 'cinder_bride', text: "The Cinder Bride, smith-queen of the Burning Deep. She fought with a forge because it was the only language she had left. Every blade she made was a promise she could not keep.\n\n§o\"Tell Corvane... tell him I kept the veil.\"§r" },
+    ashen_groom: { title: 'Corvane, Keeper of the Sixth Seal', boss: 'ashen_groom', text: "The Ashen Groom, bell-ringer of Soul Sand Valley. He swore to stand at the altar until she came, and did not think he might never be able to leave.\n\nHe fought in the stances of fire and soul because both of them were all he had left of her.\n\n§o\"I can hear the valley. It is only wind.\"§r" },
     frost_cantor: { title: 'Ysolde, Keeper of the Third Seal', boss: 'frost_cantor', text: "The Third Keeper, cantor of the high snow. She sang the Shard to sleep and has not stopped for longer than anyone remembers; the cold followed her song and froze the world to listen.\n\nShe asked you to finish the verse. The Wayfarer once did.\n\n§o\"Do you hear that? It is silent. I had forgotten silence.\"§r" },
     mire_lantern: { title: 'Morwen, Keeper of the Fourth Seal', boss: 'mire_lantern', text: "The Fourth Keeper, lamplighter of the fen. A Seal that is a lantern which can never go out is a hard thing to carry, and the Shard learned to use the light as bait.\n\nShe could see the Wayfarer's lamp, far ahead. Whoever she was, she is still walking.\n\n§o\"I only wanted someone to come home.\"§r" },
     eclipse_sovereign: { title: 'The Eclipse Sovereign', boss: 'eclipse_sovereign', text: "The Second Keeper, warden of the Void Shore. He stood at the edge of the world and watched the Eclipse rise.\n\nHe took the Shard into himself to spare the others - and became its herald. The Voidweavers are his unspoken doubts.\n\nThe Wayfarer's last legible line: §o'He knew my name.'§r" },
@@ -87,7 +115,7 @@ const PAGES = {
 
 // ------------------------------------------------------------------------------------------- state
 function fresh() {
-    return { step: 0, grove: 0, kills: { gravewalker: 0, cave_weaver: 0 }, groveKills: 0, pages: [], mirror: false, c3: 0, c4: 0, verses: [false, false, false, false], fork: false, chimes: [], sconces: [] };
+    return { step: 0, grove: 0, kills: { gravewalker: 0, cave_weaver: 0 }, groveKills: 0, pages: [], mirror: false, c3: 0, c4: 0, c5: 0, c6: 0, verses: [false, false, false, false], fork: false, chimes: [], sconces: [], vows: [], compass: false };
 }
 
 export function saveStory(p, st) {
@@ -159,6 +187,7 @@ export function advanceRoad(p, st, road, to) {
     const done = r.steps[to - 1];
     if (done) toast(p, `§a${r.short} §f- ${done.title} complete.`);
     for (const k of Object.keys(PAGES)) if (PAGES[k].road === road && PAGES[k].at === to) toast(p, `A new page appears in your journal: §d${PAGES[k].title}`);
+    if (road === 'c4' && to >= 3 && !st.compass) { st.compass = true; give(p, `${NS}:ember_compass`, 1); save(p, st); msg(p, "§6🔥 §fMorwen's last light shows a road down into the Burning Deep. §7An §6Ember Compass§7 has appeared in your pack."); }
     if (to < r.steps.length) msg(p, '§7Open your Wayfarer\'s Journal for the next clue.');
     else msg(p, `§d§l${r.name} - complete!`);
     return true;
@@ -183,6 +212,8 @@ function roadProgress(st, road) {
     if (road === 'c3' && n === 0) return `\n\n§7Verses heard: ${st.verses.filter(Boolean).length}/4 (${['Dawn', 'Zenith', 'Dusk', 'Midnight'].filter((_, i) => st.verses[i]).join(', ') || 'none yet'})`;
     if (road === 'c3' && n === 1) return `\n\n§7Chimes struck in order: ${(st.chimes || []).length}/4`;
     if (road === 'c4' && n === 0) return `\n\n§7Wisp Essence x6 (you have ${Math.min(6, countItem(null, `${NS}:wisp_essence`))}), Lantern x1`;
+    if (road === 'c5' && n === 0) return `\n\n§7Vows spoken in order: ${(st.vows || []).length}/3`;
+    if (road === 'c6' && n === 0) return '\n\n§7Touch the Toll Core, listen to the tolling and ring it back (3 rounds).';
     if (road === 'c4' && n === 1) return `\n\n§7Sconces lit in order: ${(st.sconces || []).length}/3`;
     return '';
 }
@@ -353,7 +384,7 @@ export function initStory() {
         else if (cmd === 'road') {
             const [, road, n] = ev.message.trim().split(/\s+/);
             const st = getStory(p);
-            if (road === 'c3' || road === 'c4') { st[road] = Math.max(0, Math.min(3, parseInt(n, 10) || 0)); if (st.step < 5) st.step = 5; save(p, st); msg(p, `§d✿ ${road} set to ${st[road]}.`); }
+            if (road === 'c3' || road === 'c4' || road === 'c5' || road === 'c6') { st[road] = Math.max(0, Math.min(3, parseInt(n, 10) || 0)); if (st.step < 5) st.step = 5; save(p, st); msg(p, `§d✿ ${road} set to ${st[road]}.`); }
         }
         else if (cmd === 'set') {
             const st = getStory(p);
@@ -414,6 +445,8 @@ export function initStory() {
                 if (id === 'veiled_blossom' && st.step >= 3 && st.step < 5) { give(p, 'minecraft:experience_bottle', 8); advance(p, st, 5); }
                 else if (id === 'eclipse_sovereign' && st.step === 5) advance(p, st, 6);
                 else if (id === 'frost_cantor') { unlock(p, st, id); if ((st.c3 || 0) < 3) { st.c3 = 2; advanceRoad(p, st, 'c3', 3); } else save(p, st); }
+                else if (id === 'cinder_bride') { unlock(p, st, id); if ((st.c5 || 0) < 3) { st.c5 = 2; advanceRoad(p, st, 'c5', 3); } else save(p, st); }
+                else if (id === 'ashen_groom') { unlock(p, st, id); if ((st.c6 || 0) < 3) { st.c6 = 2; advanceRoad(p, st, 'c6', 3); } else save(p, st); }
                 else if (id === 'mire_lantern') { unlock(p, st, id); if ((st.c4 || 0) < 3) { st.c4 = 2; advanceRoad(p, st, 'c4', 3); } else save(p, st); }
                 else if (fresh_) save(p, st);
             }, 'bossPage');

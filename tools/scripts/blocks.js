@@ -10,6 +10,7 @@ import { registerSanctumComponent } from './sanctum.js';
 import { registerCropComponent, boneMealCrop, isCropBlock } from './crops.js';
 import { registerBlossomAltar } from './story.js';
 import { registerPuzzleBlocks } from './puzzle.js';
+import { registerNetherBlocks } from './puzzle2.js';
 
 const SIGIL = `${NS}:eclipse_sigil`;
 
@@ -92,6 +93,7 @@ export function registerBlockComponents(reg) {
     registerCropComponent(reg);
     registerBlossomAltar(reg);
     registerPuzzleBlocks(reg);
+    registerNetherBlocks(reg);
     reg.registerCustomComponent(`${NS}:altar`, {
         onPlayerInteract(e) {
             const it = mainhand(e.player);

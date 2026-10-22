@@ -306,7 +306,7 @@ export function initCantor() {
         fog.clear(s);
         for (let i = 0; i < 80; i++) spawnParticle(dim, `${NS}:snow_swirl`, { x: L.x + rand(-3, 3), y: L.y + rand(0, 5), z: L.z + rand(-3, 3) });
         for (let k = 0; k < 8; k++) runLater(k * 10, () => playSound(dim, 'note.harp', L, { volume: 2, pitch: SCALE[k % SCALE.length] }));
-        titleAll(dim, L, '§b§lThe Song Ends', '§f"...Thank you. Five Seals remain."');
+        titleAll(dim, L, '§b§lThe Song Ends', '§f"...Thank you. The Third Seal is yours."');
         speak('Ysolde', '§b', dim, L, '"...Do you hear that? It is silent. I had forgotten silence. Take my Seal, wayfarer - and sing the last verse for me, when you find her."');
     });
 }

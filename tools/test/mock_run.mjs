@@ -499,6 +499,141 @@ fire('after', 'scriptEventReceive', { id: 'ecr:bossbar', message: 'off', sourceE
 fire('after', 'scriptEventReceive', { id: 'ecr:cinematic', message: 'off', sourceEntity: hero });
 fire('after', 'scriptEventReceive', { id: 'ecr:bossbar', message: 'on', sourceEntity: hero });
 fire('after', 'scriptEventReceive', { id: 'ecr:cinematic', message: 'on', sourceEntity: hero });
+
+// 10) Road V - the Cinder Bride: vows (wrong order, then right) -> ring + compass -> anvil -> Varenna (blades, shield, parry, phases, fog, bar, music) -> Seal V
+const nd = getDim('minecraft:nether');
+nd.players.push(hero);
+hero.dimension = nd;
+const sounds = [];
+nd.playSound = (id, loc, o) => { sounds.push([id, o && o.pitch]); };
+const setN = (id, x, y, z, st) => { const b = new FakeBlock(id, fakeLoc(x, y, z), nd); b.permutation = new FakePerm(id, st || {}); nd.setBlock(b); return b; };
+const holdN = (id, n = 1) => { const it = new ItemStack(id, n); hero.equip.set('Mainhand', it); hero.inv.set(30 + hero.inv.size, it); return it; };
+hero.location = fakeLoc(700, 60, 700);
+timeOfDay = 14000;
+const ped = (k, held) => { if (held) holdN(held); registered['ecr:pedestal'].onPlayerInteract({ player: hero, block: setN(`ecr:pedestal_${k}`, 700 + ['gold', 'flame', 'tears'].indexOf(k), 60, 700, { 'ecr:offered': 0 }), dimension: nd }); };
+ped('flame', 'minecraft:gold_ingot');                                                    // gold on the flame pedestal: out of turn
+if ((story().vows || []).length) note('puzzle: an offering on the wrong pedestal was accepted');
+ped('gold', 'minecraft:gold_ingot'); ped('flame', 'minecraft:blaze_rod'); ped('tears', 'minecraft:ghast_tear');
+await tickAll(40);
+if (story().c5 !== 1) note(`puzzle: the three vows in order should reach Road V step 2, got ${JSON.stringify(story())}`);
+if (![...hero.inv.values()].some((i) => i.typeId === 'ecr:cinder_ring')) note('story: the Cinder Ring was not granted');
+if (![...hero.inv.values()].some((i) => i.typeId === 'ecr:ember_compass')) note('story: no Ember Compass was granted');
+const compassItem = new ItemStack('ecr:ember_compass'); hero.equip.set('Mainhand', compassItem);
+setN('ecr:bridal_anvil', 760, 60, 700, {});
+const barsBefore = hero.sent.length;
+fire('after', 'itemUse', { source: hero, itemStack: compassItem }); await tickAll(30);
+if (!hero.sent.slice(barsBefore).some((m) => m[0] === 'bar' && String(m[1]).includes('blocks to the'))) note('puzzle: the Ember Compass never reported the direction of the chapel');
+const anvil = setN('ecr:bridal_anvil', 760, 60, 700, {});
+hero.location = fakeLoc(760, 60, 703);
+registered['ecr:bridal_anvil'].onPlayerInteract({ player: hero, block: anvil, dimension: nd });
+if (story().c5 !== 2) note(`story: touching the Bridal Anvil should reach Road V step 3, got ${JSON.stringify(story())}`);
+holdN('ecr:cinder_ring');
+registered['ecr:bridal_anvil'].onPlayerInteract({ player: hero, block: anvil, dimension: nd });
+await tickAll(60);
+const bride = nd.entities.find((e) => e.typeId === 'ecr:cinder_bride');
+if (!bride) note('boss: the Cinder Bride did not spawn at the Bridal Anvil');
+else {
+    hero.health = 100;
+    await tickAll(260);
+    for (const t of ['ecr:forged_blade']) if (!nd.spawned.includes(t)) note(`boss: Varenna never forged a blade`);
+    bride.health = 50; const hb = bride.health;
+    fire('after', 'entityHurt', { hurtEntity: bride, damage: 10, damageSource: { cause: 'entityAttack', damagingEntity: hero } });
+    if (!(bride.health > hb)) note('boss: Varenna was not shielded while her blades lived');
+    const blade = nd.entities.find((e) => e.typeId === 'ecr:forged_blade');
+    if (blade) { const h0 = bride.health; blade.isValid = false; fire('after', 'entityDie', { deadEntity: blade, damageSource: { cause: 'entityAttack', damagingEntity: hero } }); if (!(bride.health < h0)) note('boss: cutting down a forged blade did not parry (hurt Varenna)'); }
+    bride.health = 60; await tickAll(300);                                                // phase 2 (brand, heat)
+    bride.health = 40; await tickAll(300);                                                // phase 3 (last dance)
+    bride.health = 10; await tickAll(300);                                                // phase 4 (the march)
+    if (!nd.spawned.includes('minecraft:blaze')) note('boss: Varenna never summoned guards');
+    if (!(hero.cmds || []).some((c) => c.startsWith('fog @s push ecr:forge_haze'))) note('boss: the forge haze fog was never pushed');
+    if (!(hero.cmds || []).some((c) => c.startsWith('fog @s push ecr:forge_ashfall'))) note('boss: the ashfall fog was never pushed');
+    if (!(hero.sounds || []).includes('ecr.music.cinder_bride')) note('music: the Cinder Bride theme never played');
+    if (!hero.sent.some((m) => m[0] === 'bar' && String(m[1]).includes('\uE438'))) note('bossbar: the Cinder Bride bar never appeared');
+    if (!hero.sent.some((m) => m[0] === 'title' && String(m[1]).includes('BRANDED'))) note('boss: Varenna never branded a player');
+    bride.health = 0; bride.isValid = false;
+    fire('after', 'entityDie', { deadEntity: bride, damageSource: { cause: 'entityAttack', damagingEntity: hero } });
+    await tickAll(2);
+    if (!(hero.cmds || []).some((c) => c.startsWith('fog @s remove ecr_varenna'))) note('boss: the forge fog was not removed');
+    if (story().c5 !== 3) note(`story: defeating Varenna should finish Road V, got ${JSON.stringify(story())}`);
+    if (!(story().pages || []).includes('cinder_bride')) note('story: the Varenna lore page was not unlocked');
+}
+
+// 11) Road VI - the Ashen Groom: toll tower memory game (wrong bell, then 3 right rounds) -> key -> altar -> Corvane (stances, deflection, phases) -> Seal VI
+hero.location = fakeLoc(800, 60, 800);
+const core = setN('ecr:toll_core', 800, 60, 800, {});
+const bellBlocks = [0, 1, 2, 3].map((n) => setN(`ecr:toll_bell_${n}`, 800 + [0, 3, 0, -3][n], 61, 800 + [-3, 0, 3, 0][n], {}));
+const PITCH = [0.7, 0.9, 1.15, 1.5];
+const heard = (from) => sounds.slice(from).filter((x) => x[0] === 'block.bell.hit').map((x) => PITCH.indexOf(x[1]));
+let mark = sounds.length;
+registered['ecr:toll_core'].onPlayerInteract({ player: hero, block: core, dimension: nd }); flush();
+let seq = heard(mark);
+const wrong = (seq[0] + 1) % 4;
+registered['ecr:toll_bell'].onPlayerInteract({ player: hero, block: bellBlocks[wrong], dimension: nd });
+if (story().c6 !== 0) note('puzzle: a wrong bell advanced the road');
+let markNext = sounds.length;
+for (let round = 1; round <= 3; round++) {
+    if (round === 1) { mark = sounds.length; registered['ecr:toll_core'].onPlayerInteract({ player: hero, block: core, dimension: nd }); flush(); } else mark = markNext;
+    seq = heard(mark).slice(0, 2 + round);
+    if (seq.length !== 2 + round) { note(`puzzle: round ${round} toll was ${JSON.stringify(seq)}, expected ${2 + round} bells`); break; }
+    for (const n of seq) registered['ecr:toll_bell'].onPlayerInteract({ player: hero, block: bellBlocks[n], dimension: nd });
+    markNext = sounds.length; flush(); flush();
+}
+await tickAll(40);
+if (story().c6 !== 1) note(`puzzle: three correct rounds should reach Road VI step 2, got ${JSON.stringify(story())}`);
+if (![...hero.inv.values()].some((i) => i.typeId === 'ecr:grave_key')) note('story: the Grave Key was not granted');
+const altar2 = setN('ecr:grave_altar', 840, 60, 840, {});
+hero.location = fakeLoc(840, 60, 843);
+registered['ecr:grave_altar'].onPlayerInteract({ player: hero, block: altar2, dimension: nd });
+if (story().c6 !== 2) note(`story: touching the Grave Altar should reach Road VI step 3, got ${JSON.stringify(story())}`);
+holdN('ecr:grave_key');
+registered['ecr:grave_altar'].onPlayerInteract({ player: hero, block: altar2, dimension: nd });
+await tickAll(60);
+const groom = nd.entities.find((e) => e.typeId === 'ecr:ashen_groom');
+if (!groom) note('boss: the Ashen Groom did not spawn at the Grave Altar');
+else {
+    hero.health = 100;
+    await tickAll(300);
+    const lastStance = () => { const ev = groom.events.filter((e) => e.startsWith('ecr:stance_')); return ev.length ? Number(ev.at(-1).slice(-1)) : -1; };
+    const stances = new Set();
+    for (let i = 0; i < 20; i++) { await tickAll(13); stances.add(lastStance()); }
+    if (!(stances.has(0) && stances.has(1))) note(`boss: Corvane never rotated between Ember and Soul (${[...stances]})`);
+    let guard = 0;
+    while (lastStance() !== 0 && guard++ < 40) await tickAll(20);                      // wait for Ember stance
+    groom.health = 50; let h0 = groom.health;
+    fire('after', 'entityHurt', { hurtEntity: groom, damage: 10, damageSource: { cause: 'projectile', damagingEntity: hero } });
+    if (!(groom.health > h0)) note('boss: an arrow was not deflected in Ember stance');
+    h0 = groom.health;
+    fire('after', 'entityHurt', { hurtEntity: groom, damage: 10, damageSource: { cause: 'entityAttack', damagingEntity: hero } });
+    if (groom.health > h0) note('boss: a sword was deflected in Ember stance (it should land)');
+    guard = 0;
+    while (lastStance() !== 1 && guard++ < 40) await tickAll(20);
+    groom.health = 50; h0 = groom.health;
+    fire('after', 'entityHurt', { hurtEntity: groom, damage: 10, damageSource: { cause: 'entityAttack', damagingEntity: hero } });
+    if (!(groom.health > h0)) note('boss: a sword was not deflected in Soul stance');
+    groom.health = 70; await tickAll(300);
+    groom.health = 40; await tickAll(300);
+    groom.health = 10; await tickAll(300);
+    if (!nd.spawned.includes('minecraft:wither_skeleton')) note('boss: Corvane never raised his grave echoes');
+    if (!(hero.cmds || []).some((c) => c.startsWith('fog @s push ecr:soul_mist'))) note('boss: the soul mist fog was never pushed');
+    if (!(hero.cmds || []).some((c) => c.startsWith('fog @s push ecr:soul_hollow'))) note('boss: the hollow fog was never pushed');
+    if (!(hero.sounds || []).includes('ecr.music.ashen_groom')) note('music: the Ashen Groom theme never played');
+    if (!hero.sent.some((m) => m[0] === 'bar' && String(m[1]).includes('\uE440'))) note('bossbar: the Ashen Groom bar never appeared');
+    groom.health = 0; groom.isValid = false;
+    fire('after', 'entityDie', { deadEntity: groom, damageSource: { cause: 'entityAttack', damagingEntity: hero } });
+    await tickAll(2);
+    if (!(hero.cmds || []).some((c) => c.startsWith('fog @s remove ecr_corvane'))) note('boss: the soul fog was not removed');
+    if (story().c6 !== 3) note(`story: defeating Corvane should finish Road VI, got ${JSON.stringify(story())}`);
+    if (!(story().pages || []).includes('ashen_groom')) note('story: the Corvane lore page was not unlocked');
+}
+// 12) the Burning Deep gear + tablets
+for (const w of ['ecr:vowbreaker', 'ecr:grievance']) {
+    const it = new ItemStack(w); hero.equip.set('Mainhand', it);
+    fire('after', 'itemUse', { source: hero, itemStack: it });
+    for (let k = 0; k < 3; k++) fire('after', 'entityHitEntity', { damagingEntity: hero, hitEntity: new FakeEntity('minecraft:zombie', nd, hero.location) });
+}
+for (const f of ['ecr:cinder_heart', 'ecr:soul_ember']) fire('after', 'itemCompleteUse', { source: hero, itemStack: new ItemStack(f) });
+for (let t = 0; t < 12; t++) registered['ecr:ember_tablet'].onPlayerInteract({ player: hero, block: setN('ecr:ember_tablet', 900 + t, 60, 900, { 'ecr:text': t }), dimension: nd });
+hero.dimension = ow;
 world.getAllPlayers = oldAll;
 
 // ------------------------------------------------------------------ verdict

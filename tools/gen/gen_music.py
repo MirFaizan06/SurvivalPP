@@ -3,7 +3,8 @@
 import os, shutil
 from common import *
 
-TRACKS = {'veiled_blossom': 0.85, 'eclipse_sovereign': 0.85, 'frost_cantor': 0.85, 'mire_lantern': 0.85}
+TRACKS = {'veiled_blossom': 0.85, 'eclipse_sovereign': 0.85, 'frost_cantor': 0.85, 'mire_lantern': 0.85,
+          'cinder_bride': 0.9, 'ashen_groom': 0.9}
 SRC = ROOT / 'tools' / 'assets' / 'music'
 
 

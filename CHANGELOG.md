@@ -2,6 +2,23 @@
 
 All notable changes to **Eclipsed Realms: Chronicles of the Seven Seals** (formerly "Survival++ | Eclipsed Realms") (Tech Bytes Design). Versions follow `major.minor.patch`; the pack version is set in `tools/version.json`.
 
+## [1.7.0] - "Burning Deep Update"
+
+### Added
+- **Road V - The Cinder Bride (Nether):** the **Forge of Vows** (three offering pedestals - Gold Ingot, Blaze Rod, Ghast Tear, in the order the vow was spoken; out of turn burns you and returns the items), the **Ashen Chapel** with the **Bridal Anvil** and a hidden crypt, the **Cinder Ring** and the **Ember Compass**, and **Varenna, the Cinder Bride** (900 HP, four phases): Forged Blades that shield her until a player parries them (each parried blade costs her 2.5% of her life), Anvil Slam with ember geysers, Cinder Brand (spread out), Forge Heat (rotating hot floor sectors), the Last Dance and the Wedding March.
+- **Road VI - The Ashen Groom (Nether):** the **Toll Tower** (a Simon-says memory game: ring back 3, 4 and 5 bells) for the **Grave Key**, the **Hollow Hall** with the **Grave Altar**, and **Corvane, the Ashen Groom** (1100 HP, four phases): a duel of **stances** (Ember = immune to projectiles and fire, Soul = immune to melee, Hollow = vulnerable but furious), Duel Lunge, Soul Chains, Marrow Rain, Grave Echoes and the Widow's Toll rings.
+- **Boss weapons and trophies:** Vowbreaker (ignite; right-click Anvil Slam), Grievance (wither; right-click Duel Lunge), Cinder Heart and Soul Ember (consumable buffs), Seal of the Forge and Seal of the Vow.
+- **Presentation:** intro scenes, themed boss bars (now nine skins), fogs (four per boss), music, particles (embers, soul flames, ash, bursts) and 12 Ember Tablets of lore for both bosses.
+- **4 new places** in the Nether with loot tables: Forge of Vows, Ashen Chapel, Toll Tower, Hollow Hall.
+
+### Changed
+- **The Veiled Blossom's music** is now a real boss theme ("Battle RPG Theme" by CleytonKauffman, CC0) instead of the calm piano piece. The calm piece was beautiful but not boss-type.
+- Chapter count: six main bosses. Roads V and VI are gated behind Roads IV and V.
+
+### Fixed
+- `lint5` guard continues to run on the new content; the mock run found and fixed a stance-rotation bug (a stance value of 0 was treated as "none") before release.
+- *Not tested in-game:* everything above (same caveat as v1.6: the camera scenes, glyph bars, particles, animations, structure placement, the memory game's timing, the stance deflection and the boss balance were validated offline only).
+
 ## [1.6.0] - "Seals Update"
 
 ### Fixed (from the real game's Content Log)

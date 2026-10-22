@@ -1,6 +1,6 @@
 # The Chronicles of the Seven Seals - Lore
 
-> **Spoiler warning.** This page tells the whole story that exists so far (Chapters I to IV) and the history behind it. If you want to discover it through the **Wayfarer's Journal** in game, stop reading here.
+> **Spoiler warning.** This page tells the whole story that exists so far (Chapters I to VI) and the history behind it. If you want to discover it through the **Wayfarer's Journal** in game, stop reading here.
 
 The add-on is a story-driven adventure. The journal you receive when you first join gives you one clue at a time; each clue sends you to a real place, a real fight and a real reward. This document is the long version.
 
@@ -42,7 +42,9 @@ A Seal is dangerous to keep. Break one carelessly and the Shard **bleeds into it
 | II | **The Eclipse Sovereign** | The edge of the End | Chapter II - **open** |
 | III | **Ysolde**, the Frost Cantor | The Frozen Cathedral, high in the snowy peaks | Road III - **open** |
 | IV | **Morwen**, the Mire Lantern | The Drowned Chapel, deep in the fen | Road IV - **open** |
-| V-VII | *the ink is smeared* | ? | Unwritten |
+| V | **Varenna**, the Cinder Bride | The Ashen Chapel, in the Burning Deep | Road V - **open** |
+| VI | **Corvane**, the Ashen Groom | The Hollow Hall, in Soul Sand Valley | Road VI - **open** |
+| VII | *the ink is smeared* | ? | Unwritten |
 
 ## 4. The Hollow Court and the Hollow Lords
 
@@ -201,7 +203,74 @@ When she falls:
 
 **Rewards:** the **Mirelight Scythe** (sweeps and sips; right-click for the **Beacon of the Lost**), the **Seal of the Lantern**, Wisp Essence, diamonds, netherite scrap, an enchanted golden apple.
 
-## 10. The dead of the high snow and the fen
+## 10. Chapter V - The Cinder Bride
+
+> *"Morwen's lamp showed me a road down into the Burning Deep. There is a forge there where a wedding was interrupted at the vows."*
+
+Road V opens when Road IV is done, and is the first road that leads **out of the Overworld**: it takes place in the Nether. **Varenna** was the smith-queen of the Burning Deep, and a bride. The night she was to be married, the Cracking came, the ceremony was interrupted at the vows (all three: **gold, flame and tears**), and nobody told the bride. She took the Fifth Shard and forged it into her **wedding ring**, so that it could not be taken from her hand without taking the hand. It was the only wedding ring in the Burning Deep, and the only thing she could think of that she would never put down. She has been standing at an anvil ever since, waiting for the word that finishes the sentence. Her hammer, her ring and her blades are the only language she has left.
+
+### The road to her
+
+| Step | Clue | What it really means |
+|---|---|---|
+| 1. The Vows Left Unsaid | Find the **Forge of Vows** and make the three offerings in the order the vow was spoken. | Three **pedestals** (flame, tears, gold - in space) wait for a **Gold Ingot**, a **Blaze Rod** and a **Ghast Tear**, **in that order**. The tablets tell you the order; the forge punishes anything out of turn (and returns what you offered). It gives you the **Cinder Ring** and the **Ember Compass**. |
+| 2. The Bridal Anvil | Use the compass to find the **Ashen Chapel** and touch the **Bridal Anvil**. | A chapel of black carpet with one white thread, and an anvil where an altar should be. The ring has a twin. |
+| 3. The Wedding | Set the Cinder Ring on the anvil. | It rings once, like a bell. She comes. |
+
+### The fight (900 HP, four phases)
+
+She is the first **harder** Keeper. Her fight is a forge:
+
+* **Forged Blades.** She hammers out spectral swords that charge you. **While any blade lives she is shielded** - and every blade a *player* cuts down is a **parry**: it costs her 2.5% of her life. (Shielded, 80% of your damage is healed back.)
+* **Anvil Slam** (telegraphed rings and ember geysers marked under your feet), **Cinder Brand** (a mark that, after five seconds, detonates on whoever stands near the branded player - *spread out*), **Forge Heat** (sectors of the floor glow, then burn; the safe sectors are the ones without embers) and **the Last Dance** (she crosses the floor and strikes from behind).
+* In the last phase, **the Wedding March**: she never stops forging.
+
+> *"You came to my wedding without an invitation. How rude... and how welcome."*
+> *"Every blade I make is a promise I could not keep."*
+> *"The Wayfarer stood where you stand. She knew his name before she knew mine."*
+> *"Dance with me. The march has only one step."*
+
+> *"...I can put the hammer down. Take my Seal, wayfarer - and when you find him, tell Corvane I kept the veil."*
+
+**Rewards:** **Vowbreaker** (a forge hammer; ignites; right-click for an **Anvil Slam**), the **Seal of the Forge**, **Cinder Hearts** (fire resistance and strength), netherite scrap and ancient debris, diamonds, enchanted golden apples.
+
+## 11. Chapter VI - The Ashen Groom
+
+> *"Varenna asked me to tell him she kept the veil. The bells of Soul Sand Valley have been tolling since before I arrived."*
+
+Road VI opens when Road V is done. **Corvane** was the **bell-ringer** of Soul Sand Valley, and the groom. When the Cracking took the wedding, he could not leave the valley, so he hung bells in a tower and tolled for every one who did not return. He took the Sixth Shard into his chest, as a flame, and swore to stand at the altar until she came. It did not occur to him that he might never be able to leave. **Her veil is on his arm. His ring is on her hand. They have been each other's Seals for longer than the valley has had a name.** To free one, the other must fall - the cruelest arithmetic of the Seals, and the Wayfarer found no way around it.
+
+### The road to him
+
+| Step | Clue | What it really means |
+|---|---|---|
+| 1. The Widower's Toll | Find the **Toll Tower** and ring back the pattern the bells toll, three rounds. | A memory game: the tower tolls a pattern (3, then 4, then 5 bells), and you ring it back. A wrong bell costs you; the tower falls silent and you start again. It drops the **Grave Key**. |
+| 2. The Groom's Grave | Use the compass to find the **Hollow Hall** and touch the **Grave Altar**. | A hall of broken pews, a black aisle with a white thread, a ring of soul lanterns around an altar. |
+| 3. The Last Vow | Set the Grave Key into the altar. | Every bell in the valley answers once. He comes. |
+
+### The fight (1100 HP, four phases)
+
+The hardest Keeper so far, and the fastest. His fight is a **duel of stances**; every few seconds he changes stance after a telegraph (the armour's glow changes colour):
+
+* **Ember** (orange): immune to **projectiles and fire**. Use steel.
+* **Soul** (blue): immune to **melee**. Use arrows, tridents, magic.
+* **Hollow** (grey): takes everything, but he is **furious** - faster and harder-hitting.
+
+Whatever his stance deflects is healed straight back. On top of that: the **Duel Lunge** (a telegraphed line he dashes along), **Soul Chains** (they drag you to him unless you break line of sight), **Marrow Rain**, **Grave Echoes** (wither skeletons) and the **Widow's Toll** - rings of bell-sound that roll out from him and that you must jump.
+
+> *"You have her ring... no. Not hers. It only looks like hers."*
+> *"Do you know what a widower is? A man who keeps his promises to someone who cannot hold him to them."*
+> *"Tell her the ring still fits."*
+
+> *"...I can hear the valley. It is only wind. Take my Seal, wayfarer. Tell her... no. I will tell her myself."*
+
+**Rewards:** **Grievance** (a soul-forged greatsword; withers; right-click for a **Duel Lunge**), the **Seal of the Vow**, **Soul Embers** (regeneration, absorption, speed), netherite scrap and ancient debris, diamonds, a Totem of Undying.
+
+### What the lovers say about the Wayfarer
+
+Both of them knew her name, and neither could say how. The tablets say: *"I wrote it down once, in my own hand, and the ink ran. I think the Eclipse has been reading over my shoulder since the beginning."* The Eighth Voice, the page, the First Dawn ground into ink - the pieces are almost all in the player's journal now.
+
+## 12. The dead of the high snow and the fen
 
 | Creature | Place in the story |
 |---|---|
@@ -213,7 +282,7 @@ When she falls:
 
 Their drops make better metal: **Rime Shards** forge **Rimesteel** (iron that remembers winter), **Glacial Shards** make **Glacite**, and **Wisp Essence** makes **Wispsteel**. A tablet in the fen says it best: *"Alloys of rime keep a blade sharp in the cold. Alloys of wisp-light keep a blade honest in the dark. Neither will keep you alive. Carry both."*
 
-## 11. Everything else in the world, and where it fits
+## 13. Everything else in the world, and where it fits
 
 | Thing | Place in the story |
 |---|---|
@@ -225,20 +294,22 @@ Their drops make better metal: **Rime Shards** forge **Rimesteel** (iron that re
 | **Sanctum Wardens** | Keeper-craft: a smaller, kinder version of a Seal. |
 | **Adventure structures** | Ruins from the Dawnlands and the people who tried (and failed) to hold the Shards. |
 | **Verse Cairns, Frozen Cathedral, Fen Hut, Drowned Chapel, Wayfarer's Cairn** | The places of Roads III and IV; the cairns carry the Wayfarer's notes. |
+| **Forge of Vows, Ashen Chapel, Toll Tower, Hollow Hall** | The places of Roads V and VI, in the Burning Deep. |
+| **Forged Blades** | Varenna's promises, hammered into swords. |
 | **Rimesteel, Glacite, Wispsteel** | Alloys of the Keepers' lands. |
 | **Deer, yaks, boars, pheasants** | The world still tries to live. |
 
-## 12. What happens next
+## 14. What happens next
 
 The story is deliberately unfinished. The next Seals are not yet written. Things the journal already hints at, which later updates will explore:
 
-- Why the Wayfarer's notes end after the Second Seal (she was still walking after the Fourth: both Keepers saw her lamp).
+- Why the Wayfarer's notes end after the Second Seal (she was still walking after the Fourth - Morwen saw her lamp - and after the Sixth: both lovers knew her name).
 - What the Eighth Voice is, and why the Eclipse hungers for the page and not for the Shards.
 - What the Seven Shards become if they are ever reunited.
 - Whether a Keeper can be freed from a Seal without a death.
 - Who the Eclipse was, before it was hungry.
 
-## 13. For writers (how the lore is built so it can grow)
+## 15. For writers (how the lore is built so it can grow)
 
 - **Seals and Keepers are the main line.** Each Seal gets a Keeper, a place, a fight with a *reason* (not just an obstacle), and a final plea or secret.
 - **Side bosses are the Hollow Lords**: casualties of the Eclipse that give loot, relics and lore, never the main clue.

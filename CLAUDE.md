@@ -82,3 +82,10 @@ Ores Azurite/Pyrelite/Eclipsite (+tools, armour) · stones Marlstone/Slate/Verdi
 - **Cinematics:** `playIntro(boss)` returns the scene length (0 = none/disabled). Bosses must skip their brain while `boss.hasTag(INTRO_TAG)` and call `playIntro` once (tag `ecr_introduced`). Camera API: `player.camera.setCamera('minecraft:free', {location, facingLocation, easeOptions})`, `fade`, `addShake`, `clear`; input is locked with `inputPermissions`; HUD hidden with `/hud @s hide`.
 - **Alloy gear:** `gen_items.MATS` entries with `ore=False` (no raw/ore/block); art in `art_swords.py`, `armor_models.py DESIGNS`, `tex_items.MATS`; crafted by shapeless recipes in `gen_seals.items()`.
 - **Structures:** `structures6.py` (disc depth needs `base >= depth + 2`; keep structure water from touching air you want dry - the flooded chamber keeps an air pocket above its water).
+
+## v1.7 additions - Roads V and VI (the Burning Deep)
+- **Bosses 5/6:** models `mob_nether.py` (Cinder Bride, Ashen Groom, Forged Blade), animations `anims4.py`, entities/items/blocks/fogs/particles `gen_nether.py` (custom `bp_boss` with 4 phases, `ecr:stance` on the Groom with a 3-way glow render controller), brains `varenna.js` / `corvane.js`, puzzles `puzzle2.js` (pedestals, Bridal Anvil, Toll Tower memory game, Grave Altar, Ember Tablets, Ember Compass), structures `structures7.py`, art `nether_art.py`.
+- **Stance deflection and the Bride's blade shield are implemented by healing damage back in `world.afterEvents.entityHurt`** (the API cannot cancel damage after the fact). Deflected damage still briefly lowers the health bar.
+- **Roads:** `story.js ROADS` now has c5 (opens after c4) and c6 (opens after c5). The compass is given when Road IV completes; `scan()` in `puzzle.js` is shared by the Tuning Fork and the Ember Compass.
+- **Music:** `tools/assets/music/*.ogg` (credits in CREDITS.md); `gen_music.TRACKS` and `music.js TRACKS` (seconds) must match the file lengths.
+- **Boss bar order:** `gen_ui.SKINS` == `bossbar.js SKINS` (nine skins, glyph page E4 holds up to 32).

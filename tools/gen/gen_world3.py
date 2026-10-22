@@ -1,6 +1,6 @@
 """v1.3 adventure structures: world-gen rules (rarity, biomes, placement) and tiered chest loot for the ten new structures."""
 from common import *
-import structures3, structures4, structures5, structures6
+import structures3, structures4, structures5, structures6, structures7
 from gen_world import feature, rule, tag, anyof, dist_surface, dist_underground
 from gen_world2 import item
 
@@ -61,6 +61,9 @@ SHARDS = [item(f'{N}:glacial_shard', 12, 1, 4), item(f'{N}:rime_shard', 14, 2, 6
 ESSENCE = [item(f'{N}:wisp_essence', 14, 1, 4), item('minecraft:glow_berries', 10, 3, 9), item('minecraft:lantern', 8, 1, 3), item('minecraft:slime_ball', 8, 2, 6),
            item('minecraft:moss_block', 8, 3, 9)]
 
+VOWS = [item('minecraft:ghast_tear', 14, 1, 3), item('minecraft:blaze_rod', 14, 2, 5), item('minecraft:gold_ingot', 14, 3, 8), item('minecraft:gilded_blackstone', 8, 2, 6),
+        item('minecraft:crying_obsidian', 8, 2, 6)]
+
 # table name -> (entries, rolls, rare relic or None)
 TABLES = {
     'ecr_bandit_camp': (T1, (2, 3), None),
@@ -89,6 +92,11 @@ TABLES = {
     'ecr_drowned_chapel': (T3 + ESSENCE, (4, 6), (f'{N}:wisp_essence', 0.5)),
     'ecr_drowned_chapel_vault': (T4 + ESSENCE, (6, 9), (f'{N}:wispsteel_ingot', 0.3)),
     'ecr_wayfarer_cairn': (T2, (2, 4), None),
+    'ecr_forge_of_vows': (NETHER + VOWS, (5, 8), None),
+    'ecr_ashen_chapel': (NETHER + VOWS, (5, 8), None),
+    'ecr_ashen_chapel_crypt': (NETHER + T5[:8] + VOWS, (7, 10), (f'{N}:cinder_heart', 0.12)),
+    'ecr_toll_tower': (NETHER, (4, 7), None),
+    'ecr_hollow_hall': (NETHER + T5[:8], (6, 9), (f'{N}:soul_ember', 0.12)),
     'ecr_eclipse_vault': (END, (5, 8), None),
     'ecr_eclipse_vault_core': (END + T5[:6], (8, 11), (f'{N}:eclipse_sigil', 0.3)),
 }
@@ -116,6 +124,7 @@ def build_all():
     s.update(structures4.build_all())
     s['hanae_shrine'] = structures5.hanae_shrine()
     s.update(structures6.build_all())
+    s.update(structures7.build_all())
     base = lambda k: s[k][1]
     # --- Overworld (rarity is per 16x16 chunk: 1/N; bigger = rarer). Easy ones are common, hard ones rare like mansions/outposts.
     structure('bandit_lookout', 'bandit_lookout', base('bandit_lookout'), anyof('plains', 'savanna', 'forest', 'meadow', 'taiga'), 1, 140, adj=5)
@@ -148,6 +157,17 @@ def build_all():
     structure('fen_hut', 'fen_hut', base('fen_hut'), anyof('swamp', 'mangrove_swamp'), 1, 120, adj=6, steep=4)
     structure('drowned_chapel', 'drowned_chapel', base('drowned_chapel'), anyof('swamp', 'mangrove_swamp'), 1, 150, adj=10, steep=5)
     structure('wayfarer_cairn', 'wayfarer_cairn', base('wayfarer_cairn'), anyof('plains', 'forest', 'taiga', 'savanna', 'meadow', 'desert'), 1, 260, adj=4, steep=3)
+    # --- Roads V and VI (the Burning Deep): same snap-to-floor scheme as the Pyre Bastion
+    def nether(name, biome, n, search=20, adj=8):
+        feature(f'{name}_feature', 'structure_template_feature', {
+            'structure_name': f'{NS}:{name}', 'adjustment_radius': adj, 'facing_direction': 'random', 'rotate_around_center': True,
+            'ground_level': base(name), 'constraints': {'grounded': {}}}, fv='1.26.30')
+        feature(f'{name}_floor_feature', 'snap_to_surface_feature', {'feature_to_snap': f'{NS}:{name}_feature', 'search_range': search, 'surface': 'floor'}, fv='1.26.50')
+        rule(f'{name}_rule', f'{name}_floor_feature', 'surface_pass', biome, dist_underground(1, 34, 90, 1, n))
+    nether('forge_of_vows', tag('nether'), 70)
+    nether('ashen_chapel', anyof('crimson_forest', 'basalt_deltas', 'nether_wastes', 'warped_forest'), 110)
+    nether('toll_tower', tag('soulsand_valley'), 28, adj=6)
+    nether('hollow_hall', tag('soulsand_valley'), 60, adj=10)
     loot()
     return s
 

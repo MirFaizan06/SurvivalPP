@@ -312,7 +312,7 @@ for p in glob.glob(f'{RP}/attachables/*.json'):
             bad(f'{os.path.basename(p)}: missing {t}')
 
 # non-id ecr: strings the scripts use (dynamic property keys, scriptevent ids, block states, entity events/properties, tags)
-SCRIPT_WORDS = ('bossbar', 'bossbar_off', 'cinematic', 'cinematic_off', 'verse', 'lit', 'text', 'puzzle', 'gear', 'intro', 'c3', 'c4', 'puzzle_v1', 'cantor_state', 'expire', 'despawn', 'melee_mode', 'ranged_mode', 'mode_switcher', 'switch_to_melee', 'switch_to_ranged', 'verse_stone', 'lore_tablet', 'sconce', 'sconce_', 'chime', 'choir_lectern', 'marsh_altar')
+SCRIPT_WORDS = ('bossbar', 'bossbar_off', 'cinematic', 'cinematic_off', 'verse', 'lit', 'text', 'puzzle', 'gear', 'intro', 'c3', 'c4', 'puzzle_v1', 'cantor_state', 'expire', 'despawn', 'melee_mode', 'ranged_mode', 'mode_switcher', 'switch_to_melee', 'switch_to_ranged', 'verse_stone', 'lore_tablet', 'sconce', 'sconce_', 'chime', 'choir_lectern', 'marsh_altar', 'pedestal', 'offered', 'bridal_anvil', 'toll_core', 'toll_bell', 'grave_altar', 'ember_tablet', 'c5', 'c6', 'vows', 'compass', 'stance', 'lunged', 'tolled', 'stance_1', 'pedestal_', 'ringed', 'introduced')
 
 # scripts: ids referenced
 for p in glob.glob(f'{BP}/scripts/*.js'):

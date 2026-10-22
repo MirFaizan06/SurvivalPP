@@ -21,6 +21,9 @@ import { initMorwen } from './morwen.js';
 import { initPuzzle } from './puzzle.js';
 import { initMobs3 } from './mobs3.js';
 import { initGear } from './gear.js';
+import { initVarenna } from './varenna.js';
+import { initCorvane } from './corvane.js';
+import { initPuzzle2 } from './puzzle2.js';
 
 // Custom block components must be registered during the startup event.
 system.beforeEvents.startup.subscribe((ev) => {
@@ -37,7 +40,7 @@ function initAll() {
     /** @type {[string, () => void][]} */
     const modules = [
         ['blocks', initBlockEvents], ['mining', initMining], ['tools', initTools], ['stasis', initStasis],
-        ['boss', initBoss], ['combat', initCombat], ['armor', initArmor], ['sanctum', initSanctum], ['deaths', initDeaths], ['crops', initCrops], ['foods', initFoodEffects], ['bosses2', initBosses2], ['mobs2', initMobs2], ['story', initStory], ['blossom', initBlossom], ['diag', initDiag], ['bossbar', initBossBar], ['cinematic', initCinematic], ['cantor', initCantor], ['morwen', initMorwen], ['puzzle', initPuzzle], ['mobs3', initMobs3], ['gear', initGear],
+        ['boss', initBoss], ['combat', initCombat], ['armor', initArmor], ['sanctum', initSanctum], ['deaths', initDeaths], ['crops', initCrops], ['foods', initFoodEffects], ['bosses2', initBosses2], ['mobs2', initMobs2], ['story', initStory], ['blossom', initBlossom], ['diag', initDiag], ['bossbar', initBossBar], ['cinematic', initCinematic], ['cantor', initCantor], ['morwen', initMorwen], ['puzzle', initPuzzle], ['mobs3', initMobs3], ['gear', initGear], ['varenna', initVarenna], ['corvane', initCorvane], ['puzzle2', initPuzzle2],
         ['rod', () => world.afterEvents.itemUse.subscribe((ev) => {
             if (ev.itemStack && ev.itemStack.typeId === 'minecraft:fishing_rod') onRodUse(ev.source, ev.itemStack);
         })],

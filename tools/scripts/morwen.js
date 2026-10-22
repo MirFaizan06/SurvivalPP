@@ -250,7 +250,7 @@ export function initMorwen() {
         fog.clear(s);
         for (let i = 0; i < 60; i++) spawnParticle(dim, `${NS}:wisp_glow`, { x: L.x + rand(-3, 3), y: L.y + rand(0, 5), z: L.z + rand(-3, 3) });
         for (let k = 0; k < 6; k++) runLater(k * 12, () => playSound(dim, 'beacon.deactivate', L, { volume: 2, pitch: 0.6 + k * 0.1 }));
-        titleAll(dim, L, '§a§lThe Lantern Goes Out', '§f"...Thank you. Four Seals remain."');
+        titleAll(dim, L, '§a§lThe Lantern Goes Out', '§f"...Thank you. The Fourth Seal is yours."');
         speak('Morwen', '§a', dim, L, '"...It is quiet. The light is gone, and I am not afraid. Take my Seal, wayfarer. She is still walking ahead of you - I could see her lamp."');
     });
 }

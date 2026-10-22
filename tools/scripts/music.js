@@ -1,14 +1,16 @@
-// Boss fight music for the four main story bosses. The track starts for every player near the boss as soon as the boss exists
+// Boss fight music for the four main story bosses (six). The track starts for every player near the boss as soon as the boss exists
 // (ritual, journal quest or /summon), repeats while the fight lasts, and stops when the boss dies or the player walks away.
 import { world, system } from '@minecraft/server';
 import { NS, safe } from './util.js';
 
 /** boss entity id -> { sound definition id, track length in seconds, volume } */
 const TRACKS = {
-    [`${NS}:veiled_blossom`]: { id: 'ecr.music.veiled_blossom', secs: 131, volume: 0.85 },
+    [`${NS}:veiled_blossom`]: { id: 'ecr.music.veiled_blossom', secs: 114, volume: 0.85 },
     [`${NS}:eclipse_sovereign`]: { id: 'ecr.music.eclipse_sovereign', secs: 123, volume: 0.85 },
     [`${NS}:frost_cantor`]: { id: 'ecr.music.frost_cantor', secs: 114, volume: 0.85 },
     [`${NS}:mire_lantern`]: { id: 'ecr.music.mire_lantern', secs: 142, volume: 0.85 },
+    [`${NS}:cinder_bride`]: { id: 'ecr.music.cinder_bride', secs: 108, volume: 0.9 },
+    [`${NS}:ashen_groom`]: { id: 'ecr.music.ashen_groom', secs: 130, volume: 0.9 },
 };
 const RANGE = 64;
 const LEAVE = 90;

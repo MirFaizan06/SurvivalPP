@@ -148,6 +148,8 @@ def generate():
     gen_blossom.build()
     import gen_seals
     gen_seals.build()
+    import gen_nether
+    gen_nether.build()
     import gen_ui
     gen_ui.build()
     import gen_music

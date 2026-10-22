@@ -172,6 +172,37 @@ const MOBS = {
             '§a☠ §f%v §fwas lost in the dark of §a§lthe Mire Lantern',
         ],
     },
+    [`${NS}:cinder_bride`]: {
+        name: 'The Cinder Bride',
+        melee: [
+            '§6☠ §f%v §fwas given away by §6§lVarenna, the Cinder Bride',
+            '§6☠ §f%v §fwas married to the anvil by §6§lthe Cinder Bride',
+            '§6☠ §f%v §ffell silent at §6§lVarenna§r§f\u2019s wedding',
+        ],
+        ranged: [
+            '§6☠ §f%v §fwas burned at the altar by §6§lThe Cinder Bride',
+            '§6☠ §f%v §fstood too close to the branded and paid for it',
+            '§6☠ §f%v §fwas forged into the vow by §6§lVarenna',
+        ],
+    },
+    [`${NS}:ashen_groom`]: {
+        name: 'The Ashen Groom',
+        melee: [
+            '§b☠ §f%v §fwas struck down by §b§lCorvane, the Ashen Groom',
+            '§b☠ §f%v §fdid not match their steel to §b§lthe Groom§r§f\u2019s stance',
+            '§b☠ §f%v §fanswered the toll for §b§lCorvane',
+        ],
+        ranged: [
+            '§b☠ §f%v §fwas pierced by a soul lance from §b§lThe Ashen Groom',
+            '§b☠ §f%v §fwas dragged to the altar by §b§lCorvane§r§f\u2019s chains',
+            '§b☠ §f%v §fwas tolled for by §b§lthe Ashen Groom',
+        ],
+    },
+    [`${NS}:forged_blade`]: {
+        name: 'Forged Blade',
+        melee: ['§6☠ §f%v §fwas cut down by one of §6Varenna§f\u2019s forged blades', '§6☠ §f%v §ffailed to parry a §6Forged Blade', '§6☠ §f%v §fwas skewered by a §6Forged Blade'],
+        ranged: ['§6☠ §f%v §fwas cut down by a §6Forged Blade'],
+    },
     [`${NS}:mire_wisp`]: {
         name: 'Mire Wisp',
         melee: ['§a☠ §f%v §fchased a §aMire Wisp §finto the water', '§a☠ §f%v §fwas led astray by a §aMire Wisp', '§a☠ §f%v §fwas dazzled by a §aMire Wisp §fand never found the shore'],
@@ -217,6 +248,8 @@ const PROJECTILES = {
     [`${NS}:web_bolt`]: `${NS}:cave_weaver`,
     [`${NS}:petal_blade`]: `${NS}:veiled_blossom`,
     [`${NS}:frost_note`]: `${NS}:frost_cantor`,
+    [`${NS}:cinder_bolt`]: `${NS}:cinder_bride`,
+    [`${NS}:soul_lance`]: `${NS}:ashen_groom`,
     [`${NS}:wisp_bolt`]: `${NS}:mire_lantern`,
 };
 

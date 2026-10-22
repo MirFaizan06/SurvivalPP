@@ -8,6 +8,7 @@ export const CREATURES = [
     'ashen_warg', 'voidweaver', 'eclipse_sovereign', 'meadow_deer', 'highland_yak', 'wild_boar', 'pheasant', 'gravewalker', 'revenant', 'cave_weaver', 'sporeling',
     'hollow_king', 'mosswood_colossus', 'silkqueen', 'veiled_blossom', 'blossom_vex', 'blossom_echo',
     'frost_cantor', 'mire_lantern', 'rimewalker', 'hoarbone', 'mirewalker', 'lanternbone', 'mire_wisp', 'mire_decoy',
+    'cinder_bride', 'ashen_groom', 'forged_blade',
 ];
 
 function missing() {

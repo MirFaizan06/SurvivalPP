@@ -5,7 +5,7 @@ import { world, system, EntityComponentTypes } from '@minecraft/server';
 import { NS, DIM_IDS, safe } from './util.js';
 
 /** boss entity id -> skin index (the order of gen_ui.SKINS, kept in sync by lint4) */
-export const SKINS = ['eclipse_sovereign', 'hollow_king', 'mosswood_colossus', 'silkqueen', 'veiled_blossom', 'frost_cantor', 'mire_lantern'];
+export const SKINS = ['eclipse_sovereign', 'hollow_king', 'mosswood_colossus', 'silkqueen', 'veiled_blossom', 'frost_cantor', 'mire_lantern', 'cinder_bride', 'ashen_groom'];
 const BOSSES = Object.fromEntries(SKINS.map((s, i) => [`${NS}:${s}`, i]));
 const BASE = 0xE400;
 const CELLS = 20;

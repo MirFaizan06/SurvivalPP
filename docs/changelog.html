@@ -8,6 +8,25 @@
 <a class="brand" href="index.html"><img src="img/icon_1024.png" alt=""><span>Eclipsed Realms <small>Chronicles of the Seven Seals</small></span></a>
 <nav><a href="index.html">Home</a><a href="world.html">World & Survival</a><a href="adventure.html">Adventure</a><a href="creatures.html">Creatures</a><a href="lore.html">Lore</a><a href="systems.html">Systems</a><a href="changelog.html" class=on>Changelog</a></nav></div></header>
 <main><h1>Changelog</h1><p class="lead">Every release, newest first. Version numbers are <code>major.minor.patch</code>.</p><div class="log">
+<h2>[1.7.0] - "Burning Deep Update"</h2>
+<h3>Added</h3>
+<ul>
+<li><strong>Road V - The Cinder Bride (Nether):</strong> the <strong>Forge of Vows</strong> (three offering pedestals - Gold Ingot, Blaze Rod, Ghast Tear, in the order the vow was spoken; out of turn burns you and returns the items), the <strong>Ashen Chapel</strong> with the <strong>Bridal Anvil</strong> and a hidden crypt, the <strong>Cinder Ring</strong> and the <strong>Ember Compass</strong>, and <strong>Varenna, the Cinder Bride</strong> (900 HP, four phases): Forged Blades that shield her until a player parries them (each parried blade costs her 2.5% of her life), Anvil Slam with ember geysers, Cinder Brand (spread out), Forge Heat (rotating hot floor sectors), the Last Dance and the Wedding March.</li>
+<li><strong>Road VI - The Ashen Groom (Nether):</strong> the <strong>Toll Tower</strong> (a Simon-says memory game: ring back 3, 4 and 5 bells) for the <strong>Grave Key</strong>, the <strong>Hollow Hall</strong> with the <strong>Grave Altar</strong>, and <strong>Corvane, the Ashen Groom</strong> (1100 HP, four phases): a duel of <strong>stances</strong> (Ember = immune to projectiles and fire, Soul = immune to melee, Hollow = vulnerable but furious), Duel Lunge, Soul Chains, Marrow Rain, Grave Echoes and the Widow's Toll rings.</li>
+<li><strong>Boss weapons and trophies:</strong> Vowbreaker (ignite; right-click Anvil Slam), Grievance (wither; right-click Duel Lunge), Cinder Heart and Soul Ember (consumable buffs), Seal of the Forge and Seal of the Vow.</li>
+<li><strong>Presentation:</strong> intro scenes, themed boss bars (now nine skins), fogs (four per boss), music, particles (embers, soul flames, ash, bursts) and 12 Ember Tablets of lore for both bosses.</li>
+<li><strong>4 new places</strong> in the Nether with loot tables: Forge of Vows, Ashen Chapel, Toll Tower, Hollow Hall.</li>
+</ul>
+<h3>Changed</h3>
+<ul>
+<li><strong>The Veiled Blossom's music</strong> is now a real boss theme ("Battle RPG Theme" by CleytonKauffman, CC0) instead of the calm piano piece. The calm piece was beautiful but not boss-type.</li>
+<li>Chapter count: six main bosses. Roads V and VI are gated behind Roads IV and V.</li>
+</ul>
+<h3>Fixed</h3>
+<ul>
+<li><code>lint5</code> guard continues to run on the new content; the mock run found and fixed a stance-rotation bug (a stance value of 0 was treated as "none") before release.</li>
+<li><em>Not tested in-game:</em> everything above (same caveat as v1.6: the camera scenes, glyph bars, particles, animations, structure placement, the memory game's timing, the stance deflection and the boss balance were validated offline only).</li>
+</ul>
 <h2>[1.6.0] - "Seals Update"</h2>
 <h3>Fixed (from the real game's Content Log)</h3>
 <ul>
@@ -155,6 +174,6 @@
 <li>World generation for Overworld, Nether and End; Pyre Spires, Eclipse Obelisks and Shrines.</li>
 </ul>
 </div></main>
-<footer>Eclipsed Realms: Chronicles of the Seven Seals v1.6.0 &middot; by Tech Bytes Design &middot; <a href="https://github.com/MirFaizan06/SurvivalPP">GitHub</a> &middot;
+<footer>Eclipsed Realms: Chronicles of the Seven Seals v1.7.0 &middot; by Tech Bytes Design &middot; <a href="https://github.com/MirFaizan06/SurvivalPP">GitHub</a> &middot;
 Not an official Minecraft product; not approved by or associated with Mojang or Microsoft.</footer>
 </body></html>

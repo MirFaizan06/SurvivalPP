@@ -296,12 +296,64 @@ def mirelight(t, s, x, y):
 
 L_SCALE = 0.0   # set below once frame() is known
 
+
+EMBER_R = [hx(c) for c in ('#7a1d00', '#c8400c', '#ff8a24', '#ffd35e', '#fff2b0')]
+SOULS_R = [hx(c) for c in ('#0a3a6a', '#1c78c8', '#5ac8ff', '#b8f0ff', '#ffffff')]
+DARKS_R = [hx(c) for c in ('#0a0a0e', '#1a1a22', '#32323e', '#52525e', '#7a7a88')]
+
+
+# ------------------------------------------------------------------------------- VOWBREAKER: the Cinder Bride's forge hammer
+def vowbreaker(t, s, x, y):
+    if t < -0.02:
+        return None
+    if 0.02 <= t <= 0.72 and abs(s) <= 0.8:                                   # haft
+        return ramp(BARK, 0.35 + 0.3 * (0.5 + 0.5 * math.sin(t * 60)) - 0.1 * s)
+    if t < 0.06 and abs(s) <= 1.4:                                            # pommel ring
+        return ramp(GOLD_R, 0.7)
+    if 0.62 <= t <= 1.0 and abs(s) <= 3.8:                                    # the head: a block of black iron with a glowing core
+        u = abs(s) / 3.8
+        tt = (t - 0.62) / 0.38
+        if abs(s) < 1.7 and 0.15 < tt < 0.85:
+            return ramp(EMBER_R, 0.6 + 0.4 * (1 - abs(tt - 0.5) * 2))
+        edge = 0.3 + 0.3 * (1 - u) + 0.15 * math.sin(tt * 18)
+        if tt > 0.9 or tt < 0.1 or u > 0.88:
+            edge += 0.22
+        return ramp(DARKS_R, edge)
+    return None
+
+
+# ------------------------------------------------------------------------------- GRIEVANCE: the Ashen Groom's soul-forged greatsword
+def grievance(t, s, x, y):
+    blade0 = 0.28
+    if blade0 <= t <= 1.0:
+        w = 2.5 if t < 0.9 else lerp(2.5, 0.0, (t - 0.9) / 0.1)
+        if abs(s) <= w:
+            u = s / max(w, 0.01)
+            if abs(u) < 0.16 and int(t * 60) % 4 != 0:                         # the soul runes down the fuller
+                return ramp(SOULS_R, 0.8 + 0.2 * math.sin(t * 40))
+            if abs(u) > 0.78:
+                return ramp(SOULS_R, 0.55 + 0.35 * (abs(u) - 0.78) / 0.22)
+            return ramp(DARKS_R, 0.42 + 0.2 * (-u) + (0.1 if int(t * 40) % 6 == 0 else 0))
+    gx, gy = HX + (TX - HX) * 0.22, HY + (TY - HY) * 0.22
+    dx_, dy_ = x + 0.5 - gx, y + 0.5 - gy
+    dist = math.hypot(dx_, dy_)
+    if 2.4 <= dist <= 3.6 and t < 0.3:                                     # the wedding ring on the guard
+        return ramp(SOULS_R, 0.7 + 0.3 * (0.5 + 0.5 * math.cos(math.atan2(dy_, dx_) - 3.9)))
+    if 0.2 <= t < 0.28 and abs(s) <= 4.0 - abs(t - 0.24) * 20:
+        return ramp(DARKS_R, 0.5)
+    if 0.05 <= t < 0.2 and abs(s) <= 0.9:
+        return ramp([hx(c) for c in ('#06080c', '#10141c', '#1c2430', '#2c3a4c')], 0.35 + (0.3 if int(t * 66) % 2 == 0 else 0.0) - 0.1 * s)
+    if t < 0.05 and abs(s) <= 1.4 and t > -0.03:
+        return ramp(SOULS_R, 0.8 - 0.3 * s)
+    return None
+
+
 L_SCALE = frame()[0]
 SWORDS = {'azurite': azurite, 'pyrelite': pyrelite, 'eclipsite': eclipsite, 'rimesteel': rimesteel, 'glacite': glacite, 'wispsteel': wispsteel,
-          'frostsong': frostsong, 'mirelight_scythe': mirelight}
+          'frostsong': frostsong, 'mirelight_scythe': mirelight, 'vowbreaker': vowbreaker, 'grievance': grievance}
 
 
-BOSS_WEAPONS = ('frostsong', 'mirelight_scythe')
+BOSS_WEAPONS = ('frostsong', 'mirelight_scythe', 'vowbreaker', 'grievance')
 
 
 def build():

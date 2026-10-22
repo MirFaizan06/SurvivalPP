@@ -32,6 +32,20 @@ export const INTROS = {
             { pos: [15, 0, 8], look: 0.7, secs: 2.2, ease: 'InOutSine' }],
         shakeAt: 6.2,
     },
+    [`${NS}:cinder_bride`]: {
+        title: '§6§lVarenna, the Cinder Bride', sub: '§7Keeper of the Fifth Seal - the wedding that never ended', h: 3.6, sound: 'random.anvil_land', color: [0.8, 0.3, 0.05],
+        shots: [{ pos: [20, 4, 9], look: 0.6, secs: 0 }, { pos: [12, -7, 3.5], look: 0.65, secs: 3.6, ease: 'InOutSine' },
+            { pos: [6, 3, 0.8], look: 0.85, secs: 2.4, ease: 'OutCubic' }, { pos: [3.2, -0.4, 3.0], look: 0.9, secs: 2.0, ease: 'InOutSine' },
+            { pos: [16, 0, 8], look: 0.65, secs: 2.2, ease: 'InOutSine' }],
+        shakeAt: 6.2,
+    },
+    [`${NS}:ashen_groom`]: {
+        title: '§b§lCorvane, the Ashen Groom', sub: '§7Keeper of the Sixth Seal - the last bell of the valley', h: 4.0, sound: 'block.bell.hit', color: [0.1, 0.4, 0.8],
+        shots: [{ pos: [22, -5, 8], look: 0.6, secs: 0 }, { pos: [13, 8, 3], look: 0.7, secs: 3.6, ease: 'InOutSine' },
+            { pos: [7, -3, 0.5], look: 0.9, secs: 2.4, ease: 'OutCubic' }, { pos: [3.4, 0.4, 3.6], look: 0.92, secs: 2.0, ease: 'InOutSine' },
+            { pos: [18, 0, 9], look: 0.65, secs: 2.2, ease: 'InOutSine' }],
+        shakeAt: 6.2,
+    },
     [`${NS}:mire_lantern`]: {
         title: '§a§lMorwen, the Mire Lantern', sub: '§7Keeper of the Fourth Seal - the light that leads you astray', h: 3.0, sound: 'mob.evocation_illager.prepare_summon', color: [0.15, 0.3, 0.1],
         shots: [{ pos: [18, 5, 3], look: 0.6, secs: 0 }, { pos: [11, -6, 2.5], look: 0.6, secs: 3.4, ease: 'InOutSine' },
