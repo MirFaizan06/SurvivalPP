@@ -146,6 +146,57 @@ const MOBS = {
             '§d☠ §f%v §fwas not turned back by the §d§lVeiled Blossom',
         ],
     },
+    [`${NS}:frost_cantor`]: {
+        name: 'The Frost Cantor',
+        melee: [
+            '§b☠ §f%v §fwas silenced by §b§lYsolde, the Frost Cantor',
+            '§b☠ §f%v §ffell out of tune with §b§lThe Frost Cantor',
+            '§b☠ §f%v §fbecame the final rest in §b§lYsolde§r§f\u2019s song',
+        ],
+        ranged: [
+            '§b☠ §f%v §fwas struck by a frozen note from §b§lThe Frost Cantor',
+            '§b☠ §f%v §fcould not keep time with §b§lYsolde',
+            '§b☠ §f%v §fstood on the ground when the §b§lResonance §fpassed',
+        ],
+    },
+    [`${NS}:mire_lantern`]: {
+        name: 'The Mire Lantern',
+        melee: [
+            '§a☠ §f%v §ffollowed the wrong light to §a§lMorwen',
+            '§a☠ §f%v §fwas struck by §a§lthe Mire Lantern§r§f\u2019s own lamp',
+            '§a☠ §f%v §fwas kept by the fen',
+        ],
+        ranged: [
+            '§a☠ §f%v §fwas burned by foxfire from §a§lThe Mire Lantern',
+            '§a☠ §f%v §fput out their own light in §a§lMorwen§r§f\u2019s fen',
+            '§a☠ §f%v §fwas lost in the dark of §a§lthe Mire Lantern',
+        ],
+    },
+    [`${NS}:mire_wisp`]: {
+        name: 'Mire Wisp',
+        melee: ['§a☠ §f%v §fchased a §aMire Wisp §finto the water', '§a☠ §f%v §fwas led astray by a §aMire Wisp', '§a☠ §f%v §fwas dazzled by a §aMire Wisp §fand never found the shore'],
+        ranged: ['§a☠ §f%v §fwas led astray by a §aMire Wisp'],
+    },
+    [`${NS}:rimewalker`]: {
+        name: 'Rimewalker',
+        melee: ['§b☠ §f%v §fwas frozen where they stood by a §bRimewalker', '§b☠ §f%v §fwas dragged into the drift by a §bRimewalker', '§b☠ §f%v §fjoined the silent choir of a §bRimewalker'],
+        ranged: ['§b☠ §f%v §fwas buried by a §bRimewalker'],
+    },
+    [`${NS}:hoarbone`]: {
+        name: 'Hoarbone',
+        melee: ['§b☠ §f%v §fwas cut down by a §bHoarbone', '§b☠ §f%v §fwas chilled to the marrow by a §bHoarbone'],
+        ranged: ['§b☠ §f%v §fwas pierced by a §bHoarbone§f\u2019s frozen arrow', '§b☠ §f%v §fnever saw the §bHoarbone §fon the ridge', '§b☠ §f%v §fwas shot down in the snow by a §bHoarbone'],
+    },
+    [`${NS}:mirewalker`]: {
+        name: 'Mirewalker',
+        melee: ['§2☠ §f%v §fwas pulled under by a §2Mirewalker', '§2☠ §f%v §fwas swallowed by the mud and a §2Mirewalker', '§2☠ §f%v §fbecame fen-compost thanks to a §2Mirewalker'],
+        ranged: ['§2☠ §f%v §fwas claimed by the fen'],
+    },
+    [`${NS}:lanternbone`]: {
+        name: 'Lanternbone',
+        melee: ['§e☠ §f%v §fwas struck with a §eLanternbone§f\u2019s hooked pole', '§e☠ §f%v §fwas guided to a bad end by a §eLanternbone'],
+        ranged: ['§e☠ §f%v §fwas burned by a §eLanternbone§f\u2019s foxfire', '§e☠ §f%v §ffollowed a §eLanternbone§f\u2019s light too far', '§e☠ §f%v §fwas lost in the fen by the light of a §eLanternbone'],
+    },
     [`${NS}:blossom_vex`]: {
         name: 'Blossom Vex',
         melee: ['§d☠ §f%v §fwas swarmed by Blossom Vexes', '§d☠ §f%v §fwas carried off by a Blossom Vex'],
@@ -165,6 +216,8 @@ const PROJECTILES = {
     [`${NS}:bone_shard`]: `${NS}:revenant`,
     [`${NS}:web_bolt`]: `${NS}:cave_weaver`,
     [`${NS}:petal_blade`]: `${NS}:veiled_blossom`,
+    [`${NS}:frost_note`]: `${NS}:frost_cantor`,
+    [`${NS}:wisp_bolt`]: `${NS}:mire_lantern`,
 };
 
 const FALLBACK = {

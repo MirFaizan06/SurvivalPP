@@ -84,7 +84,7 @@ def build_overworld():
     rule('azurite_geode_rule', 'azurite_geode_feature', 'underground_pass', tag('overworld'), dist_underground(1, -54, 0, 1, 42))
 
     # --- Jacaranda trees (three silhouettes, weighted)
-    cherry_branch = {'cherry_canopy': {'leaf_block': LEAF, 'height': ir(3, 4), 'radius': ir(3, 4),
+    cherry_branch = {'cherry_canopy': {'leaf_block': LEAF, 'height': ir(4, 5), 'radius': ir(3, 4),
                                        'wide_bottom_layer_hole_chance': chance(1, 4), 'corner_hole_chance': chance(2, 3),
                                        'hanging_leaves_chance': chance(1, 5), 'hanging_leaves_extension_chance': chance(1, 3)}}
     feature('jacaranda_weeping_tree_feature', 'tree_feature', {
@@ -185,7 +185,7 @@ def species_trees():
         'cherry_trunk': {'trunk_block': L, 'trunk_height': {'base': 5, 'intervals': [2]},
                          'branches': {'tree_type_weights': {'one_branch': 1, 'two_branches': 3, 'two_branches_and_trunk': 1},
                                       'branch_horizontal_length': ir(2, 3), 'branch_start_offset_from_top': ir(-3, -2), 'branch_end_offset_from_top': ir(-1, 0),
-                                      'branch_canopy': {'cherry_canopy': {'leaf_block': F, 'height': ir(3, 4), 'radius': ir(3, 3),
+                                      'branch_canopy': {'cherry_canopy': {'leaf_block': F, 'height': ir(4, 5), 'radius': ir(3, 3),
                                                                            'wide_bottom_layer_hole_chance': chance(1, 3), 'corner_hole_chance': chance(2, 3),
                                                                            'hanging_leaves_chance': chance(2, 3), 'hanging_leaves_extension_chance': chance(2, 3)}}}},
         'cherry_canopy': {'leaf_block': F, 'height': ir(4, 5), 'radius': ir(4, 4),
@@ -212,7 +212,7 @@ def stones_worldgen():
             'count': g['count'], 'discard_chance_on_air_exposure': 0.0,
             'replace_rules': [{'places_block': f'{NS}:{v}', 'may_replace': [f'minecraft:{r}' for r in g['rules']]}]})
         rule(f'{v}_rule', f'{v}_blob_feature', 'underground_pass', tag('overworld'),
-             dist_underground(g['iters'], g['y'][0], g['y'][1], g['chance'][0], g['chance'][1]))
+             dist_underground(g['iters'], g['y'][0], g['y'][1], *(g['chance'] if g['chance'][0] < g['chance'][1] else (None, None))))   # numerator must be below the denominator
     # biome flavoured boosts
     rule('marlstone_dripstone_rule', 'marlstone_blob_feature', 'underground_pass', tag('dripstone_caves'), dist_underground(3, -32, 40))
     rule('slate_mountain_rule', 'slate_blob_feature', 'underground_pass', tag('mountains'), dist_underground(3, 40, 160))

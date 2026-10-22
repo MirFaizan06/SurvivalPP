@@ -175,6 +175,7 @@ def build_stasis():
         'minecraft:map_color': '#150a2b',
         'minecraft:loot': loot_simple('stasis_plate', [(f'{NS}:stasis_plate', 1, 1, 1.0)]),
         f'{NS}:stasis_plate': {},
+        'minecraft:redstone_producer': {'power': 0},
     }
     perms = [{'condition': "q.block_state('ecr:powered') == 1", 'components': {
         'minecraft:geometry': g_dn,

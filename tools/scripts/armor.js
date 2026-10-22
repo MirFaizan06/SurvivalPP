@@ -7,6 +7,9 @@ const SETS = {
     pyrelite: [['fire_resistance', 0], ['strength', 0]],
     eclipsite: [['speed', 0], ['night_vision', 0], ['slow_falling', 0], ['resistance', 0], ['water_breathing', 0]],
     sakura: [['speed', 0], ['jump_boost', 0]],
+    rimesteel: [['resistance', 0]],
+    glacite: [['speed', 0], ['haste', 0]],
+    wispsteel: [['night_vision', 0], ['health_boost', 1], ['strength', 0]],
 };
 /** @type {[EquipmentSlot, string][]} */
 const SLOTS = [[EquipmentSlot.Head, 'helmet'], [EquipmentSlot.Chest, 'chestplate'], [EquipmentSlot.Legs, 'leggings'], [EquipmentSlot.Feet, 'boots']];
@@ -19,7 +22,7 @@ export function initArmor() {
                 let mat;
                 for (const [slot, kind] of SLOTS) {
                     const it = eq.getEquipment(slot);
-                    const m = it && new RegExp(`^${NS}:(azurite|pyrelite|eclipsite|sakura)_${kind}$`).exec(it.typeId);
+                    const m = it && new RegExp(`^${NS}:(azurite|pyrelite|eclipsite|sakura|rimesteel|glacite|wispsteel)_${kind}$`).exec(it.typeId);
                     if (!m) return;
                     if (mat && mat !== m[1]) return;
                     mat = m[1];

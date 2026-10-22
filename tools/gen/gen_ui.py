@@ -11,6 +11,8 @@ SKINS = {
     'mosswood_colossus': ('Mosswood Colossus', dict(track='#1a0f06', fill=('#1a5a22', '#4cc450', '#c8ff90'), edge='#6a4726', accent='#9af07a', motif='leaves')),
     'silkqueen': ('Silkqueen', dict(track='#0a0716', fill=('#3a2a80', '#a898f0', '#f4f0ff'), edge='#8a6aff', accent='#f2c744', motif='web')),
     'veiled_blossom': ('Veiled Blossom', dict(track='#2a0e1e', fill=('#8a2a58', '#f070a8', '#ffe0ee'), edge='#ffc0d8', accent='#ffffff', motif='blossom')),
+    'frost_cantor': ('Frost Cantor', dict(track='#06121e', fill=('#1c4f8a', '#62b8f0', '#f0fbff'), edge='#bfe4ff', accent='#ffffff', motif='snowflake')),
+    'mire_lantern': ('Mire Lantern', dict(track='#08140c', fill=('#2a6a3a', '#9ae070', '#fff6a0'), edge='#c8b060', accent='#ffe27a', motif='lantern')),
 }
 S = 2                                    # texture scale: drawn at 2x for smooth downsampling in the UI
 BAR_W, BAR_H = 182, 7                    # UI size of the fill
@@ -134,6 +136,33 @@ def frame(w, h, p, seed):
             d.ellipse([sx - 5, cy - 5, sx + 5, cy + 5], fill=hexc('#0a0716'), outline=accent, width=2)
         for k, x in enumerate(range(bx0 + 30, bx1 - 30, 46)):
             d.arc([x, by0 - 14, x + 30, by0 + 10], 180, 360, fill=accent, width=2)
+    elif motif == 'snowflake':
+        for side in (-1, 1):
+            sx = w // 2 + side * (bx1 - w // 2 + 6)
+            for k in range(6):
+                a = k / 6 * math.tau
+                ex, ey = sx + math.cos(a) * 20, cy + math.sin(a) * 20
+                d.line([(sx, cy), (ex, ey)], fill=hexc('#eaf8ff'), width=2)
+                for t in (0.55, 0.8):
+                    bx, by = sx + math.cos(a) * 20 * t, cy + math.sin(a) * 20 * t
+                    for sg in (-1, 1):
+                        d.line([(bx, by), (bx + math.cos(a + sg * 0.9) * 7, by + math.sin(a + sg * 0.9) * 7)], fill=hexc('#bfe4ff'), width=1)
+            d.ellipse([sx - 4, cy - 4, sx + 4, cy + 4], fill=hexc('#06121e'), outline=accent, width=2)
+        for x in range(bx0 + 24, bx1 - 24, 26):                                         # icicles hanging from the frame
+            ln = 8 + (x * 7) % 9
+            d.polygon([(x - 4, by1 + 1), (x + 4, by1 + 1), (x, by1 + ln)], fill=hexc('#dff3ff'), outline=hexc('#7ab8e0'))
+    elif motif == 'lantern':
+        for side in (-1, 1):
+            sx = w // 2 + side * (bx1 - w // 2 + 6)
+            d.rectangle([sx - 9, cy - 13, sx + 9, cy - 9], fill=hexc('#3a2e14'), outline=edge)
+            d.rectangle([sx - 9, cy + 9, sx + 9, cy + 13], fill=hexc('#3a2e14'), outline=edge)
+            d.rounded_rectangle([sx - 8, cy - 9, sx + 8, cy + 9], radius=3, fill=hexc('#ffe27a'), outline=edge, width=2)
+            d.ellipse([sx - 4, cy - 5, sx + 4, cy + 5], fill=hexc('#fffbd0'))
+            d.arc([sx - 6, cy - 20, sx + 6, cy - 10], 180, 360, fill=edge, width=2)
+        cx = w // 2
+        for k in range(5):                                                                # wisps rising above the bar
+            x = cx - 60 + k * 30
+            d.ellipse([x - 3, by0 - 10 - (k % 2) * 4, x + 3, by0 - 4 - (k % 2) * 4], fill=hexc('#fff6a0') if k % 2 else hexc('#b8f08a'))
     else:  # blossom
         for side in (-1, 1):
             sx = w // 2 + side * (bx1 - w // 2 + 6)
@@ -152,18 +181,111 @@ def frame(w, h, p, seed):
     return img
 
 
+# --------------------------------------------------------------------------------------------- glyph bar
+# The script-driven bar: a custom font page (font/glyph_E4.png).  Every skin owns 8 consecutive characters starting at
+# U+E400 + 8 * skin_index:  +0 left emblem, +1 right emblem, +2..+6 bar cell (empty, 1/4, 1/2, 3/4, full).
+# bossbar.js draws it on the action bar, which needs no JSON-UI bindings and therefore cannot fall back to the vanilla bar.
+GLYPH_PAGE = 'E4'
+GLYPH_BASE = 0xE400
+CELL = 16
+
+
+def emblem(motif, p):
+    """16x16 emblem for the end caps, drawn at 4x and reduced."""
+    big = 64
+    img = Image.new('RGBA', (big, big), (0, 0, 0, 0))
+    d = ImageDraw.Draw(img)
+    edge, accent = hexc(p['edge']), hexc(p['accent'])
+    dark = hexc(p['track'])
+    c = big // 2
+    if motif == 'corona':
+        d.ellipse([c - 14, c - 14, c + 14, c + 14], fill=dark, outline=edge, width=3)
+        for k in range(16):
+            a = k / 16 * math.tau
+            r2 = 29 if k % 2 == 0 else 23
+            d.line([(c + math.cos(a) * 17, c + math.sin(a) * 17), (c + math.cos(a) * r2, c + math.sin(a) * r2)], fill=accent, width=3)
+    elif motif == 'crown':
+        d.polygon([(8, 44), (8, 16), (22, 30), (32, 10), (42, 30), (56, 16), (56, 44)], fill=accent, outline=hexc('#4a3408'))
+        d.rectangle([8, 44, 56, 52], fill=hexc('#d4a62c'), outline=hexc('#4a3408'))
+        for gx in (18, 32, 46):
+            d.ellipse([gx - 4, 38, gx + 4, 46], fill=hexc('#4cf0a0'))
+    elif motif == 'leaves':
+        for ang in (-0.9, 0.2, 1.4, 2.6):
+            petal(d, c + math.cos(ang) * 10, c + math.sin(ang) * 10, 30, ang + 1.5, hexc('#4cc450'), hexc('#0a3a14'))
+        d.ellipse([c - 6, c - 6, c + 6, c + 6], fill=hexc('#664726'), outline=hexc('#1a0f06'), width=2)
+    elif motif == 'web':
+        for k in range(8):
+            a = k / 8 * math.tau
+            d.line([(c, c), (c + math.cos(a) * 29, c + math.sin(a) * 29)], fill=hexc('#eeebfb'), width=2)
+        for rr in (10, 19, 28):
+            d.regular_polygon((c, c, rr), 8, outline=hexc('#cfc8f0'))
+        d.ellipse([c - 6, c - 6, c + 6, c + 6], fill=dark, outline=accent, width=2)
+    elif motif == 'snowflake':
+        for k in range(6):
+            a = k / 6 * math.tau
+            d.line([(c, c), (c + math.cos(a) * 29, c + math.sin(a) * 29)], fill=hexc('#eaf8ff'), width=4)
+            for t in (0.5, 0.78):
+                bx, by = c + math.cos(a) * 29 * t, c + math.sin(a) * 29 * t
+                for sg in (-1, 1):
+                    d.line([(bx, by), (bx + math.cos(a + sg * 0.9) * 11, by + math.sin(a + sg * 0.9) * 11)], fill=edge, width=3)
+        d.ellipse([c - 5, c - 5, c + 5, c + 5], fill=dark, outline=accent, width=2)
+    elif motif == 'lantern':
+        d.rectangle([c - 14, 8, c + 14, 16], fill=hexc('#3a2e14'), outline=edge, width=2)
+        d.rectangle([c - 14, 50, c + 14, 58], fill=hexc('#3a2e14'), outline=edge, width=2)
+        d.rounded_rectangle([c - 12, 16, c + 12, 50], radius=6, fill=accent, outline=edge, width=3)
+        d.ellipse([c - 6, 26, c + 6, 42], fill=hexc('#fffbd0'))
+    else:  # blossom
+        blossom(d, c, c, 28, hexc('#ffc0d8'), hexc('#f7d466'))
+    return img.resize((CELL, CELL), Image.LANCZOS)
+
+
+def glyph_cell(p, quarters):
+    """One bar cell: 16 px wide, bar body in rows 3..12 with a 1 px frame; `quarters` 0..4 of its width are filled."""
+    img = Image.new('RGBA', (CELL, CELL), (0, 0, 0, 0))
+    px = img.load()
+    edge = hexc(p['edge'])
+    track = hexc(p['track'])
+    lo, mid, hi = (hexc(c) for c in p['fill'])
+    for y in range(3, 13):
+        for x in range(CELL):
+            if y in (3, 12):
+                px[x, y] = lerpc(edge, (0, 0, 0, 255), 0.35)
+            elif x < quarters * 4:
+                t = (y - 4) / 7                                          # bright top, dark bottom, with a gloss line
+                px[x, y] = lerpc(hi, lo, min(1.0, t * 1.15)) if y > 4 else lerpc(hi, (255, 255, 255, 255), 0.35)
+                if (x + y) % 8 == 0:
+                    px[x, y] = lerpc(px[x, y], (255, 255, 255, 255), 0.25)
+            else:
+                px[x, y] = lerpc(track, (0, 0, 0, 255), 0.0) if y < 11 else lerpc(track, (255, 255, 255, 255), 0.08)
+    return img
+
+
+def build_glyphs():
+    sheet = Image.new('RGBA', (256, 256), (0, 0, 0, 0))
+    for i, (skin, (key, p)) in enumerate(SKINS.items()):
+        base = i * 8
+        em = emblem(p['motif'], p)
+        tiles = [em, em.transpose(Image.FLIP_LEFT_RIGHT)] + [glyph_cell(p, q) for q in range(5)]
+        for j, t in enumerate(tiles):
+            n = base + j
+            sheet.paste(t, ((n % 16) * CELL, (n // 16) * CELL))
+    assert len(SKINS) * 8 <= 256
+    save_png(sheet, f'{RP}/font/glyph_{GLYPH_PAGE}.png')
+    return sheet
+
+
 def ui_json():
     controls = []
     for skin, (key, p) in SKINS.items():
         controls.append({f'ecr_{skin}@hud.ecr_boss_skin': {
-            '$key': f"'{key}'", '$tex_back': f'textures/ui/ecr_boss_{skin}_back', '$tex_fill': f'textures/ui/ecr_boss_{skin}_fill', '$tex_frame': f'textures/ui/ecr_boss_{skin}_frame'}})
+            '$ecr_boss_name': f"'{key}'", '$tex_back': f'textures/ui/ecr_boss_{skin}_back', '$tex_fill': f'textures/ui/ecr_boss_{skin}_fill', '$tex_frame': f'textures/ui/ecr_boss_{skin}_frame'}})
     return {
         'namespace': 'hud',
         'ecr_boss_skin': {
             'type': 'panel', 'size': [FRAME[0], FRAME[1]], 'anchor_from': 'top_middle', 'anchor_to': 'top_middle', 'offset': [0, 4],
             'bindings': [
                 {'binding_name': '#bossName', 'binding_type': 'collection', 'binding_collection_name': 'boss_bars'},
-                {'binding_type': 'view', 'source_property_name': '(not ((#bossName - $key) = #bossName))', 'target_property_name': '#visible'}],
+                {'binding_type': 'view', 'source_property_name': '(not ((#bossName - $ecr_boss_name) = #bossName))', 'target_property_name': '#visible'}],
             'controls': [
                 {'ecr_back': {'type': 'image', 'texture': '$tex_back', 'layer': 5, 'size': list(BACK), 'anchor_from': 'center', 'anchor_to': 'center'}},
                 {'ecr_fill': {
@@ -181,6 +303,7 @@ def build():
         save_png(gradient_bar(BAR_W * S, BAR_H * S, p['fill'], 900 + i, p['motif']), f'{RP}/textures/ui/ecr_boss_{skin}_fill.png')
         save_png(frame(FRAME[0] * S, FRAME[1] * S, p, i), f'{RP}/textures/ui/ecr_boss_{skin}_frame.png')
     wjson(f'{RP}/ui/hud_screen.json', ui_json())
+    build_glyphs()
 
 
 if __name__ == '__main__':

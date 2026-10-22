@@ -383,6 +383,7 @@ def build_door(w, spec):
         'minecraft:light_dampening': 0,
         'minecraft:loot': loot_simple(f'{w}_door', [(f'{NS}:{w}_door', 1, 1, 1.0)]),
         f'{NS}:openable': {},
+        'minecraft:movable': {'movement_type': 'popped'},
         **wood_common(spec, 3.0, 3.0),
     }
     desc = {'identifier': f'{NS}:{w}_door', 'menu_category': cat('none'),
@@ -404,6 +405,7 @@ def build_plate_button(w, spec):
         'minecraft:tags': ['minecraft:is_axe_item_destructible', 'wood', 'pressure_plate'],
         'minecraft:light_dampening': 0,
         f'{NS}:plate': {},
+        'minecraft:redstone_producer': {'power': 0},
         **wood_common(spec, 0.5, 0.5),
     }
     perms = [{'condition': "q.block_state('ecr:pressed') == 1", 'components': {
@@ -431,6 +433,7 @@ def build_plate_button(w, spec):
         'minecraft:tags': ['minecraft:is_axe_item_destructible', 'wood', 'button'],
         'minecraft:light_dampening': 0,
         f'{NS}:button': {},
+        'minecraft:redstone_producer': {'power': 0},
         **wood_common(spec, 0.5, 0.5),
     }
     desc = {'identifier': f'{NS}:{w}_button', 'menu_category': cat('construction', 'minecraft:itemGroup.name.buttons'),

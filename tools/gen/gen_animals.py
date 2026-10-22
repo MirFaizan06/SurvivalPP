@@ -107,7 +107,7 @@ def bp(name, a):
     if a.get('defend'):
         # neutral until hurt: the whole sounder joins in
         adult['minecraft:attack'] = {'damage': a['defend']}
-        adult['minecraft:behavior.hurt_by_target'] = {'priority': 1, 'alert_same_type': True}
+        adult['minecraft:behavior.hurt_by_target'] = {'priority': 1}
         adult['minecraft:behavior.melee_attack'] = {'priority': 2, 'speed_multiplier': 1.35, 'track_target': True, 'reach_multiplier': 1.2}
         baby['minecraft:behavior.panic'] = {'priority': 1, 'speed_multiplier': 1.4}
         comps['minecraft:knockback_resistance'] = {'value': 0.2}
@@ -115,8 +115,8 @@ def bp(name, a):
         adult['minecraft:interact'] = {'interactions': [{
             'on_interact': {'filters': {'all_of': [
                 {'test': 'is_family', 'subject': 'other', 'value': 'player'},
-                {'test': 'has_equipment', 'domain': 'hand', 'subject': 'other', 'value': 'bucket:0'}]}},
-            'use_item': True, 'swing': True, 'transform_to_item': 'bucket:1', 'play_sounds': 'milk', 'interact_text': 'action.interact.milk'}]}
+                {'test': 'has_equipment', 'domain': 'hand', 'subject': 'other', 'value': 'minecraft:bucket'}]}},
+            'use_item': True, 'swing': True, 'transform_to_item': 'minecraft:milk_bucket', 'play_sounds': ['milk'], 'interact_text': 'action.interact.milk'}]}
     if a['kind'] == 'bird':
         # moulting: pheasants drop a feather now and then
         adult['minecraft:spawn_entity'] = {'entities': [{'min_wait_time': 400, 'max_wait_time': 900, 'spawn_sound': 'plop', 'spawn_item': 'feather',

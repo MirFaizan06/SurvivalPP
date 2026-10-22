@@ -84,7 +84,7 @@ def build_recipes():
                               (f'{NS}:{v}_bricks_stairs', 1, f'{NS}:{v}'), (f'{NS}:{v}_bricks_slab', 2, f'{NS}:{v}')):
             name = f"cut_{out.split(':')[1]}_from_{src.split(':')[1]}"
             wjson(f'{BP}/recipes/{name}.json', {'format_version': '1.20.10', 'minecraft:recipe_shapeless': {
-                'description': {'identifier': f'{NS}:{name}'}, 'tags': ['stonecutter'], 'ingredients': [{'item': src}], 'result': {'item': out, 'count': cnt}}})
+                'description': {'identifier': f'{NS}:{name}'}, 'tags': ['stonecutter'], 'ingredients': [{'item': src}], 'unlock': {'context': 'AlwaysUnlocked'}, 'result': {'item': out, 'count': cnt}}})
 
 
 def build_all():

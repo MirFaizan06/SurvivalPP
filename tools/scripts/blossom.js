@@ -2,6 +2,7 @@
 // Falling Blossoms, the Eclipse Bloom petal spiral, and a fog that changes with the fight.
 import { world, system, EntityComponentTypes, EntityDamageCause } from '@minecraft/server';
 import { tickMusic, stopMusic } from './music.js';
+import { playIntro, INTRO_TAG } from './cinematic.js';
 import { NS, DIM_IDS, safe, dimOf, consumeMainhand, say, msg, spawnParticle, playSound, rand, randInt, runLater } from './util.js';
 import { nearbyPlayers, titleAll, healthFrac, shockwave } from './boss.js';
 
@@ -257,7 +258,8 @@ export function startHanaeRitual(block, player) {
                 state.set(boss.id, s);
                 playSound(dim, 'mob.enderdragon.growl', c, { volume: 3, pitch: 1.6 });
                 for (let i = 0; i < 40; i++) spawnParticle(dim, LEAF, { x: c.x + rand(-2.5, 2.5), y: c.y + rand(0, 4), z: c.z + rand(-2.5, 2.5) });
-                titleAll(dim, c, '§d§lTHE VEILED BLOSSOM', '§fHanae, Keeper of the First Seal');
+                boss.addTag('ecr_introduced');
+                if (!playIntro(boss)) titleAll(dim, c, '§d§lTHE VEILED BLOSSOM', '§fHanae, Keeper of the First Seal');
             }
         }, 'hanaeRitual');
     }, 2);
@@ -271,10 +273,12 @@ function phaseOf(boss) {
 }
 
 function bossTick(boss) {
-    tickMusic(boss);
     const now = system.currentTick;
     let s = state.get(boss.id);
     if (!s) { s = { next: {}, fog: new Map(), phase: 0, shield: false }; state.set(boss.id, s); }
+    if (!boss.hasTag('ecr_introduced')) { boss.addTag('ecr_introduced'); playIntro(boss); }
+    if (boss.hasTag(INTRO_TAG)) return;
+    tickMusic(boss);
     const dim = boss.dimension, L = boss.location;
     const want = phaseOf(boss);
     const cur = safe(() => boss.getProperty('ecr:phase')) ?? 0;

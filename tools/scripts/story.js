@@ -10,6 +10,8 @@ const MIRROR = `${NS}:veiled_mirror`;
 const KEY = 'ecr:story';
 const GIVEN = 'ecr:journal_given';
 const CHERRY = 'minecraft:cherry_grove';
+const FORK = `${NS}:tuning_fork`;
+const LANTERN = `${NS}:keepers_lantern`;
 
 // ------------------------------------------------------------------------------------------- content
 /** @type {[string, number, string][]} */
@@ -36,6 +38,33 @@ const STEPS = [
 ];
 const COMPLETE = 6;
 
+/** The Overworld roads open after the First Seal and are walked in parallel with Chapter II (the End).  Road IV opens when Road III is done.
+ *  Progress per road is the number of finished steps (3 = done), stored in the player's story as `c3` / `c4`. */
+const ROADS = {
+    c3: {
+        name: 'Road III - The Silent Choir', short: 'The Silent Choir', opens: (st) => st.step >= 5, hint: 'recommended: diamond or Rimesteel gear, a cold-weather appetite',
+        steps: [
+            { title: 'Echoes in the Snow',
+              clue: "§o'Hanae's plea was not the only voice in the grove. Under it, something hummed a lullaby I knew as a child. Where the snow never leaves, standing stones sing it back - four verses, and I must hear every one.'§r\n\n§bFind the §fVerse Stones§b that stand in snowy lands and read all four verses (Dawn, Zenith, Dusk, Midnight). The §fCantor's Tuning Fork§b hums towards them." },
+            { title: "The Sun's Road",
+              clue: "§o'The verses were never a song. They are a lock. Four chimes hang in a cathedral of ice, and the song says in what order the sun walks.'§r\n\n§bFind the §fFrozen Cathedral§b in the high snowy peaks and strike its four chimes in the order of the sun's road. A wrong note will be answered." },
+            { title: 'The Conductor',
+              clue: "§o'The lectern is awake. The Third Keeper has been conducting this song for longer than I have been alive. Do not strike a note you cannot finish.'§r\n\n§bUse the §fTuning Fork§b on the §fCantor's Lectern§b and face Ysolde, the Frost Cantor." },
+        ],
+    },
+    c4: {
+        name: 'Road IV - The Lantern in the Mire', short: 'The Lantern in the Mire', opens: (st) => st.c3 >= 3, hint: 'bring torches or lanterns - light is a weapon here',
+        steps: [
+            { title: 'Lights in the Fen',
+              clue: "§o'Ysolde's last verse was a map, and it ended in a swamp. At night the water breathes little lights. I think they are the travellers a Keeper once tried to guide home. Gather what is left of them.'§r\n\n§aSlay Mire Wisps and the dead of the fen at night, then present §f6 Wisp Essence§a and a §fLantern§a in the journal." },
+            { title: 'The Drowned Chapel',
+              clue: "§o'The lantern wants to be lit in a certain order. I found half the riddle on a tablet in a fen hut and half in the chapel itself - a drowned place with three sconces and a hidden room.'§r\n\n§aFind the §fDrowned Chapel§a in a swamp, read the §fFen Notes§a, and light the three sconces with the §fKeeper's Lantern§a in the right order." },
+            { title: 'The Lantern Calls',
+              clue: "§o'All three burn. The altar waits with open hands. She only answers under a night sky, and only to a lantern that is lit.'§r\n\n§aAt night, in a swamp, use the §fKeeper's Lantern§a on the §fMarsh Altar§a and face Morwen, the Mire Lantern." },
+        ],
+    },
+};
+
 /** lore pages: unlocked by progress ('at' = step) or by defeating a boss ('boss') */
 const PAGES = {
     prologue: { title: 'Prologue - The Hollow Sun', at: 0, text: "Before the Eclipse there was one sky, and one dawn that never ended.\n\nThen the Hollow Sun rose and swallowed the First Dawn whole. The world cracked into three Realms - the Overworld, the Burning Deep and the Void Shore - and the Eclipse's power shattered into Seven Shards.\n\nSeven Keepers bound the Shards into Seven Seals and swore to guard them.\n\nThis journal was begun by the Wayfarer, who set out to find every Seal and end the Eclipse. Its pages fill only as you walk her road." },
@@ -46,12 +75,35 @@ const PAGES = {
     mosswood_colossus: { title: 'The Mosswood Colossus', boss: 'mosswood_colossus', text: "The forest's last Greenwarden. When the Eclipse withered the sun, its roots drank shadow instead and the guardian woke wrong.\n\nThe Sporelings are the seeds it can no longer plant.\n\nA Hollow Lord." },
     silkqueen: { title: 'The Silkqueen', boss: 'silkqueen', text: "The Mother of Threads. She spun webs to hold the cracking world together. The Eclipse taught her that everything caught is hers.\n\nHer Cave Weavers are her unfinished lullabies.\n\nA Hollow Lord." },
     veiled_blossom: { title: 'Hanae, Keeper of the First Seal', boss: 'veiled_blossom', text: "Miko of the Cherry Grove. She bound the First Shard with her own life, and veiled her face so the Shard could not see through her eyes.\n\nHer Echoes are the pilgrims she could not save. She never meant to kill anyone who came - only to make them turn back.\n\n§o\"The ending was never meant to be reached.\"§r\n\nShe gave you the Seal anyway." },
+    eighth_voice: { title: 'The Eighth Voice', road: 'c3', at: 1, text: "A tablet in the snow, in the Wayfarer's hand:\n\n§o\"Eight stood at the Cracking. Seven took Shards. I took only the page. I never understood why until I heard Ysolde sing it.\"§r\n\nThe journal's ink is Azurite dust - the First Dawn, ground fine. Whoever the Wayfarer was, she wrote with the world's own morning." },
+    suns_road: { title: "The Sun's Road", road: 'c3', at: 2, text: "Dawn, Zenith, Dusk, Midnight.\n\nThe four verses were four keys, and the chimes of the Frozen Cathedral their locks. The Choir's rule is simple and terrible: a cantor sings so the Shard may sleep. The day the song ends, the Seal opens. So the cantor may not rest, may not stop, and may not be thanked." },
+    frozen_choir: { title: 'The Frozen Choir', road: 'c3', at: 0, text: "Where the Eclipse could not reach the sky, it reached the snow. The dead of the high country - Rimewalkers, Hoarbones - are the Choir's missing voices, taught to sing without breath.\n\nTheir shards of rime make a good alloy: iron that remembers winter." },
+    fen_lights: { title: 'The Lights of the Fen', road: 'c4', at: 0, text: "Morwen hung a lantern in every window of the fen so that no traveller would wander into the dark. The Shard learned the trick. Now the lights lead the other way.\n\nMire Wisps are the travellers who followed the wrong light. Their essence is warm, and it remembers the way home." },
+    lantern_riddle: { title: 'The Sconces', road: 'c4', at: 2, text: "The eye must watch before the star can guide;\nthe moon leads home, and comes last.\n\nLight them as you would leave a lantern for a lost friend." },
+    frost_cantor: { title: 'Ysolde, Keeper of the Third Seal', boss: 'frost_cantor', text: "The Third Keeper, cantor of the high snow. She sang the Shard to sleep and has not stopped for longer than anyone remembers; the cold followed her song and froze the world to listen.\n\nShe asked you to finish the verse. The Wayfarer once did.\n\n§o\"Do you hear that? It is silent. I had forgotten silence.\"§r" },
+    mire_lantern: { title: 'Morwen, Keeper of the Fourth Seal', boss: 'mire_lantern', text: "The Fourth Keeper, lamplighter of the fen. A Seal that is a lantern which can never go out is a hard thing to carry, and the Shard learned to use the light as bait.\n\nShe could see the Wayfarer's lamp, far ahead. Whoever she was, she is still walking.\n\n§o\"I only wanted someone to come home.\"§r" },
     eclipse_sovereign: { title: 'The Eclipse Sovereign', boss: 'eclipse_sovereign', text: "The Second Keeper, warden of the Void Shore. He stood at the edge of the world and watched the Eclipse rise.\n\nHe took the Shard into himself to spare the others - and became its herald. The Voidweavers are his unspoken doubts.\n\nThe Wayfarer's last legible line: §o'He knew my name.'§r" },
 };
 
 // ------------------------------------------------------------------------------------------- state
 function fresh() {
-    return { step: 0, grove: 0, kills: { gravewalker: 0, cave_weaver: 0 }, groveKills: 0, pages: [], mirror: false };
+    return { step: 0, grove: 0, kills: { gravewalker: 0, cave_weaver: 0 }, groveKills: 0, pages: [], mirror: false, c3: 0, c4: 0, verses: [false, false, false, false], fork: false, chimes: [], sconces: [] };
+}
+
+export function saveStory(p, st) {
+    save(p, st);
+}
+
+export function giveTo(p, id, n = 1) {
+    give(p, id, n);
+}
+
+export function toastTo(p, text) {
+    toast(p, text);
+}
+
+export function roadOpen(st, road) {
+    return ROADS[road].opens(st);
 }
 
 export function getStory(p) {
@@ -92,26 +144,52 @@ function advance(p, st, to) {
     const done = STEPS[to - 1];
     save(p, st);
     if (done) toast(p, `§aJournal updated§f - ${done.title} complete.`);
-    for (const k of Object.keys(PAGES)) if (PAGES[k].at === to) toast(p, `A new page appears in your journal: §d${PAGES[k].title}`);
+    for (const k of Object.keys(PAGES)) if (PAGES[k].at === to && !PAGES[k].road) toast(p, `A new page appears in your journal: §d${PAGES[k].title}`);
+    if (to >= 5 && !st.fork) { st.fork = true; give(p, FORK, 1); save(p, st); msg(p, "§b❄ §fThe Wayfarer's pages stir: a new road opens. §7A §bCantor's Tuning Fork§7 has appeared in your pack."); }
     if (to < STEPS.length) msg(p, `§7Open your Wayfarer's Journal for the next clue.`);
     else if (to >= COMPLETE) msg(p, '§d§lChapter complete!§r §7More of the story is yet to be written...');
+}
+
+/** finish a step of an Overworld road (to = number of finished steps after this call) */
+export function advanceRoad(p, st, road, to) {
+    if ((st[road] || 0) >= to) return false;
+    const r = ROADS[road];
+    st[road] = to;
+    save(p, st);
+    const done = r.steps[to - 1];
+    if (done) toast(p, `§a${r.short} §f- ${done.title} complete.`);
+    for (const k of Object.keys(PAGES)) if (PAGES[k].road === road && PAGES[k].at === to) toast(p, `A new page appears in your journal: §d${PAGES[k].title}`);
+    if (to < r.steps.length) msg(p, '§7Open your Wayfarer\'s Journal for the next clue.');
+    else msg(p, `§d§l${r.name} - complete!`);
+    return true;
 }
 
 // ------------------------------------------------------------------------------------------- journal UI
 function pageUnlocked(st, key) {
     const pg = PAGES[key];
+    if (pg.road) return (st[pg.road] || 0) >= pg.at && roadOpen(st, pg.road);
     if (pg.at !== undefined) return st.step >= pg.at;
     return st.pages.includes(key);
 }
 
 function progressText(st) {
-    if (st.step === 1) return `\n\n§7Gravewalkers: ${Math.min(st.kills.gravewalker, KILLS.gravewalker)}/${KILLS.gravewalker}\nCave Weavers: ${Math.min(st.kills.cave_weaver, KILLS.cave_weaver)}/${KILLS.cave_weaver}\n§8...or any monsters slain inside a Cherry Grove: ${Math.min(st.groveKills || 0, GROVE_KILLS)}/${GROVE_KILLS}`;
+    if (st.step === 1) return `\n\n§7Gravewalkers: ${Math.min(st.kills.gravewalker, KILLS.gravewalker)}/${KILLS.gravewalker}\nCave Weavers: ${Math.min(st.kills.cave_weaver, KILLS.cave_weaver)}/${KILLS.cave_weaver}\n§7...or any monsters slain inside a Cherry Grove: ${Math.min(st.groveKills || 0, GROVE_KILLS)}/${GROVE_KILLS}`;
     if (st.step === 2) return '\n\n§7' + OFFERINGS.map(([, n, name]) => `${name} x${n}`).join(', ');
+    return '';
+}
+
+function roadProgress(st, road) {
+    const n = st[road] || 0;
+    if (road === 'c3' && n === 0) return `\n\n§7Verses heard: ${st.verses.filter(Boolean).length}/4 (${['Dawn', 'Zenith', 'Dusk', 'Midnight'].filter((_, i) => st.verses[i]).join(', ') || 'none yet'})`;
+    if (road === 'c3' && n === 1) return `\n\n§7Chimes struck in order: ${(st.chimes || []).length}/4`;
+    if (road === 'c4' && n === 0) return `\n\n§7Wisp Essence x6 (you have ${Math.min(6, countItem(null, `${NS}:wisp_essence`))}), Lantern x1`;
+    if (road === 'c4' && n === 1) return `\n\n§7Sconces lit in order: ${(st.sconces || []).length}/3`;
     return '';
 }
 
 function countItem(p, id) {
     let n = 0;
+    if (!p) return 0;
     safe(() => {
         const inv = p.getComponent(EntityComponentTypes.Inventory).container;
         for (let i = 0; i < inv.size; i++) { const it = inv.getItem(i); if (it && it.typeId === id) n += it.amount; }
@@ -149,19 +227,52 @@ function presentOfferings(p) {
 
 function showPage(p, key) {
     const pg = PAGES[key];
-    new ActionFormData().title(`§5${pg.title}`).body(pg.text).button('§0Back').show(p).then(() => openJournal(p)).catch(() => { /* busy */ });
+    new ActionFormData().title(`§d${pg.title}`).body(`§f${pg.text}`).button('Back').show(p).then(() => openJournal(p)).catch(() => { /* busy */ });
 }
 
 function showPages(p) {
     const st = getStory(p);
     const keys = Object.keys(PAGES).filter((k) => pageUnlocked(st, k));
-    const form = new ActionFormData().title("§5Lore pages").body(`§7${keys.length} of ${Object.keys(PAGES).length} pages found. Defeat the great foes to find the rest.`);
-    for (const k of keys) form.button(`§0${PAGES[k].title}`);
-    form.button('§8Back');
+    const form = new ActionFormData().title("§dLore pages").body(`§7${keys.length} of ${Object.keys(PAGES).length} pages found. Defeat the great foes to find the rest.`);
+    for (const k of keys) form.button(PAGES[k].title);
+    form.button('Back');
     form.show(p).then((res) => {
         if (res.canceled || res.selection === undefined) return;
         if (res.selection >= keys.length) { openJournal(p); return; }
         showPage(p, keys[res.selection]);
+    }).catch(() => { /* busy */ });
+}
+
+function presentLantern(p) {
+    const st = getStory(p);
+    if (st.c4 !== 0) return;
+    /** @type {[string, number, string][]} */
+    const need = [[`${NS}:wisp_essence`, 6, 'Wisp Essence'], ['minecraft:lantern', 1, 'Lantern']];
+    const missing = need.filter(([id, n]) => countItem(p, id) < n);
+    if (missing.length) { msg(p, `§cThe journal's pages stay blank. §7Still missing: ${missing.map(([, n, name]) => `${name} x${n}`).join(', ')}`); return; }
+    for (const [id, n] of need) takeItem(p, id, n);
+    give(p, LANTERN, 1);
+    advanceRoad(p, st, 'c4', 1);
+    msg(p, "§a✦ The essence settles into the glass and the flame turns green-gold. §fYou hold the Keeper's Lantern.");
+}
+
+function showRoad(p, road) {
+    const st = getStory(p);
+    const r = ROADS[road];
+    const n = st[road] || 0;
+    const finished = n >= r.steps.length;
+    const step = r.steps[Math.min(n, r.steps.length - 1)];
+    const body = finished
+        ? `§d§l${r.name}§r\n\n§fThis road is finished. §7Its lore pages are in your journal.`
+        : `§d${r.name}\n§bStep ${n + 1}: ${step.title}\n\n§f${step.clue}${roadProgress(st, road)}\n\n§8${r.hint}`;
+    const form = new ActionFormData().title(`§d${r.short}`).body(body.replace('§8', '§7'));
+    const actions = [];
+    if (road === 'c4' && n === 0) { form.button('§aPresent offerings'); actions.push('offer'); }
+    form.button('Back'); actions.push('back');
+    form.show(p).then((res) => {
+        if (res.canceled || res.selection === undefined) return;
+        if (actions[res.selection] === 'offer') presentLantern(p);
+        else openJournal(p);
     }).catch(() => { /* busy */ });
 }
 
@@ -170,18 +281,20 @@ export function openJournal(p) {
     const step = STEPS[Math.min(st.step, STEPS.length - 1)];
     const finished = st.step >= COMPLETE;
     const body = finished
-        ? "§d§lThe story so far is complete.§r\n\n§7Chapters I and II are written. The Wayfarer's pages beyond the Second Seal are still blank - the road continues.\n\n§7Read your lore pages for everything you have learned."
-        : `§5${step.chapter}\n§dStep ${Math.min(st.step + 1, STEPS.length)}: ${step.title}\n\n§0${step.clue}${progressText(st)}`;
-    const form = new ActionFormData().title("§5Wayfarer's Journal").body(body);
+        ? "§d§lThe story so far is complete.§r\n\n§fChapters I and II are written. The Wayfarer's pages beyond the Second Seal are still blank - the road continues.\n\n§7Read your lore pages for everything you have learned."
+        : `§d${step.chapter}\n§bStep ${Math.min(st.step + 1, STEPS.length)}: ${step.title}\n\n§f${step.clue}${progressText(st)}`;
+    const form = new ActionFormData().title("§dWayfarer's Journal").body(body);
     const actions = [];
+    for (const k of Object.keys(ROADS)) if (roadOpen(st, k)) { form.button(`§b${ROADS[k].short}${(st[k] || 0) >= 3 ? ' ✓' : ''}`); actions.push(k); }
     if (st.step === 2) { form.button('§dPresent offerings'); actions.push('offer'); }
-    form.button('§0Lore pages'); actions.push('pages');
-    form.button('§8Close'); actions.push('close');
+    form.button('Lore pages'); actions.push('pages');
+    form.button('Close'); actions.push('close');
     form.show(p).then((res) => {
         if (res.canceled || res.selection === undefined) return;
         const a = actions[res.selection];
         if (a === 'offer') presentOfferings(p);
         else if (a === 'pages') showPages(p);
+        else if (a === 'c3' || a === 'c4') showRoad(p, a);
     }).catch(() => { /* busy */ });
 }
 
@@ -237,6 +350,11 @@ export function initStory() {
         const [cmd, arg] = ev.message.trim().split(/\s+/);
         if (cmd === 'reset') { save(p, fresh()); msg(p, '§d✿ Story progress reset.'); }
         else if (cmd === 'journal') give(p, JOURNAL, 1);
+        else if (cmd === 'road') {
+            const [, road, n] = ev.message.trim().split(/\s+/);
+            const st = getStory(p);
+            if (road === 'c3' || road === 'c4') { st[road] = Math.max(0, Math.min(3, parseInt(n, 10) || 0)); if (st.step < 5) st.step = 5; save(p, st); msg(p, `§d✿ ${road} set to ${st[road]}.`); }
+        }
         else if (cmd === 'set') {
             const st = getStory(p);
             st.step = Math.max(0, Math.min(COMPLETE, parseInt(arg, 10) || 0));
@@ -295,6 +413,8 @@ export function initStory() {
                 const fresh_ = unlock(p, st, id);
                 if (id === 'veiled_blossom' && st.step >= 3 && st.step < 5) { give(p, 'minecraft:experience_bottle', 8); advance(p, st, 5); }
                 else if (id === 'eclipse_sovereign' && st.step === 5) advance(p, st, 6);
+                else if (id === 'frost_cantor') { unlock(p, st, id); if ((st.c3 || 0) < 3) { st.c3 = 2; advanceRoad(p, st, 'c3', 3); } else save(p, st); }
+                else if (id === 'mire_lantern') { unlock(p, st, id); if ((st.c4 || 0) < 3) { st.c4 = 2; advanceRoad(p, st, 'c4', 3); } else save(p, st); }
                 else if (fresh_) save(p, st);
             }, 'bossPage');
         }

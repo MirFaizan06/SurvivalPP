@@ -11,6 +11,13 @@ MATS = {
                      prot=(4, 10, 7, 4), rarity='rare', fire=True, handle='minecraft:blaze_rod'),
     'eclipsite': dict(title='Eclipsite', tier='netherite', tools=8124, armor_factor=148, dmg=(32, 40, 24, 28, 4), speed=36, ench=30,
                       prot=(12, 32, 24, 12), rarity='epic', fire=True, handle='minecraft:end_rod'),
+    # v1.6 alloys: no ore, made from a vanilla metal plus the drops of the Frozen Choir / the Fen (see gen_seals.py)
+    'rimesteel': dict(title='Rimesteel', tier='iron', tools=1100, armor_factor=22, dmg=(7, 9, 5, 5, 1), speed=7, ench=14,
+                      prot=(2, 6, 5, 2), rarity='uncommon', fire=False, handle='minecraft:stick', ore=False),
+    'glacite': dict(title='Glacite', tier='diamond', tools=2600, armor_factor=42, dmg=(9, 11, 7, 7, 1), speed=11, ench=18,
+                    prot=(4, 9, 7, 4), rarity='rare', fire=False, handle='minecraft:stick', ore=False),
+    'wispsteel': dict(title='Wispsteel', tier='netherite', tools=4800, armor_factor=66, dmg=(13, 16, 9, 10, 1), speed=15, ench=22,
+                      prot=(5, 11, 8, 5), rarity='epic', fire=True, handle='minecraft:breeze_rod', ore=False),
 }
 TOOL_KINDS = [('sword', 0, 'sword', 'Sword'), ('pickaxe', 2, 'pickaxe', 'Pickaxe'), ('axe', 1, 'axe', 'Axe'), ('shovel', 3, 'shovel', 'Shovel'), ('hoe', 4, 'hoe', 'Hoe')]
 ARMOR_KINDS = [('helmet', 'head', 'helmet', 11, 'Helmet', 0), ('chestplate', 'chest', 'chestplate', 16, 'Chestplate', 1),
@@ -81,7 +88,7 @@ def build_equipment():
             lang_item(name, f'{d["title"]} {title}')
             attachable(name, mat, kind)
         # materials
-        for nm, title, extra in ((f'{mat}_ingot', f'{d["title"]} Ingot', {}), (f'raw_{mat}', f'Raw {d["title"]}', {})):
+        for nm, title, extra in ((f'{mat}_ingot', f'{d["title"]} Ingot', {}), (f'raw_{mat}', f'Raw {d["title"]}', {}))[:2 if d.get('ore', True) else 1]:
             comps = {'minecraft:icon': {'textures': {'default': itemtex(nm)}}, 'minecraft:max_stack_size': 64,
                      'minecraft:rarity': {'value': d['rarity']}}
             if d['fire']:
@@ -240,6 +247,8 @@ def build_recipes():
             if handle:
                 key['/'] = d['handle']
             shaped(f'{mat}_{kind}', pat, key, f'{NS}:{mat}_{kind}')
+        if not d.get('ore', True):
+            continue
         shaped(f'{mat}_block', ['###', '###', '###'], {'#': ing}, f'{NS}:{mat}_block')
         shapeless(f'{mat}_ingot_from_block', [f'{NS}:{mat}_block'], ing, 9)
         furnace(f'{mat}_ingot_from_raw', f'{NS}:raw_{mat}', ing, ['furnace'])

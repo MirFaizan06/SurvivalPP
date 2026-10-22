@@ -307,9 +307,210 @@ def sakura(m, piece):
             C(bn, (x - 2.3, 4.2, -2.4), (4.6, 0.8, 4.8), 'cream')
 
 
+
+# ============================================================================== RIMESTEEL  (iron replica: riveted nordic plate, fur, frost)
+RIMESTEEL = [hx(c) for c in ('#0e1622', '#26384c', '#4a6a88', '#86a8c4', '#c2dcee', '#f0f8ff', '#ffffff')]
+
+
+def rimesteel_materials():
+    fur = R('#22201c', '#3e382e', '#625848', '#8a7e68')
+    ice = R('#3c6a90', '#6aa0c8', '#a8d0ec', '#e2f4ff')
+    leather = R('#1a120c', '#32231a', '#523a28', '#76563c')
+
+    def plate(ctx):
+        r, g, b, a, gl = P.make(RIMESTEEL, scale=0.4, base=0.5, amp=0.3, bevel=0.22, seed=251, streak=(1, 0.35))(ctx)
+        n = fbm3(ctx.W, 252, 0.5, 3)
+        if n > 0.78:                                                       # frost creeping over the steel
+            c = ramp_at(ice, 0.55 + (n - 0.78) * 2)
+            return (c[0], c[1], c[2], 255, 0)
+        return (r, g, b, a, gl)
+    return {'plate': plate, 'steel': P.make(RIMESTEEL, scale=0.5, base=0.62, amp=0.3, bevel=0.3, seed=253),
+            'fur': P.make(fur, scale=0.4, base=0.5, amp=0.5, bevel=0.1, seed=254, streak=(1, 0.4)),
+            'leather': P.make(leather, scale=0.5, base=0.5, amp=0.4, bevel=0.15, seed=255, streak=(1, 0.6)),
+            'ice': P.make(ice, scale=0.4, base=0.7, amp=0.25, bevel=0.2, seed=256, glow_fn=lambda ctx, n, c: (c, 40)),
+            'rivet': P.make(R('#4a5260', '#8a96a8', '#c4ccd8', '#ffffff'), scale=0.5, base=0.7, amp=0.2, bevel=0.4, seed=257)}
+
+
+def rimesteel(m, piece):
+    base_volumes(m, piece, 'plate', infl_chest=0.45)
+    C = m.cube
+    if piece == 'helmet':
+        C('head', (-4.6, 29.4, -4.7), (9.2, 1.4, 9.4), 'steel')                                              # brow band
+        C('head', (-0.7, 24.6, -4.9), (1.4, 5.6, 0.9), 'steel')                                             # nasal guard
+        for s in (-1, 1):
+            C('head', (s * 4.5 - 0.4, 24.0, -3.0), (0.8, 5.4, 5.6), 'steel')                                 # cheek plates
+            C('head', (s * 3.8 - 0.9, 31.4, -1.0), (1.8, 3.6, 1.8), 'ice', rot=(0, 0, -26 * s), pivot=(s * 3.8, 31.4, 0), params={'seed': 11})   # ice horns
+            C('head', (s * 2.4 - 0.4, 30.2, -4.9), (0.8, 0.8, 0.4), 'rivet')
+        C('head', (-4.7, 23.6, 3.0), (9.4, 4.2, 1.8), 'fur', params={'seed': 12})                            # fur neck mantle
+        C('head', (-0.8, 31.2, -3.0), (1.6, 1.8, 6.0), 'fur', params={'seed': 13})                           # fur crest
+    elif piece == 'chestplate':
+        C('body', (-5.0, 22.2, -3.0), (10.0, 2.4, 6.0), 'fur', params={'seed': 20})                          # fur collar
+        C('body', (-4.2, 15.4, -2.6), (8.4, 1.4, 5.2), 'leather')                                            # belt
+        C('body', (-1.0, 15.2, -2.9), (2.0, 1.8, 0.6), 'steel')
+        for k in range(3):
+            C('body', (-3.4 + k * 3.4, 19.0, -2.55), (0.9, 0.9, 0.4), 'rivet')
+        C('body', (-0.5, 16.8, -2.6), (1.0, 5.6, 0.4), 'steel')                                              # central ridge
+        C('body', (-3.8, 12.2, 2.0), (7.6, 11.0, 1.0), 'plate', inflate=0.25, params={'seed': 21})
+        for s, bn in ((-1, 'rightArm'), (1, 'leftArm')):
+            x = s * 6.0
+            C(bn, (x - 2.8, 21.2, -2.8), (5.6, 1.6, 5.6), 'steel')                                           # pauldron
+            C(bn, (x - 2.6, 22.6, -2.6), (5.2, 1.0, 5.2), 'fur', params={'seed': 22})
+            C(bn, (x - 0.8, 23.4, -0.8), (1.6, 3.2, 1.6), 'ice', rot=(0, 0, -18 * s), pivot=(x, 23.4, 0), params={'seed': 23})
+            C(bn, (x - 2.5, 12.2, -2.5), (5.0, 2.0, 5.0), 'fur', params={'seed': 24})                        # fur cuff
+    elif piece == 'leggings':
+        C('body', (-4.3, 15.6, -2.5), (8.6, 1.4, 5.0), 'leather')
+        for s, bn in ((-1, 'rightLeg'), (1, 'leftLeg')):
+            x = s * 1.9
+            C(bn, (x - 1.9, 6.0, -2.9), (3.8, 6.4, 0.8), 'plate', rot=(-6, 0, 0), pivot=(x, 13, -2.4), params={'seed': 30})   # tasset
+            C(bn, (x - 1.1, 5.2, -3.3), (2.2, 2.2, 1.2), 'steel')                                            # knee
+            C(bn, (x - 2.2, 4.4, -2.2), (4.4, 1.4, 4.4), 'fur', params={'seed': 31})
+    else:
+        for s, bn in ((-1, 'rightLeg'), (1, 'leftLeg')):
+            x = s * 1.9
+            C(bn, (x - 2.5, 0.0, -2.5), (5.0, 1.0, 5.4), 'steel')
+            C(bn, (x - 2.4, 3.4, -2.4), (4.8, 1.8, 4.8), 'fur', params={'seed': 40})                         # fur cuffs
+            C(bn, (x - 1.0, 0.6, -3.4), (2.0, 1.6, 1.2), 'plate')
+            C(bn, (x + s * 2.5 - 0.3, 1.0, -0.5), (0.6, 3.0, 1.2), 'ice', rot=(0, 0, 14 * s), pivot=(x + s * 2.5, 1, 0), params={'seed': 41})
+
+
+# ============================================================================== GLACITE  (diamond replica: cut ice crystal with snowflake emblem)
+GLACITE = [hx(c) for c in ('#06182e', '#0f3a6a', '#1c70b0', '#40b4e8', '#8ee0ff', '#d4f6ff', '#ffffff')]
+
+
+def glacite_materials():
+    silver = R('#3a4a5c', '#6a809a', '#a0b6cc', '#dae6f2', '#ffffff')
+    deep = R('#06101e', '#0c2040', '#143868', '#1e5090')
+
+    def crystal(ctx):
+        r, g, b, a, gl = P.make(GLACITE, scale=0.32, base=0.5, amp=0.3, bevel=0.24, seed=261)(ctx)
+        n = fbm3(ctx.W, 262, 0.4, 2)
+        if abs(n - 0.5) < 0.03:
+            c = ramp_at(GLACITE, 0.96)
+            return (c[0], c[1], c[2], 255, 30)
+        return (r, g, b, a, gl)
+
+    def flake(ctx):
+        c = ramp_at(GLACITE, 0.97)
+        return (c[0], c[1], c[2], 255, 230)
+    return {'plate': crystal, 'silver': P.make(silver, scale=0.5, base=0.6, amp=0.3, bevel=0.3, seed=263), 'deep': P.make(deep, scale=0.5, base=0.5, amp=0.4, bevel=0.15, seed=264),
+            'shard': P.make(GLACITE, scale=0.4, base=0.72, amp=0.2, bevel=0.22, seed=265, glow_fn=lambda ctx, n, c: (c, 80)), 'flake': flake}
+
+
+def glacite(m, piece):
+    base_volumes(m, piece, 'plate', infl_chest=0.6)
+    C = m.cube
+    if piece == 'helmet':
+        for k, (x, h, rz, rx) in enumerate(((0, 8, 0, -4), (-2.0, 6.4, 16, -4), (2.0, 6.4, -16, -4), (-3.6, 4.6, 34, -6), (3.6, 4.6, -34, -6))):
+            C('head', (x - 0.9, 32.0, -1.4), (1.8, h, 1.8), 'shard', rot=(rx, 0, rz), pivot=(x, 32, -0.5), params={'seed': 10 + k})
+        for s in (-1, 1):
+            C('head', (s * 4.6 - 0.4, 24.0, -3.4), (0.8, 5.0, 6.0), 'silver')
+            C('head', (s * 5.2 - 0.6, 28.0, 1.0), (1.2, 5.0, 1.2), 'shard', rot=(10, 0, -30 * s), pivot=(s * 5.2, 28, 1), params={'seed': 20})
+        C('head', (-4.7, 27.4, -4.8), (9.4, 2.0, 1.0), 'silver')                                             # visor rim
+        C('head', (-3.8, 27.8, -5.0), (7.6, 1.0, 0.6), 'deep')
+        C('head', (-0.8, 29.6, -5.1), (1.6, 1.6, 0.6), 'flake')
+    elif piece == 'chestplate':
+        C('body', (-4.3, 22.4, -2.6), (8.6, 1.8, 5.2), 'silver')
+        for k, (dx, dy) in enumerate(((0, 0), (-2.2, -2.4), (2.2, -2.4), (0, -4.6))):                         # snowflake emblem
+            C('body', (dx - 0.8, 17.6 + dy, -3.2), (1.6, 1.6, 0.8), 'flake')
+        C('body', (-0.5, 12.8, -2.9), (1.0, 4.0, 0.5), 'flake')
+        C('body', (-3.8, 12.2, 2.0), (7.6, 11.0, 1.0), 'plate', inflate=0.3, params={'seed': 40})
+        for k in range(3):
+            C('body', (-3.0 + k * 2.6, 14.0, 3.0), (1.4, 8.0 - k * 1.0, 1.4), 'shard', rot=(10, 0, 0), pivot=(-2.3 + k * 2.6, 22, 3), params={'seed': 41 + k})
+        for s, bn in ((-1, 'rightArm'), (1, 'leftArm')):
+            x = s * 6.0
+            for k, (dx, h, rz) in enumerate(((0, 7.0, 10 * s), (-2.2 * s, 5.2, 34 * s), (2.2 * s, 5.0, -14 * s))):
+                C(bn, (x + dx - 1.0, 22.6, -1.0), (2.0, h, 2.0), 'shard', rot=(0, 0, -rz), pivot=(x + dx, 22.6, 0), params={'seed': 50 + k})
+            C(bn, (x - 2.8, 21.2, -2.8), (5.6, 1.2, 5.6), 'silver')
+            C(bn, (x - 2.5, 12.2, -2.5), (5.0, 1.2, 5.0), 'silver')
+    elif piece == 'leggings':
+        C('body', (-4.3, 15.6, -2.5), (8.6, 1.4, 5.0), 'silver')
+        C('body', (-1.0, 15.7, -3.1), (2.0, 1.4, 0.7), 'flake')
+        for s, bn in ((-1, 'rightLeg'), (1, 'leftLeg')):
+            x = s * 1.9
+            C(bn, (x - 1.2, 5.4, -3.4), (2.4, 3.6, 1.6), 'shard', rot=(26, 0, 0), pivot=(x, 7, -2.4), params={'seed': 60})
+            C(bn, (x - 1.9, 7.0, -2.9), (3.8, 5.0, 0.8), 'plate', rot=(-8, 0, 0), pivot=(x, 13, -2.4), params={'seed': 61})
+            C(bn, (x - 2.4, 11.0, -2.4), (4.8, 1.0, 4.8), 'silver')
+    else:
+        for s, bn in ((-1, 'rightLeg'), (1, 'leftLeg')):
+            x = s * 1.9
+            C(bn, (x - 2.5, 0.4, -2.5), (5.0, 1.0, 5.0), 'silver')
+            for k, (dz, rx, h) in enumerate(((1.4, -16, 4.8), (2.8, -30, 3.8))):
+                C(bn, (x + s * 2.6 - 0.4, 1.0, dz - 0.8), (0.8, h, 1.6), 'shard', rot=(rx, 0, 16 * s), pivot=(x + s * 2.6, 1.5, dz), params={'seed': 70 + k})
+            C(bn, (x - 1.2, 0.4, -3.4), (2.4, 2.0, 1.6), 'plate', rot=(-10, 0, 0), pivot=(x, 1, -2.5), params={'seed': 72})
+
+
+# ============================================================================== WISPSTEEL  (netherite replica: dark fen-iron, lantern light, antler crest)
+WISPSTEEL = [hx(c) for c in ('#06140e', '#0f3a26', '#1c7a4a', '#3cc070', '#a8f08a', '#ffe27a', '#fffbd0')]
+
+
+def wispsteel_materials():
+    iron = R('#0a0e0c', '#161e1a', '#26322c', '#3c4a42', '#586a60')
+    gold = R('#6a4a0a', '#a8781a', '#d9a830', '#f7d466', '#fff0a8')
+    moss = R('#0c1a0e', '#18331a', '#2a5a2a', '#468a38')
+    bark = R('#140c06', '#2c1c0e', '#503418', '#7a5430')
+
+    def dark_plate(ctx):
+        r, g, b, a, gl = P.make(iron, scale=0.35, base=0.5, amp=0.4, bevel=0.22, seed=271)(ctx)
+        n = fbm3(ctx.W, 272, 0.3, 3)
+        if abs(n - 0.5) < 0.026:                                           # green foxfire in the seams
+            c = ramp_at(WISPSTEEL, 0.62 + 0.3 * fbm3(ctx.W, 273, 0.7, 2))
+            return (c[0], c[1], c[2], 255, 0)
+        if n > 0.8:
+            c = ramp_at(moss, 0.55)
+            return (c[0], c[1], c[2], 255, 0)
+        return (r, g, b, a, gl)
+    return {'plate': dark_plate, 'gold': P.make(gold, scale=0.5, base=0.55, amp=0.4, bevel=0.3, seed=274),
+            'moss': P.make(moss, scale=0.4, base=0.5, amp=0.5, bevel=0.1, seed=275, streak=(1, 0.5)), 'bark': P.make(bark, scale=0.4, base=0.5, amp=0.5, bevel=0.2, seed=276, streak=(1, 0.6)),
+            'lamp': solid_glow(WISPSTEEL, 0.7, 1.0, 255, 277, rim=False), 'wisp': solid_glow(WISPSTEEL, 0.4, 0.8, 220, 278, rim=False)}
+
+
+def wispsteel(m, piece):
+    base_volumes(m, piece, 'plate')
+    C = m.cube
+    if piece == 'helmet':
+        for s in (-1, 1):
+            for k, (dy, h, rz) in enumerate(((0, 7.0, 16), (4.0, 5.0, 46))):                                   # antler crest
+                C('head', (s * 3.4 - 0.6, 31.6 + dy, -0.6), (1.2, h, 1.2), 'bark', rot=(0, 0, -rz * s), pivot=(s * 3.4, 31.6 + dy, 0), params={'seed': 10 + k})
+            C('head', (s * 4.55 - 0.4, 24.0, -3.2), (0.8, 5.0, 5.6), 'plate')
+            C('head', (s * 2.1 - 1.0, 27.6, -4.9), (2.0, 0.9, 0.5), 'lamp')                                    # glowing eye slits
+        C('head', (-4.6, 29.2, -4.8), (9.2, 1.2, 1.0), 'gold')
+        C('head', (-1.0, 24.4, -4.9), (2.0, 2.4, 0.9), 'plate')
+        C('head', (-1.0, 33.4, -4.0), (2.0, 2.0, 2.0), 'wisp', params={'rim': False})                           # a wisp above the brow
+        C('head', (-4.7, 29.8, 2.6), (9.4, 4.0, 1.8), 'moss', params={'seed': 12})                              # moss hood-back
+    elif piece == 'chestplate':
+        C('body', (-4.3, 22.5, -2.6), (8.6, 1.6, 5.2), 'gold')
+        C('body', (-1.6, 15.4, -3.1), (3.2, 5.0, 1.2), 'lamp')                                                  # lantern in the chest
+        for dx in (-1.7, 1.1):
+            C('body', (dx, 15.2, -3.4), (0.6, 5.4, 0.6), 'gold')
+        C('body', (-2.0, 14.6, -3.3), (4.0, 0.8, 0.8), 'gold'); C('body', (-2.0, 20.2, -3.3), (4.0, 0.8, 0.8), 'gold')
+        C('body', (-3.8, 12.2, 2.0), (7.6, 11.0, 1.0), 'plate', inflate=0.3, params={'seed': 41})
+        C('body', (-4.6, 4.0, 2.8), (9.2, 17.0, 0.8), 'moss', rot=(-4, 0, 0), pivot=(0, 22, 2.8), params={'seed': 42})   # moss cloak
+        for s, bn in ((-1, 'rightArm'), (1, 'leftArm')):
+            x = s * 6.0
+            C(bn, (x - 2.8, 21.4, -2.8), (5.6, 1.4, 5.6), 'plate')
+            C(bn, (x - 1.0, 22.8, -1.0), (2.0, 2.0, 2.0), 'wisp', params={'rim': False})
+            C(bn, (x - 2.5, 12.2, -2.5), (5.0, 1.2, 5.0), 'gold')
+    elif piece == 'leggings':
+        C('body', (-4.3, 15.6, -2.5), (8.6, 1.4, 5.0), 'gold')
+        C('body', (-3.5, 12.0, -3.4), (1.0, 4.0, 0.8), 'gold'); C('body', (2.5, 12.0, -3.4), (1.0, 4.0, 0.8), 'gold')       # hanging chains
+        C('body', (-4.0, 9.6, -3.9), (2.0, 3.0, 2.0), 'lamp'); C('body', (2.0, 9.6, -3.9), (2.0, 3.0, 2.0), 'lamp')         # belt lanterns
+        for s, bn in ((-1, 'rightLeg'), (1, 'leftLeg')):
+            x = s * 1.9
+            C(bn, (x - 1.9, 6.0, -2.9), (3.8, 6.0, 0.8), 'plate', rot=(-8, 0, 0), pivot=(x, 13, -2.4), params={'seed': 61})
+            C(bn, (x - 0.8, 5.4, -3.4), (1.6, 2.4, 1.2), 'gold')
+    else:
+        for s, bn in ((-1, 'rightLeg'), (1, 'leftLeg')):
+            x = s * 1.9
+            C(bn, (x - 2.5, 0.0, -2.5), (5.0, 1.0, 5.4), 'gold')
+            C(bn, (x - 2.4, 3.2, -2.4), (4.8, 2.0, 4.8), 'moss', params={'seed': 71})
+            C(bn, (x - 1.0, 0.8, -3.4), (2.0, 1.6, 1.2), 'plate')
+            C(bn, (x + s * 2.6 - 0.8, 1.6, -0.8), (1.6, 1.6, 1.6), 'wisp', params={'rim': False})
+
+
 DESIGNS = {
     'azurite': (azurite, azurite_materials), 'pyrelite': (pyrelite, pyrelite_materials),
     'eclipsite': (eclipsite, eclipsite_materials), 'sakura': (sakura, sakura_materials),
+    'rimesteel': (rimesteel, rimesteel_materials), 'glacite': (glacite, glacite_materials), 'wispsteel': (wispsteel, wispsteel_materials),
 }
 CENTER = {'helmet': (0, 30, 0), 'chestplate': (0, 18, 0), 'leggings': (0, 9, 0), 'boots': (0, 3, 0)}
 SCALE = {'helmet': 17, 'chestplate': 11, 'leggings': 12, 'boots': 20}

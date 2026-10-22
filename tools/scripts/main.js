@@ -14,6 +14,13 @@ import { initMobs2 } from './mobs2.js';
 import { initStory } from './story.js';
 import { initBlossom } from './blossom.js';
 import { initDiag } from './diag.js';
+import { initBossBar } from './bossbar.js';
+import { initCinematic } from './cinematic.js';
+import { initCantor } from './cantor.js';
+import { initMorwen } from './morwen.js';
+import { initPuzzle } from './puzzle.js';
+import { initMobs3 } from './mobs3.js';
+import { initGear } from './gear.js';
 
 // Custom block components must be registered during the startup event.
 system.beforeEvents.startup.subscribe((ev) => {
@@ -30,7 +37,7 @@ function initAll() {
     /** @type {[string, () => void][]} */
     const modules = [
         ['blocks', initBlockEvents], ['mining', initMining], ['tools', initTools], ['stasis', initStasis],
-        ['boss', initBoss], ['combat', initCombat], ['armor', initArmor], ['sanctum', initSanctum], ['deaths', initDeaths], ['crops', initCrops], ['foods', initFoodEffects], ['bosses2', initBosses2], ['mobs2', initMobs2], ['story', initStory], ['blossom', initBlossom], ['diag', initDiag],
+        ['boss', initBoss], ['combat', initCombat], ['armor', initArmor], ['sanctum', initSanctum], ['deaths', initDeaths], ['crops', initCrops], ['foods', initFoodEffects], ['bosses2', initBosses2], ['mobs2', initMobs2], ['story', initStory], ['blossom', initBlossom], ['diag', initDiag], ['bossbar', initBossBar], ['cinematic', initCinematic], ['cantor', initCantor], ['morwen', initMorwen], ['puzzle', initPuzzle], ['mobs3', initMobs3], ['gear', initGear],
         ['rod', () => world.afterEvents.itemUse.subscribe((ev) => {
             if (ev.itemStack && ev.itemStack.typeId === 'minecraft:fishing_rod') onRodUse(ev.source, ev.itemStack);
         })],

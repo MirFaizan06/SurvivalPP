@@ -88,7 +88,7 @@ def base(family, hp, speed, box, xp, name, extra=None, spawn='monster'):
         'minecraft:follow_range': {'value': 32, 'max': 32},
         'minecraft:experience_reward': {'on_death': f'query.last_hit_by_player ? {xp} : 0'},
         'minecraft:loot': {'table': f'loot_tables/entities/{name}.json'},
-        'minecraft:behavior.hurt_by_target': {'priority': 1, 'alert_same_type': True},
+        'minecraft:behavior.hurt_by_target': {'priority': 1},
         'minecraft:behavior.random_stroll': {'priority': 7, 'speed_multiplier': 0.9},
     })
     comps.update(target_players(2, 28, must_see=False))

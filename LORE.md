@@ -1,6 +1,6 @@
 # The Chronicles of the Seven Seals - Lore
 
-> **Spoiler warning.** This page tells the whole story that exists so far (Chapters I and II) and the history behind it. If you want to discover it through the **Wayfarer's Journal** in game, stop reading here.
+> **Spoiler warning.** This page tells the whole story that exists so far (Chapters I to IV) and the history behind it. If you want to discover it through the **Wayfarer's Journal** in game, stop reading here.
 
 The add-on is a story-driven adventure. The journal you receive when you first join gives you one clue at a time; each clue sends you to a real place, a real fight and a real reward. This document is the long version.
 
@@ -40,7 +40,9 @@ A Seal is dangerous to keep. Break one carelessly and the Shard **bleeds into it
 |---|---|---|---|
 | I | **Hanae**, the Veiled Blossom | The Cherry Grove | Chapter I - **open** |
 | II | **The Eclipse Sovereign** | The edge of the End | Chapter II - **open** |
-| III-VII | *the ink is smeared* | ? | Unwritten |
+| III | **Ysolde**, the Frost Cantor | The Frozen Cathedral, high in the snowy peaks | Road III - **open** |
+| IV | **Morwen**, the Mire Lantern | The Drowned Chapel, deep in the fen | Road IV - **open** |
+| V-VII | *the ink is smeared* | ? | Unwritten |
 
 ## 4. The Hollow Court and the Hollow Lords
 
@@ -124,7 +126,94 @@ His **Voidweavers** are his unspoken doubts, given robes and spells. The **Eclip
 
 Defeating him completes Chapter II. How the Sovereign came to know the Wayfarer's name - and why the Wayfarer's journal gets thinner after him - is where the story is waiting.
 
-## 8. Everything else in the world, and where it fits
+## 8. Chapter III - The Silent Choir
+
+> *"Hanae's plea was not the only voice in the grove. Under it, something hummed a lullaby I knew as a child."*
+
+After the First Seal the Wayfarer's journal **forks**. She numbered the roads in the order she heard them calling: the Second (the End) because the Core hummed, and the Third and Fourth in the Overworld, because they were closest to home. A player can walk the Third before the Second; the Fourth only opens once the Third is done.
+
+**Ysolde** was the **cantor** of the high snow. When the Shards scattered, the Third Shard fell into the mountains, and Ysolde did the only thing she knew how to do: she **sang to it**. The Shard is a hungry thing, but it is also an *infant* thing, and it sleeps while it is sung to. So she has been singing for longer than anyone remembers. The cold followed her song, and froze the world around her, so that it could listen.
+
+The Choir's rule is simple and terrible: **a cantor sings so the Shard may sleep. The day the song ends, the Seal opens.** So the cantor may not rest, may not stop, and may not be thanked.
+
+### The road to her
+
+| Step | Clue | What it really means |
+|---|---|---|
+| 1. Echoes in the Snow | Read the four **Verse Stones** (Dawn, Zenith, Dusk, Midnight) that stand in snowy lands. | The song is written in stone, one verse at a time. The **Cantor's Tuning Fork** the journal gives you hums towards them. |
+| 2. The Sun's Road | Strike the four **chimes** of the **Frozen Cathedral** in the order of the sun's road. | The verses were never a song, they were a lock. Dawn, Zenith, Dusk, Midnight - but the chimes hang in a different order in space, so you have to *remember*. A wrong note is answered with frost. |
+| 3. The Conductor | Strike the fork on the **Cantor's Lectern**. | The note does not fade. She comes. |
+
+The cathedral is also home to a hidden vault (a cracked tile in the north-west corner), two spawners of the dead Choir, and a trap under the carpet.
+
+### The fight
+
+She conducts in **3/4 time**; every attack is announced by the beat.
+
+1. **Overture.** The **Aria** (frozen notes), **Resonance Rings** (they only hurt those standing on the ground - jump) and the dead Choir answering.
+2. **Crescendo.** The **Icicle Chorus** and the **Whiteout**: a blizzard that shoves you until you kneel.
+3. **Requiem.** A double spiral of notes and the **Final Verse**, a three-second channel. Break it with enough damage and she is stunned; ignore it and a wave rolls out.
+
+> *"Hush, wayfarer... you walk in the middle of a song."*
+> *"She sang the last verse with me, once. The Wayfarer. She had a beautiful voice."*
+> *"If the music stops, the Seal opens. If it never stops, I never rest."*
+
+When she falls, she is quiet for the first time:
+
+> *"...Do you hear that? It is silent. I had forgotten silence. Take my Seal, wayfarer - and sing the last verse for me, when you find her."*
+
+**Rewards:** **Frostsong** (a conductor's sword; right-click for **Resonance**), the **Seal of the Choir**, Glacial Shards and Rime Shards, diamonds, an enchanted golden apple.
+
+### The Eighth Voice
+
+A tablet in the snow, in the Wayfarer's own hand, says that **eight** stood at the Cracking and **seven** took Shards. *"I took only the page."* The journal's ink is **Azurite dust** - the First Dawn, ground fine. Whoever the Wayfarer was, she wrote with the world's own morning. The Eclipse hungers for the First Dawn. The Wayfarer is *walking towards the Seals with it in her hands*. That is the question the rest of the story answers.
+
+## 9. Chapter IV - The Lantern in the Mire
+
+> *"Ysolde's last verse was a map, and it ended in a swamp. At night the water breathes little lights."*
+
+**Morwen** was the **lamplighter** of the fen. She hung a lantern in every window so that no traveller would ever wander into the dark. When she took the Fourth Shard, the Shard learned her trick: the lights she hung still burn, but they now lead the other way. **Mire Wisps** are the travellers who followed the wrong light. A Seal that is a lantern which can never go out is a hard thing to carry.
+
+### The road to her
+
+| Step | Clue | What it really means |
+|---|---|---|
+| 1. Lights in the Fen | Present **6 Wisp Essence** and a Lantern in the journal. | The essence is warm and remembers the way home. It becomes the **Keeper's Lantern**. |
+| 2. The Drowned Chapel | Read the **Fen Notes**, then light the three **sconces** in the right order. | Half the riddle is in a hut in the fen; the other half is in a **flooded room** you reach by swimming down the chapel's pool. *The eye must watch before the star can guide; the moon leads home, and comes last.* A wrong order puts the fen's own lights out and wakes wisps. |
+| 3. The Lantern Calls | At night, use the Keeper's Lantern on the **Marsh Altar**. | She only answers to a lit lantern, under a night sky. |
+
+### The fight
+
+The fen **swallows light**: every few seconds everyone who is not carrying a torch or lantern goes dark. The Keeper's Lantern lights everyone within ten blocks.
+
+1. **Misdirection.** Foxfire bolts, wisp swarms, a lantern swing.
+2. **Lost.** **Lantern Mirages**: she vanishes among decoys, and only the real one flickers with motes. A mirage that you strike takes your sight.
+3. **Hollow Light.** **Lantern Rain** and a fog you cannot see through.
+
+> *"Lost, are you? They always are. Follow the light - it never lies."*
+> *"The Wayfarer carried a light like yours. She left half of it here, with me."*
+> *"Put out my lantern, wayfarer. Please. Before it learns your name."*
+> *"I only wanted someone to come home."*
+
+When she falls:
+
+> *"...It is quiet. The light is gone, and I am not afraid. Take my Seal, wayfarer. She is still walking ahead of you - I could see her lamp."*
+
+**Rewards:** the **Mirelight Scythe** (sweeps and sips; right-click for the **Beacon of the Lost**), the **Seal of the Lantern**, Wisp Essence, diamonds, netherite scrap, an enchanted golden apple.
+
+## 10. The dead of the high snow and the fen
+
+| Creature | Place in the story |
+|---|---|
+| **Rimewalker** | Pilgrims who followed Ysolde's song into the snow and never turned back. The cold keeps them walking. |
+| **Hoarbone** | The Choir's missing voices, taught to sing without breath. They carry frozen bows. |
+| **Mirewalker** | Travellers the fen kept. Their light sometimes rises again. |
+| **Lanternbone** | Morwen's lamp-bearers, still walking the path with their hooked poles. |
+| **Mire Wisp** | The light itself. |
+
+Their drops make better metal: **Rime Shards** forge **Rimesteel** (iron that remembers winter), **Glacial Shards** make **Glacite**, and **Wisp Essence** makes **Wispsteel**. A tablet in the fen says it best: *"Alloys of rime keep a blade sharp in the cold. Alloys of wisp-light keep a blade honest in the dark. Neither will keep you alive. Carry both."*
+
+## 11. Everything else in the world, and where it fits
 
 | Thing | Place in the story |
 |---|---|
@@ -135,21 +224,25 @@ Defeating him completes Chapter II. How the Sovereign came to know the Wayfarer'
 | **Stasis Chambers** | A Wayfarer's trick: a pearl waiting at a place she meant to return to. |
 | **Sanctum Wardens** | Keeper-craft: a smaller, kinder version of a Seal. |
 | **Adventure structures** | Ruins from the Dawnlands and the people who tried (and failed) to hold the Shards. |
+| **Verse Cairns, Frozen Cathedral, Fen Hut, Drowned Chapel, Wayfarer's Cairn** | The places of Roads III and IV; the cairns carry the Wayfarer's notes. |
+| **Rimesteel, Glacite, Wispsteel** | Alloys of the Keepers' lands. |
 | **Deer, yaks, boars, pheasants** | The world still tries to live. |
 
-## 9. What happens next
+## 12. What happens next
 
 The story is deliberately unfinished. The next Seals are not yet written. Things the journal already hints at, which later updates will explore:
 
-- Why the Wayfarer's notes end after the Second Seal.
+- Why the Wayfarer's notes end after the Second Seal (she was still walking after the Fourth: both Keepers saw her lamp).
+- What the Eighth Voice is, and why the Eclipse hungers for the page and not for the Shards.
 - What the Seven Shards become if they are ever reunited.
 - Whether a Keeper can be freed from a Seal without a death.
 - Who the Eclipse was, before it was hungry.
 
-## 10. For writers (how the lore is built so it can grow)
+## 13. For writers (how the lore is built so it can grow)
 
 - **Seals and Keepers are the main line.** Each Seal gets a Keeper, a place, a fight with a *reason* (not just an obstacle), and a final plea or secret.
 - **Side bosses are the Hollow Lords**: casualties of the Eclipse that give loot, relics and lore, never the main clue.
 - **The journal is the only narrator.** Every clue is a Wayfarer quote followed by a plain instruction in a second colour.
-- **Each chapter is data.** Adding a chapter means adding steps and lore pages in `tools/scripts/story.js` (see `CLAUDE.md`).
+- **Each chapter is data.** Adding a chapter means adding steps and lore pages in `tools/scripts/story.js` (see `CLAUDE.md`). Overworld roads live in `ROADS` and are walked in parallel; the main line is `STEPS`.
+- **Every road pairs an exploration puzzle with a fight that tests the same idea** (the Cantor's rhythm, Morwen's light).
 - **Keepers are tragedies, not villains.** The Eclipse is the villain; everyone else is paying for it.

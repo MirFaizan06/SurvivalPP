@@ -1,23 +1,29 @@
 <h1>Systems &amp; Crafting</h1>
 <p class="lead" style="color:var(--muted)">Pearl stasis chambers, the Sanctum Warden and a crafting cheat-sheet.</p>
-<div class="toc"><a href="#journal">Wayfarer's Journal</a><a href="#stasis">Stasis chambers</a><a href="#sanctum">Sanctum Warden</a><a href="#crafting">Crafting reference</a><a href="#faq">FAQ</a></div>
+<div class="toc"><a href="#journal">Wayfarer's Journal</a><a href="#bossbars">Boss bars &amp; intros</a><a href="#stasis">Stasis chambers</a><a href="#sanctum">Sanctum Warden</a><a href="#crafting">Crafting reference</a><a href="#faq">FAQ</a></div>
 
 <h2 id="journal">Wayfarer's Journal &amp; boss bars <span class="tag new">new</span></h2>
 <p>Every player receives the <strong>Wayfarer's Journal</strong> the first time they join. <strong>Use it</strong> to read your current clue, see progress (kills, offerings), present offerings and browse the <strong>lore pages</strong> you have unlocked. Progress is saved per player, so lost journals can be re-crafted (Book + Ink Sac + Pink Petals) without losing anything.</p>
 <ul>
 <li>Pages unlock with progress and by defeating great foes (each Hollow Lord, Hanae and the Eclipse Sovereign has a page).</li>
-<li>Chapter I leads to <strong>The Veiled Blossom</strong>; Chapter II sends you to the <strong>Eclipse Sovereign</strong>. The rest of the story is still to be written.</li>
+<li>Chapter I leads to <strong>The Veiled Blossom</strong>; Chapter II sends you to the <strong>Eclipse Sovereign</strong>.</li>
+<li><strong>After the First Seal the story forks into roads.</strong> <em>Road III - The Silent Choir</em> (Verse Stones &rarr; Frozen Cathedral chimes &rarr; the Frost Cantor) opens at once; <em>Road IV - The Lantern in the Mire</em> (Wisp Essence &rarr; Drowned Chapel sconces &rarr; the Mire Lantern) opens when Road III is done. Each road has a button in the journal with its current clue, progress and a recommended kit. The Cantor's Tuning Fork appears in your pack when Road III opens.</li>
 </ul>
+<h2 id="bossbars">Boss bars &amp; introductions <span class="tag new">new</span></h2>
+<img class="shot" src="img/bossbars_glyph.png" alt="Themed boss bars for all seven bosses">
+<p>Each of the seven great bosses has a themed health bar. In v1.6 the bar is drawn from <strong>custom font glyphs on the action bar</strong>, which works on every client; the old JSON-UI overlay is still shipped on top of the vanilla bar in case your client honours it. <code>/scriptevent ecr:bossbar off</code> hides the action-bar bar.</p>
+<p>The four <strong>main bosses</strong> (Veiled Blossom, Eclipse Sovereign, Frost Cantor, Mire Lantern) arrive in a <strong>camera-scripted introduction</strong>: the HUD hides, the camera orbits and closes in, the boss's name appears and the fight begins. Players nearby are protected and locked for the scene (about 10 seconds) and always released by a failsafe. <code>/scriptevent ecr:cinematic off</code> turns the scenes off; <code>/scriptevent ecr:cinematic release</code> frees you if anything ever goes wrong.</p>
 <img class="shot" src="img/bossbars.png" alt="Boss health bars for the Eclipse Sovereign, Hollow King, Mosswood Colossus, Silkqueen and the Veiled Blossom">
 <p>Each of our five bosses has its own <strong>themed health bar</strong> (corona, crown, vines, web, blossoms). Vanilla bosses keep the vanilla bar. If a bar ever fails to render, the vanilla bar still shows underneath.</p>
 
 <h3>Commands that help</h3>
 <ul>
 <li><code>/scriptevent ecr:diag</code> - checks that every creature loaded and tells you if one did not.</li>
-<li><code>/scriptevent ecr:story set 3</code> - jump your journal to a step (0-6); <code>reset</code> starts over; <code>journal</code> gives you a new journal.</li>
+<li><code>/scriptevent ecr:story set 3</code> - jump your journal to a step (0-6); <code>road c3 2</code> / <code>road c4 1</code> sets a road; <code>reset</code> starts over; <code>journal</code> gives you a new journal.</li>
+<li><code>/scriptevent ecr:cinematic test frost_cantor</code> - replays a boss introduction for a boss within 60 blocks.</li>
 <li><code>/summon ecr:gravewalker</code>, <code>ecr:cave_weaver</code>, <code>ecr:veiled_blossom</code>... - every creature has a spawn egg in the creative inventory too.</li>
 </ul>
-<p>Boss music: the Veiled Blossom and the Eclipse Sovereign each have their own theme (CC0 tracks by Yoiyami and Juhani Junkala via OpenGameArt).</p>
+<p>Boss music: each main boss has its own theme (CC0 tracks by Yoiyami, Juhani Junkala and isaiah658 via OpenGameArt).</p>
 
 <h2 id="stasis">Stasis chambers</h2>
 <p>Bedrock pearls despawn when you leave the dimension, and add-ons cannot change engine chunk loading - so this pack re-creates Java stasis with blocks and script using <strong>vanilla</strong> pearls and fishing rods.</p>
@@ -61,6 +67,9 @@ R T R      O = Obsidian             R = Pyrelite Ingot</pre>
 <tr><td>Eclipse Sigil</td><td>4 Void Essence + 4 Pyrelite Ingot + Nether Star</td></tr>
 <tr><td>Sanctum Warden</td><td>See above</td></tr>
 <tr><td>Stasis Chamber</td><td>4 Iron Ingot + 4 Glass + Ender Eye</td></tr>
+<tr><td>Rimesteel / Glacite / Wispsteel Ingot</td><td>Iron / Diamond / Gold + Netherite Scrap + shards or essence (see <a href="world.html#alloys">Alloy gear</a>)</td></tr>
+<tr><td>Cantor's Tuning Fork</td><td>2 Iron Ingot + Amethyst Shard + Stick</td></tr>
+<tr><td>Keeper's Lantern (spare)</td><td>Lantern + 4 Wisp Essence</td></tr>
 <tr><td>Boar Tusk</td><td>&rarr; 3 Bone Meal</td></tr>
 <tr><td>Silk Gland</td><td>&rarr; 4 String</td></tr>
 <tr><td>Hollow Bone / Grave Dust / Spore Cluster</td><td>&rarr; Bone Meal (4 / 1 / 2)</td></tr>

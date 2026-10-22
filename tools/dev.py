@@ -50,6 +50,7 @@ def lint():
     run([sys.executable, str(GEN / 'lint2.py')], cwd=GEN)
     run([sys.executable, str(GEN / 'lint3.py')], cwd=GEN)
     run([sys.executable, str(GEN / 'lint4.py')], cwd=GEN)
+    run([sys.executable, str(GEN / 'lint5.py')], cwd=GEN)
 
 
 def test():

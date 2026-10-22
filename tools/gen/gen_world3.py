@@ -1,6 +1,6 @@
 """v1.3 adventure structures: world-gen rules (rarity, biomes, placement) and tiered chest loot for the ten new structures."""
 from common import *
-import structures3, structures4, structures5
+import structures3, structures4, structures5, structures6
 from gen_world import feature, rule, tag, anyof, dist_surface, dist_underground
 from gen_world2 import item
 
@@ -56,6 +56,11 @@ T_SHRINE = [item('minecraft:pink_petals', 20, 8, 24), item('minecraft:cherry_sap
             item('minecraft:golden_apple', 5, 1, 1), book(8), item('minecraft:experience_bottle', 10, 2, 5), item('minecraft:cherry_log', 10, 4, 12), item('minecraft:lantern', 8, 1, 3),
             item(f'{N}:strawberry_seeds', 8, 1, 3), item('minecraft:honeycomb', 6, 1, 3), item('minecraft:amethyst_shard', 8, 2, 6)]
 
+SHARDS = [item(f'{N}:glacial_shard', 12, 1, 4), item(f'{N}:rime_shard', 14, 2, 6), item('minecraft:amethyst_shard', 10, 2, 8), item('minecraft:snowball', 10, 4, 12),
+          item(f'{N}:rimesteel_ingot', 3, 1, 2)]
+ESSENCE = [item(f'{N}:wisp_essence', 14, 1, 4), item('minecraft:glow_berries', 10, 3, 9), item('minecraft:lantern', 8, 1, 3), item('minecraft:slime_ball', 8, 2, 6),
+           item('minecraft:moss_block', 8, 3, 9)]
+
 # table name -> (entries, rolls, rare relic or None)
 TABLES = {
     'ecr_bandit_camp': (T1, (2, 3), None),
@@ -77,6 +82,13 @@ TABLES = {
     'ecr_pyre_bastion': (NETHER, (5, 8), None),
     'ecr_pyre_bastion_core': (NETHER + T5[:6], (7, 10), (f'{N}:eclipse_sigil', 0.1)),
     'ecr_hanae_shrine': (T_SHRINE, (3, 5), None),
+    'ecr_verse_cairn': (T1 + SHARDS, (2, 4), None),
+    'ecr_frozen_cathedral': (T4 + SHARDS, (5, 8), (f'{N}:glacial_shard', 0.5)),
+    'ecr_frozen_cathedral_vault': (T5 + SHARDS, (7, 10), (f'{N}:glacite_ingot', 0.35)),
+    'ecr_fen_hut': (T2 + ESSENCE, (3, 5), None),
+    'ecr_drowned_chapel': (T3 + ESSENCE, (4, 6), (f'{N}:wisp_essence', 0.5)),
+    'ecr_drowned_chapel_vault': (T4 + ESSENCE, (6, 9), (f'{N}:wispsteel_ingot', 0.3)),
+    'ecr_wayfarer_cairn': (T2, (2, 4), None),
     'ecr_eclipse_vault': (END, (5, 8), None),
     'ecr_eclipse_vault_core': (END + T5[:6], (8, 11), (f'{N}:eclipse_sigil', 0.3)),
 }
@@ -103,6 +115,7 @@ def build_all():
     s.update(structures3.build_all())
     s.update(structures4.build_all())
     s['hanae_shrine'] = structures5.hanae_shrine()
+    s.update(structures6.build_all())
     base = lambda k: s[k][1]
     # --- Overworld (rarity is per 16x16 chunk: 1/N; bigger = rarer). Easy ones are common, hard ones rare like mansions/outposts.
     structure('bandit_lookout', 'bandit_lookout', base('bandit_lookout'), anyof('plains', 'savanna', 'forest', 'meadow', 'taiga'), 1, 140, adj=5)
@@ -114,7 +127,7 @@ def build_all():
     structure('highland_bastion', 'highland_bastion', base('highland_bastion'), anyof('extreme_hills', 'mountains'), 1, 380, adj=12, steep=7)
     # sunken crypts are buried: placed in the underground pass anywhere in the overworld, deep enough not to breach daylight
     feature('sunken_crypt_feature', 'structure_template_feature', {
-        'structure_name': f'{NS}:sunken_crypt', 'adjustment_radius': 4, 'facing_direction': 'random', 'rotate_around_center': True})
+        'structure_name': f'{NS}:sunken_crypt', 'adjustment_radius': 4, 'facing_direction': 'random', 'rotate_around_center': True, 'constraints': {}})
     rule('sunken_crypt_rule', 'sunken_crypt_feature', 'underground_pass', tag('overworld'), dist_underground(1, -48, 20, 1, 420))
     # --- Nether: same snap-to-floor scheme the Pyre Spires use
     feature('pyre_bastion_feature', 'structure_template_feature', {
@@ -127,6 +140,14 @@ def build_all():
     structure('eclipse_vault', 'eclipse_vault', base('eclipse_vault'), tag('the_end'), 1, 130, adj=8, steep=6)
     # Hanae's Shrine: the story's ritual site, only inside cherry groves (the story needs at least one to exist near every grove)
     structure('hanae_shrine', 'hanae_shrine', base('hanae_shrine'), tag('cherry_grove'), 1, 45, adj=10, steep=6)
+    # --- Chapters III and IV.  Verse Cairns are common in snowy lands (the four verses must be easy to find once you are in the snow);
+    # the Frozen Cathedral sits in the high peaks, the Fen Hut and the Drowned Chapel in swamps.
+    for v in range(4):
+        structure(f'verse_cairn_{v}', f'verse_cairn_{v}', base(f'verse_cairn_{v}'), anyof('frozen', 'ice', 'cold'), 1, 70, adj=5, steep=4)
+    structure('frozen_cathedral', 'frozen_cathedral', base('frozen_cathedral'), anyof('frozen_peaks', 'snowy_slopes', 'jagged_peaks', 'grove', 'ice_plains'), 1, 160, adj=12, steep=8)
+    structure('fen_hut', 'fen_hut', base('fen_hut'), anyof('swamp', 'mangrove_swamp'), 1, 120, adj=6, steep=4)
+    structure('drowned_chapel', 'drowned_chapel', base('drowned_chapel'), anyof('swamp', 'mangrove_swamp'), 1, 150, adj=10, steep=5)
+    structure('wayfarer_cairn', 'wayfarer_cairn', base('wayfarer_cairn'), anyof('plains', 'forest', 'taiga', 'savanna', 'meadow', 'desert'), 1, 260, adj=4, steep=3)
     loot()
     return s
 

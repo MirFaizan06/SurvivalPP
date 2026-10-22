@@ -21,7 +21,7 @@ for (const f of fs.readdirSync(SCRIPTS)) {
         for (const n of m[1].split(',').map((s) => s.trim()).filter(Boolean)) imported[m[2] === 'server' ? 'server' : 'ui'].add(n);
     }
 }
-const CLASSES = new Set(['ItemStack', 'BlockPermutation', 'ModalFormData', 'ActionFormData', 'EntityTypes']);
+const CLASSES = new Set(['ItemStack', 'BlockPermutation', 'ModalFormData', 'ActionFormData', 'EntityTypes', 'BlockVolume']);
 const mk = (pkg, names, extra) => {
     const dir = path.join(WORK, 'node_modules', '@minecraft', pkg);
     fs.mkdirSync(dir, { recursive: true });
@@ -95,16 +95,18 @@ class FakeEntity {
         if (n === 'minecraft:inventory') return { container: { size: 36, getItem: () => undefined, setItem() {}, addItem() {} } };
         if (n === 'minecraft:equippable') return { getEquipment: () => undefined, setEquipment() {} };
         if (n === 'minecraft:projectile') return { shoot() {}, owner: undefined };
+        if (n === 'minecraft:type_family') return { hasTypeFamily: () => true };
         return undefined;
     }
     hasComponent() { return true; }
+    getTags() { return [...this.tags]; }
     addEffect(e, d, o) { this.effects.push([e, d, o]); } removeEffect() {} getEffect() { return undefined; }
     hasTag(t) { return this.tags.has(t); } addTag(t) { this.tags.add(t); } removeTag(t) { this.tags.delete(t); }
     triggerEvent(e) { this.events.push(e); }
     getProperty(k) { return this.props[k]; } setProperty(k, v) { this.props[k] = v; }
     playSound(id) { (this.sounds ||= []).push(id); }
     applyDamage() { return true; } applyKnockback() {} setOnFire() {} teleport(l) { this.location = l; } kill() { this.isValid = false; } remove() {} runCommand(c) { (this.cmds ||= []).push(c); return { successCount: 1 }; }
-    getRotation() { return { x: 0, y: 0 }; } getViewDirection() { return { x: 0, y: 0, z: 1 }; }
+    setRotation() {} getRotation() { return { x: 0, y: 0 }; } getViewDirection() { return { x: 0, y: 0, z: 1 }; }
     getDynamicProperty(k) { return this.props[`dp:${k}`]; } setDynamicProperty(k, v) { this.props[`dp:${k}`] = v; }
 }
 class FakePlayer extends FakeEntity {
@@ -112,7 +114,10 @@ class FakePlayer extends FakeEntity {
         super('minecraft:player', dim, fakeLoc(0, 64, 0));
         this.name = name; this.id = id; this.isSneaking = false; this.commandPermissionLevel = 0; this.mode = 'survival'; this.sent = [];
         this.onScreenDisplay = { setActionBar: (m) => this.sent.push(['bar', m]), setTitle: (t) => this.sent.push(['title', t]) };
-        this.inv = new Map(); this.equip = new Map();
+        this.inv = new Map(); this.equip = new Map(); this.isOnGround = true;
+        this.cam = []; this.perms = [];
+        this.camera = { setCamera: (id, o) => this.cam.push(['set', id, o]), fade: (o) => this.cam.push(['fade', o]), clear: () => this.cam.push(['clear']), addShake: (o) => this.cam.push(['shake', o]) };
+        this.inputPermissions = { setPermissionCategory: (c, on) => this.perms.push([c, on]) };
     }
     getGameMode() { return this.mode; }
     getBlockFromViewDirection() { return { block: new FakeBlock('ecr:stasis_plate', fakeLoc(70, 64, 70), this.dimension), face: 'Up' }; }
@@ -141,6 +146,7 @@ class FakeDim {
         return r;
     }
     getPlayers() { return this.players; }
+    containsBlock(vol, f) { return [...this.blocks.values()].some((b) => (f.includeTypes || []).includes(b.typeId) && b.location.x >= vol.from.x && b.location.x <= vol.to.x && b.location.z >= vol.from.z && b.location.z <= vol.to.z); }
     getBiome() { return { id: this.biome || 'minecraft:plains' }; }
     spawnEntity(t, l) { const e = new FakeEntity(t, this, l); this.entities.push(e); this.spawned.push(t); return e; }
     spawnItem(i, l) { this.spawned.push(`item:${i.typeId}`); return new FakeEntity('minecraft:item', this, l); }
@@ -166,11 +172,11 @@ const system = {
     get currentTick() { return tick; },
     runInterval(fn, t = 1) { handlers.intervals.push([fn, t]); return handlers.intervals.length; },
     runTimeout(fn, t = 0) { handlers.timeouts.push([fn, t]); return handlers.timeouts.length; },
-    run(fn) { handlers.runs.push(fn); return 0; }, clearRun() {}, waitTicks: () => Promise.resolve(),
+    run(fn) { handlers.runs.push(fn); return 0; }, clearRun(id) { const e = handlers.intervals[id - 1]; if (e) e[0] = () => {}; }, waitTicks: () => Promise.resolve(),
 };
 const formQueue = [];
 class ActionFormData extends ModalFormData { body() { return this; } button() { return this; } show() { return Promise.resolve(formQueue.length ? { canceled: false, selection: formQueue.shift() } : { canceled: true }); } }
-globalThis.__mock = { world, system, enumProxy, classes: { EntityTypes: { get: (id) => ({ id }), getAll: () => [] }, ItemStack, BlockPermutation: { resolve: (id, st) => new FakePerm(id, st) }, ModalFormData, ActionFormData } };
+globalThis.__mock = { world, system, enumProxy, classes: { EntityTypes: { get: (id) => ({ id }), getAll: () => [] }, ItemStack, BlockPermutation: { resolve: (id, st) => new FakePerm(id, st) }, ModalFormData, ActionFormData, BlockVolume: class { constructor(a, b) { this.from = a; this.to = b; } } } };
 
 // ------------------------------------------------------------------ helpers to drive the game loop
 const flush = () => {
@@ -363,6 +369,10 @@ else {
     if (bladesMid <= bladesBefore) note('boss: Hanae never fired a petal');
     for (const t of ['ecr:blossom_vex', 'ecr:blossom_echo']) if (!ow.spawned.includes(t)) note(`boss: Hanae never summoned ${t}`);
     if (!(hero.cmds || []).some((c) => c.startsWith('fog @s push ecr:blossom_veil'))) note('boss: the fog was never pushed to the player');
+    if (!hero.cam.some((c) => c[0] === 'set') || !hero.cam.some((c) => c[0] === 'clear')) note('cinematic: the intro never moved or released the camera');
+    if (!(hero.cmds || []).includes('hud @s hide') || !(hero.cmds || []).includes('hud @s reset')) note('cinematic: the HUD was not hidden and restored');
+    if (!hero.perms.some((x) => x[1] === false) || hero.perms.at(-1)[1] !== true) note('cinematic: input permissions were not locked and restored');
+    if (!hero.sent.some((m) => m[0] === 'bar' && String(m[1]).includes('\uE420'))) note('bossbar: the themed bar never reached the action bar');
     if (!(hero.sounds || []).includes('ecr.music.veiled_blossom')) note('music: the Veiled Blossom theme never played for the player');
     if (!(hero.cmds || []).some((c) => c.startsWith('fog @s push ecr:eclipse_bloom'))) note('boss: the Eclipse Bloom fog was never pushed');
     // mercy: a nearly dead player stops all attacks
@@ -382,6 +392,113 @@ fire('after', 'entityDie', { deadEntity: new FakeEntity('ecr:eclipse_sovereign',
 await tickAll(2);
 if (story().step !== 6) note(`story: defeating the Eclipse Sovereign should complete chapter II, got ${JSON.stringify(story())}`);
 if (!(story().pages || []).includes('eclipse_sovereign') || !(story().pages || []).includes('veiled_blossom')) note('story: boss lore pages were not unlocked');
+
+// 7) Chapter III - the Silent Choir: verses -> fork -> chimes (wrong, then right) -> lectern -> Frost Cantor (phases, fog, bar, music) -> Seal III
+const setB = (id, x, y, z, st) => { const b = blockAt(id, x, y, z); b.permutation = new FakePerm(id, st); return b; };
+hero.location = fakeLoc(300, 64, 300);
+ow.biome = 'minecraft:ice_plains';
+fire('after', 'scriptEventReceive', { id: 'ecr:story', message: 'road c3 0', sourceEntity: hero });
+if (!hero.inv.size || ![...hero.inv.values()].some((i) => i.typeId === 'ecr:tuning_fork')) fire('after', 'scriptEventReceive', { id: 'ecr:story', message: 'journal', sourceEntity: hero });
+for (let v = 0; v < 4; v++) registered['ecr:verse_stone'].onPlayerInteract({ player: hero, block: setB('ecr:verse_stone', 320 + v, 64, 300, { 'ecr:verse': v }), dimension: ow });
+await tickAll(40);
+if (story().c3 !== 1) note(`story: reading all four verses should open step 2 of Road III, got ${JSON.stringify(story())}`);
+const fork = new ItemStack('ecr:tuning_fork'); hero.equip.set('Mainhand', fork);
+setB('ecr:chime_dawn', 340, 64, 300, {});
+fire('after', 'itemUse', { source: hero, itemStack: fork }); await tickAll(30);
+if (!hero.sent.some((m) => m[0] === 'bar' && String(m[1]).includes('blocks to the'))) note('puzzle: the Tuning Fork never reported the direction of the cathedral');
+const strikeChime = (n) => registered['ecr:chime'].onPlayerInteract({ player: hero, block: setB(`ecr:chime_${n}`, 330, 64, 300, {}), dimension: ow });
+strikeChime('zenith');                                                                  // wrong first note
+if (story().chimes && story().chimes.length) note('puzzle: a wrong chime did not reset the sequence');
+for (const n of ['dawn', 'zenith', 'dusk', 'midnight']) strikeChime(n);
+await tickAll(40);
+if (story().c3 !== 2) note(`puzzle: striking the chimes in the sun's road should reach Road III step 3, got ${JSON.stringify(story())}`);
+const lec = setB('ecr:choir_lectern', 340, 60, 340, {});
+hero.location = fakeLoc(340, 60, 343);
+registered['ecr:choir_lectern'].onPlayerInteract({ player: hero, block: lec, dimension: ow });
+await tickAll(60);
+const cantor = ow.entities.find((e) => e.typeId === 'ecr:frost_cantor');
+if (!cantor) note('boss: the Frost Cantor did not spawn at the lectern');
+else {
+    hero.health = 100;
+    await tickAll(200);                                                                 // phase 1 (aria, rings, choir)
+    cantor.health = 60; await tickAll(260);                                             // phase 2 (icicles, whiteout)
+    cantor.health = 20; await tickAll(400);                                             // phase 3 (spiral, final verse)
+    if (!ow.spawned.includes('ecr:frost_note')) note('boss: the Cantor never fired a frozen note');
+    if (!ow.spawned.includes('ecr:hoarbone') && !ow.spawned.includes('ecr:rimewalker')) note('boss: the Cantor never called her choir');
+    if (!(hero.cmds || []).some((c) => c.startsWith('fog @s push ecr:cantor_whiteout'))) note('boss: the whiteout fog was never pushed');
+    if (!(hero.cmds || []).some((c) => c.startsWith('fog @s push ecr:cantor_requiem'))) note('boss: the requiem fog was never pushed');
+    if (!(hero.sounds || []).includes('ecr.music.frost_cantor')) note('music: the Frost Cantor theme never played');
+    if (!hero.sent.some((m) => m[0] === 'bar' && String(m[1]).includes('\uE428'))) note('bossbar: the Cantor bar never appeared');
+    cantor.health = 0; cantor.isValid = false;
+    fire('after', 'entityDie', { deadEntity: cantor, damageSource: { cause: 'entityAttack', damagingEntity: hero } });
+    await tickAll(2);
+    if (!(hero.cmds || []).some((c) => c.startsWith('fog @s remove ecr_cantor'))) note('boss: the Cantor fog was not removed');
+    if (story().c3 !== 3) note(`story: defeating the Frost Cantor should finish Road III, got ${JSON.stringify(story())}`);
+    if (!(story().pages || []).includes('frost_cantor')) note('story: the Ysolde lore page was not unlocked');
+}
+
+// 8) Chapter IV - the Lantern in the Mire: offerings -> sconces (wrong, then right) -> marsh altar -> Morwen (light, mirages, bar, music) -> Seal IV
+ow.biome = 'minecraft:swamp';
+hero.location = fakeLoc(500, 62, 500);
+slot = 20;
+for (const [id, n] of [['ecr:wisp_essence', 6], ['minecraft:lantern', 1]]) hero.inv.set(slot++, new ItemStack(id, n));
+formQueue.push(1); formQueue.push(0);                                                    // journal -> Road IV -> present offerings
+hero.equip.set('Mainhand', new ItemStack('ecr:wayfarers_journal'));
+fire('after', 'itemUse', { source: hero, itemStack: hero.equip.get('Mainhand') }); await tickAll(2);
+if (story().c4 !== 1) note(`story: presenting 6 Wisp Essence + a Lantern should give Road IV step 2, got ${JSON.stringify(story())}`);
+if (![...hero.inv.values()].some((i) => i.typeId === 'ecr:keepers_lantern')) note("story: no Keeper's Lantern was granted");
+const lantern = new ItemStack('ecr:keepers_lantern'); hero.equip.set('Mainhand', lantern);
+const sc = (n) => registered['ecr:sconce'].onPlayerInteract({ player: hero, block: setB(`ecr:sconce_${n}`, 510, 63, 500, { 'ecr:lit': 0 }), dimension: ow });
+const wispsBefore = ow.spawned.filter((t) => t === 'ecr:mire_wisp').length;
+sc('moon');                                                                              // wrong first
+if (ow.spawned.filter((t) => t === 'ecr:mire_wisp').length <= wispsBefore) note('puzzle: a wrong sconce did not stir the wisps');
+if (!hero.effects.some((e) => e[0] === 'darkness')) note('puzzle: a wrong sconce did not darken the player');
+for (const n of ['eye', 'star', 'moon']) sc(n);
+await tickAll(40);
+if (story().c4 !== 2) note(`puzzle: lighting eye, star, moon should reach Road IV step 3, got ${JSON.stringify(story())}`);
+timeOfDay = 14000;
+const marsh = setB('ecr:marsh_altar', 520, 62, 520, {});
+hero.location = fakeLoc(520, 62, 523);
+registered['ecr:marsh_altar'].onPlayerInteract({ player: hero, block: marsh, dimension: ow });
+await tickAll(60);
+const morwen = ow.entities.find((e) => e.typeId === 'ecr:mire_lantern');
+if (!morwen) note('boss: the Mire Lantern did not spawn at the Marsh Altar');
+else {
+    hero.health = 100;
+    await tickAll(240);
+    morwen.health = 60; await tickAll(300);
+    morwen.health = 20; await tickAll(300);
+    if (!ow.spawned.includes('ecr:wisp_bolt')) note('boss: Morwen never fired foxfire');
+    if (!ow.spawned.includes('ecr:mire_wisp')) note('boss: Morwen never sent wisps');
+    if (!ow.spawned.includes('ecr:mire_decoy')) note('boss: Morwen never made a lantern mirage');
+    if (!hero.effects.some((e) => e[0] === 'darkness')) note('boss: Morwen never snuffed an unlit player');
+    if (!(hero.cmds || []).some((c) => c.startsWith('fog @s push ecr:fen_hollow'))) note('boss: the hollow fog was never pushed');
+    if (!(hero.sounds || []).includes('ecr.music.mire_lantern')) note('music: the Mire Lantern theme never played');
+    if (!hero.sent.some((m) => m[0] === 'bar' && String(m[1]).includes('\uE430'))) note('bossbar: the Morwen bar never appeared');
+    const decoy = ow.entities.find((e) => e.typeId === 'ecr:mire_decoy');
+    if (decoy) { decoy.isValid = false; fire('after', 'entityDie', { deadEntity: decoy, damageSource: { cause: 'entityAttack', damagingEntity: hero } }); }
+    morwen.health = 0; morwen.isValid = false;
+    fire('after', 'entityDie', { deadEntity: morwen, damageSource: { cause: 'entityAttack', damagingEntity: hero } });
+    await tickAll(2);
+    if (!(hero.cmds || []).some((c) => c.startsWith('fog @s remove ecr_morwen'))) note('boss: the fen fog was not removed');
+    if (story().c4 !== 3) note(`story: defeating Morwen should finish Road IV, got ${JSON.stringify(story())}`);
+    if (!(story().pages || []).includes('mire_lantern')) note('story: the Morwen lore page was not unlocked');
+}
+
+// 9) new mobs, gear and tablets
+for (const t of ['ecr:rimewalker', 'ecr:hoarbone', 'ecr:mirewalker', 'ecr:lanternbone', 'ecr:mire_wisp']) { const m = new FakeEntity(t, ow, fakeLoc(40, 64, 40)); ow.entities.push(m); }
+runTicks(60);
+fire('after', 'entityDie', { deadEntity: new FakeEntity('ecr:mirewalker', ow), damageSource: { cause: 'entityAttack', damagingEntity: hero } });
+for (const w of ['ecr:frostsong', 'ecr:mirelight_scythe', 'ecr:rimesteel_sword', 'ecr:glacite_sword', 'ecr:wispsteel_axe']) {
+    const it = new ItemStack(w); hero.equip.set('Mainhand', it);
+    fire('after', 'itemUse', { source: hero, itemStack: it });
+    for (let k = 0; k < 4; k++) fire('after', 'entityHitEntity', { damagingEntity: hero, hitEntity: new FakeEntity('minecraft:zombie', ow, hero.location) });
+}
+for (let t = 0; t < 12; t++) registered['ecr:lore_tablet'].onPlayerInteract({ player: hero, block: setB('ecr:lore_tablet', 600 + t, 64, 600, { 'ecr:text': t }), dimension: ow });
+fire('after', 'scriptEventReceive', { id: 'ecr:bossbar', message: 'off', sourceEntity: hero });
+fire('after', 'scriptEventReceive', { id: 'ecr:cinematic', message: 'off', sourceEntity: hero });
+fire('after', 'scriptEventReceive', { id: 'ecr:bossbar', message: 'on', sourceEntity: hero });
+fire('after', 'scriptEventReceive', { id: 'ecr:cinematic', message: 'on', sourceEntity: hero });
 world.getAllPlayers = oldAll;
 
 // ------------------------------------------------------------------ verdict

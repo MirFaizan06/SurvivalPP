@@ -50,6 +50,8 @@ for p in all_json:
 my_blocks = {f'ecr:{os.path.basename(p)[:-5]}' for p in glob.glob(f'{BP}/blocks/*.json')}
 my_items = {f'ecr:{os.path.basename(p)[:-5]}' for p in glob.glob(f'{BP}/items/*.json')}
 my_entities = {f'ecr:{os.path.basename(p)[:-5]}' for p in glob.glob(f'{BP}/entities/*.json')}
+my_particles = {f'ecr:{os.path.basename(p)[:-5]}' for p in glob.glob(f'{RP}/particles/*.json')}
+my_fogs = {f'ecr:{os.path.basename(p)[:-5]}' for p in glob.glob(f'{RP}/fogs/*.json')}
 mine = my_blocks | my_items | my_entities
 print('blocks', len(my_blocks), 'items', len(my_items), 'entities', len(my_entities))
 
@@ -309,14 +311,17 @@ for p in glob.glob(f'{RP}/attachables/*.json'):
         if t.startswith('textures/models/armor') and not os.path.exists(f'{RP}/{t}.png'):
             bad(f'{os.path.basename(p)}: missing {t}')
 
+# non-id ecr: strings the scripts use (dynamic property keys, scriptevent ids, block states, entity events/properties, tags)
+SCRIPT_WORDS = ('bossbar', 'bossbar_off', 'cinematic', 'cinematic_off', 'verse', 'lit', 'text', 'puzzle', 'gear', 'intro', 'c3', 'c4', 'puzzle_v1', 'cantor_state', 'expire', 'despawn', 'melee_mode', 'ranged_mode', 'mode_switcher', 'switch_to_melee', 'switch_to_ranged', 'verse_stone', 'lore_tablet', 'sconce', 'sconce_', 'chime', 'choir_lectern', 'marsh_altar')
+
 # scripts: ids referenced
 for p in glob.glob(f'{BP}/scripts/*.js'):
     s = open(p, encoding='utf-8').read()
     for m in re.finditer(r"`\$\{NS\}:([a-z_0-9]+)`|'ecr:([a-z_0-9]+)'", s):
         n = 'ecr:' + (m.group(1) or m.group(2))
-        if n not in mine and n not in ('ecr:needs_netherite_pickaxe',):
+        if n not in mine and n not in my_particles and n not in my_fogs and n not in ('ecr:needs_netherite_pickaxe',):
             # custom block components / states / props are legitimate non-ids
-            if n.split(':')[1] in ('altar', 'stasis_chamber', 'stasis_plate', 'openable', 'plate', 'button', 'leaves', 'sapling', 'loaded', 'powered', 'open', 'pressed', 'persistent', 'phase', 'casting', 'link', 'db_v1', 'cast_on', 'cast_off', 'enter_phase_2', 'enter_phase_3', 'hinge_right', 'growth', 'sanctum_idx', 'diag', 'blossom_veil', 'blossom_storm', 'eclipse_bloom', 'story', 'journal_given', 'puffing', 'stag', 'roll_stag', 'relic', 'crop', 'wild_crop', 'pass_zone', 'sanctum_v1', 'wplates_v1', 'deathmsg_suppressed', 'sanctum', 'needs_netherite_pickaxe'):
+            if n.split(':')[1] in ('altar', 'stasis_chamber', 'stasis_plate', 'openable', 'plate', 'button', 'leaves', 'sapling', 'loaded', 'powered', 'open', 'pressed', 'persistent', 'phase', 'casting', 'link', 'db_v1', 'cast_on', 'cast_off', 'enter_phase_2', 'enter_phase_3', 'hinge_right', 'growth', 'sanctum_idx', 'diag', 'blossom_veil', 'blossom_storm', 'eclipse_bloom', 'story', 'journal_given', 'puffing', 'stag', 'roll_stag', 'relic', 'crop', 'wild_crop', 'pass_zone', 'sanctum_v1', 'wplates_v1', 'deathmsg_suppressed', 'sanctum', 'needs_netherite_pickaxe', *SCRIPT_WORDS):
                 continue
             bad(f'{os.path.basename(p)}: unknown id {n}')
 

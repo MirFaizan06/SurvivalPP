@@ -8,11 +8,15 @@ from common import *
 HANDLE_STICK = [hx(x) for x in ['#28200b', '#493615', '#684e1e', '#89672b', '#a8823a']]
 HANDLE_BLAZE = [hx(x) for x in ['#6b2d00', '#a84a05', '#e07c10', '#ffb62a', '#ffe27a']]
 HANDLE_ENDROD = [hx(x) for x in ['#2d2447', '#4f4380', '#8a7bd0', '#cbbcff', '#f6f0ff']]
+HANDLE_BREEZE = [hx(x) for x in ['#1a3a2e', '#2c6a50', '#4aa078', '#8ee0b0', '#d8ffe8']]
 
 MATS = {
     'azurite':  dict(ramp=AZURITE,  handle=HANDLE_STICK,  sparkle=hx('#e8fbff'), stick='stick', curve=0.9),
     'pyrelite': dict(ramp=PYRELITE, handle=HANDLE_BLAZE,  sparkle=hx('#fff2b0'), stick='blaze_rod', curve=1.75),
     'eclipsite': dict(ramp=ECLIPSITE, handle=HANDLE_ENDROD, sparkle=hx('#9ff4ff'), stick='end_rod', curve=1.35),
+    'rimesteel': dict(ramp=RIMESTEEL, handle=HANDLE_STICK, sparkle=hx('#ffffff'), stick='stick', curve=1.1, raw=False),
+    'glacite': dict(ramp=GLACITE, handle=HANDLE_STICK, sparkle=hx('#ffffff'), stick='stick', curve=0.85, raw=False),
+    'wispsteel': dict(ramp=WISPSTEEL, handle=HANDLE_BREEZE, sparkle=hx('#fff6b0'), stick='breeze_rod', curve=1.3, raw=False),
 }
 
 
@@ -124,10 +128,11 @@ def build_materials():
         if mat != 'azurite':
             add_sparkles(ing, brightest(ing, 1), d['sparkle'])
         save_item(f'{mat}_ingot', ing, mat); names.append(f'{mat}_ingot')
-        # raw chunk: raw iron silhouette
-        raw = swap_palette(load('items/raw_iron.png'), ramp, None, lo=0.05, hi=0.92, split_handle=False, curve=d['curve'])
-        add_sparkles(raw, brightest(raw, 2), d['sparkle'])
-        save_item(f'raw_{mat}', raw, mat); names.append(f'raw_{mat}')
+        # raw chunk: raw iron silhouette (only the ore metals have one)
+        if d.get('raw', True):
+            raw = swap_palette(load('items/raw_iron.png'), ramp, None, lo=0.05, hi=0.92, split_handle=False, curve=d['curve'])
+            add_sparkles(raw, brightest(raw, 2), d['sparkle'])
+            save_item(f'raw_{mat}', raw, mat); names.append(f'raw_{mat}')
         # nugget-like shard used for the T-tier shards (from iron nugget)
     return names
 

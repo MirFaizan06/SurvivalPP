@@ -1,6 +1,7 @@
 // Eclipse Sovereign: summoning ritual, phase logic, signature attacks; plus mob / weapon combat hooks
 import { world, system, EntityComponentTypes, EntityDamageCause } from '@minecraft/server';
 import { tickMusic, stopMusic } from './music.js';
+import { playIntro, INTRO_TAG } from './cinematic.js';
 import { NS, DIM_IDS, safe, dimOf, mainhand, consumeMainhand, isCreative, say, msg, spawnParticle, playSound, rand, randInt, runLater } from './util.js';
 
 const BOSS = `${NS}:eclipse_sovereign`;
@@ -51,7 +52,8 @@ export function startRitual(altar, player) {
                 const boss = dim.spawnEntity(BOSS, { x: c.x, y: c.y + 2, z: c.z });
                 playSound(dim, 'mob.enderdragon.growl', c, { volume: 6, pitch: 0.7 });
                 for (let i = 0; i < 40; i++) spawnParticle(dim, 'minecraft:huge_explosion_emitter', { x: c.x + rand(-2, 2), y: c.y + rand(0, 4), z: c.z + rand(-2, 2) });
-                titleAll(dim, c, '§5§lECLIPSE SOVEREIGN', '§dThe void remembers');
+                boss.addTag('ecr_introduced');
+                if (!playIntro(boss)) titleAll(dim, c, '§5§lECLIPSE SOVEREIGN', '§dThe void remembers');
                 for (const p of nearbyPlayers(dim, c, 24)) safe(() => p.addEffect('darkness', 100, { amplifier: 0, showParticles: false }));
                 state.set(boss.id, { next: { slam: system.currentTick + 120, summon: system.currentTick + 400 } });
             }
@@ -100,13 +102,15 @@ function summonMinions(boss, n) {
 }
 
 function bossTick(boss) {
-    tickMusic(boss);
     const now = system.currentTick;
     let s = state.get(boss.id);
     if (!s) {
         s = { next: { slam: now + 100, summon: now + 300 } };
         state.set(boss.id, s);
     }
+    if (!boss.hasTag('ecr_introduced')) { boss.addTag('ecr_introduced'); playIntro(boss); }
+    if (boss.hasTag(INTRO_TAG)) return;
+    tickMusic(boss);
     const frac = healthFrac(boss);
     const want = frac <= 0.33 ? 2 : frac <= 0.66 ? 1 : 0;
     const cur = safe(() => boss.getProperty('ecr:phase')) ?? 0;

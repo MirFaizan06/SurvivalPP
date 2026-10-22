@@ -23,7 +23,7 @@ Build order lives in `build.py: generate()` - add new modules there.
 ```
 python tools/dev.py setup       # once: clones Mojang/bedrock-samples + npm typings/ajv into .ref/
 python tools/dev.py build       # regenerate everything into <build>/out/ECR_BP and ECR_RP
-python tools/dev.py lint        # cross-reference lint + official JSON-schema validation (must be 0 problems)
+python tools/dev.py lint        # lint.py..lint5.py: cross-refs, official schemas, content-log regressions (must be 0 problems)
 python tools/dev.py typecheck   # tsc over tools/scripts against real @minecraft/server typings (must be clean)
 python tools/dev.py test        # runtime smoke test (incl. the whole story + boss flow): tools/test/mock_run.mjs boots the packaged scripts against a fake @minecraft/server (must print 0 problems)
 python tools/dev.py package     # zip -> releases/EclipsedRealms_v<ver>.mcaddon
@@ -73,3 +73,12 @@ Known/expected lint output: `items checked N bad 12` (tool `destroy_speeds` fals
 
 ## Content map (v1.4.0)
 Ores Azurite/Pyrelite/Eclipsite (+tools, armour) · stones Marlstone/Slate/Verdite/Umbrastone · 5 trees (Jacaranda, Frostpine, Amberwood, Sunwood, Mireweep) · crops Tomato/Corn/Strawberry/Chili/Oats + foods · animals Meadow Deer/Highland Yak/Wild Boar/Pheasant · hostiles Gravewalker/Revenant/Cave Weaver/Sporeling · mobs Ashen Warg/Voidweaver · bosses Eclipse Sovereign, Hollow King, Mosswood Colossus, Silkqueen · structures Pyre Spire, Eclipse Obelisk/Shrine, Forgotten Graveyard, Verdant Shrine, Silk Nest, Hunter's Camp, Mossy Boulder + ten adventure structures (Bandit Lookout, Sunken Well, Watch Keep, Dune Vault, Thorn Shrine, Frost Cairn, Highland Bastion, Sunken Crypt, Pyre Bastion, Eclipse Vault) · systems: stasis chambers (`stasis.js`), Sanctum Warden (`sanctum.js`), custom death messages (`deaths.js`).
+
+## v1.6 additions - Chapters III and IV (how to extend)
+- **Content-log rules (lint5.py):** the real game rejected things lint had passed. Never emit `alert_same_type`; `redstone_producer` belongs in base components; doors need `minecraft:movable`; `structure_template_feature` needs `constraints`; cherry canopy height >= 4; recipes need `unlock`; no item data suffixes. `lint5` also checks every entity component member against the newest official schema. When the user pastes a Content Log, fix every line and extend lint5.
+- **Roads:** `story.js ROADS` (c3, c4) - steps are data, progress is `st.c3/st.c4` (0..3), gating by `opens(st)`. Puzzle blocks live in `puzzle.js` (`registerPuzzleBlocks`); lore tablets are `TABLETS` indexed by block state `ecr:text`.
+- **Bosses 3/4:** models `mob_frost.py` / `mob_mire.py`, animations `anims3.py`, entities + items + blocks + particles + fogs `gen_seals.py`, brains `cantor.js` / `morwen.js` (shared helpers in `bossutil.js`), intro scenes in `cinematic.js INTROS`, music `gen_music.TRACKS` + `music.js`, bars: `gen_ui.SKINS` order == `bossbar.js SKINS` (lint4 checks it; the glyph page is indexed by position).
+- **Boss bar:** `bossbar.js` draws glyphs from `font/glyph_E4.png` on the action bar (8 chars per skin from U+E400 + 8*index). The JSON-UI overlay (`ui/hud_screen.json`) is a bonus.
+- **Cinematics:** `playIntro(boss)` returns the scene length (0 = none/disabled). Bosses must skip their brain while `boss.hasTag(INTRO_TAG)` and call `playIntro` once (tag `ecr_introduced`). Camera API: `player.camera.setCamera('minecraft:free', {location, facingLocation, easeOptions})`, `fade`, `addShake`, `clear`; input is locked with `inputPermissions`; HUD hidden with `/hud @s hide`.
+- **Alloy gear:** `gen_items.MATS` entries with `ore=False` (no raw/ore/block); art in `art_swords.py`, `armor_models.py DESIGNS`, `tex_items.MATS`; crafted by shapeless recipes in `gen_seals.items()`.
+- **Structures:** `structures6.py` (disc depth needs `base >= depth + 2`; keep structure water from touching air you want dry - the flooded chamber keeps an air pocket above its water).

@@ -47,6 +47,9 @@ def lum(c):
 AZURITE = [hx(x) for x in ['#071433', '#0e2a6b', '#1b4fb8', '#2f86f0', '#6cc3ff', '#c9efff', '#ffffff']]
 PYRELITE = [hx(x) for x in ['#140505', '#3b0c08', '#7d1a0a', '#d4440f', '#ff8a24', '#ffd35e', '#fff6c2']]
 ECLIPSITE = [hx(x) for x in ['#05020c', '#150a2b', '#34136a', '#6d27b8', '#c046dc', '#ff9cf0', '#9ff4ff']]
+RIMESTEEL = [hx(x) for x in ['#0e1622', '#26384c', '#4a6a88', '#86a8c4', '#c2dcee', '#f0f8ff', '#ffffff']]
+GLACITE = [hx(x) for x in ['#06182e', '#0f3a6a', '#1c70b0', '#40b4e8', '#8ee0ff', '#d4f6ff', '#ffffff']]
+WISPSTEEL = [hx(x) for x in ['#06140e', '#0f3a26', '#1c7a4a', '#3cc070', '#a8f08a', '#ffe27a', '#fffbd0']]
 
 # ---------------------------------------------------------------- IO helpers
 def ensure(path):

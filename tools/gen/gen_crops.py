@@ -56,7 +56,7 @@ def build_crop_blocks():
         loot = loot_simple(f'{c}_crop', [(f'{NS}:{seed}', 1, 1, 1.0)])
         comps = {
             'minecraft:geometry': 'minecraft:geometry.cross',
-            'minecraft:material_instances': {'*': mi(stages[0], 'alpha_test', face_dimming=False)},
+            'minecraft:material_instances': {'*': mi(stages[0], 'alpha_test', face_dimming=True)},
             'minecraft:collision_box': False,
             'minecraft:selection_box': {'origin': [-6, 0, -6], 'size': [12, h, 12]},
             'minecraft:light_dampening': 0,
@@ -71,7 +71,7 @@ def build_crop_blocks():
             f'{NS}:crop': {},
         }
         perms = [{'condition': f"q.block_state('ecr:growth') == {s}", 'components': {
-            'minecraft:material_instances': {'*': mi(stages[s], 'alpha_test', face_dimming=False)}}} for s in (1, 2, 3)]
+            'minecraft:material_instances': {'*': mi(stages[s], 'alpha_test', face_dimming=True)}}} for s in (1, 2, 3)]
         desc = {'identifier': f'{NS}:{c}_crop', 'menu_category': cat('none'), 'states': {'ecr:growth': [0, 1, 2, 3]}}
         write_block(f'{c}_crop', desc, comps, perms, sound='grass')
         lang_block(f'{c}_crop', ptitle)
@@ -85,7 +85,7 @@ def build_crop_blocks():
         wjson(f'{BP}/loot_tables/blocks/wild_{c}.json', wloot)
         wcomps = dict(comps)
         wcomps.pop(f'{NS}:crop', None)
-        wcomps['minecraft:material_instances'] = {'*': mi(wt, 'alpha_test', face_dimming=False)}
+        wcomps['minecraft:material_instances'] = {'*': mi(wt, 'alpha_test', face_dimming=True)}
         wcomps['minecraft:loot'] = f'loot_tables/blocks/wild_{c}.json'
         wcomps['minecraft:placement_filter'] = {'conditions': [{'allowed_faces': ['up'], 'block_filter': WILD_SOIL}]}
         wcomps['minecraft:tags'] = ['ecr:wild_crop']

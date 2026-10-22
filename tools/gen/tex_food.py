@@ -277,16 +277,12 @@ def oats_stage(s):
     return c.im
 
 
-STAGE_FN = {'tomato': tomato_stage, 'corn': corn_stage, 'strawberry': strawberry_stage, 'chili': chili_stage, 'oats': oats_stage}
+import tex_crops                                   # v1.6: redrawn muted sprites (the functions above are the old ones, kept for reference)
+STAGE_FN = tex_crops.STAGE_FN
 
 
 def wild(name):
-    base = STAGE_FN[name](3)
-    c = Canvas()
-    c.im = base
-    for (x, y, k) in ((1, 15, 3), (3, 15, 2), (12, 15, 3), (14, 15, 2), (2, 14, 2), (13, 14, 3)):
-        c.px(x, y, GREEN[k]); c.px(x, y - 1, GREEN[min(4, k + 1)])
-    return c.im
+    return tex_crops.wild(name)
 
 
 # ------------------------------------------------------------------ recolours of vanilla sprites

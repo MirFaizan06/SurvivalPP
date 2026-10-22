@@ -1,9 +1,9 @@
 """Boss music: copies the OGG tracks from tools/assets/music into the resource pack and registers them as sound definitions
-(played by tools/scripts/music.js).  See tools/assets/music/CREDITS.md for sources and licences (both CC0)."""
+(played by tools/scripts/music.js).  See tools/assets/music/CREDITS.md for sources and licences (all CC0)."""
 import os, shutil
 from common import *
 
-TRACKS = {'veiled_blossom': 0.85, 'eclipse_sovereign': 0.85}
+TRACKS = {'veiled_blossom': 0.85, 'eclipse_sovereign': 0.85, 'frost_cantor': 0.85, 'mire_lantern': 0.85}
 SRC = ROOT / 'tools' / 'assets' / 'music'
 
 

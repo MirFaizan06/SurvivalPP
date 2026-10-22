@@ -16,6 +16,11 @@ BOSSES = {
     # the first story boss: model, animations and client files live in gen_blossom.py
     'veiled_blossom': dict(title='The Veiled Blossom', hp=260, box=(1.0, 2.7), speed=0.25, xp=800, egg=('#f6a8c8', '#8a1428'),
                            family=['veiled_blossom'], melee=4, reach=2.6, custom=True),
+    # the third and fourth Keepers (Overworld): models, animations and client files live in gen_seals.py
+    'frost_cantor': dict(title='The Frost Cantor', hp=520, box=(1.2, 3.3), speed=0.22, xp=1200, egg=('#bfe4ff', '#1c4f8a'),
+                         family=['frost_cantor', 'undead'], melee=7, reach=3.0, custom=True),
+    'mire_lantern': dict(title='The Mire Lantern', hp=560, box=(1.2, 3.1), speed=0.21, xp=1200, egg=('#2a6a3a', '#ffe27a'),
+                         family=['mire_lantern'], melee=8, reach=3.2, custom=True),
 }
 
 LOOT = {
@@ -29,6 +34,12 @@ LOOT = {
                        entry('ecr:sakura_boots', 1, 1, looting=0), entry('ecr:sakura_shard', 6, 10, looting=0), entry('ecr:blossom_seal', 1, 1, looting=0),
                        entry('minecraft:diamond', 4, 8, looting=0), entry('minecraft:enchanted_golden_apple', 1, 1, looting=0), entry('minecraft:experience_bottle', 10, 16, looting=0),
                        entry('minecraft:pink_petals', 16, 32, looting=0)],
+    'frost_cantor': [entry('ecr:frostsong', 1, 1, looting=0), entry('ecr:choir_seal', 1, 1, looting=0), entry('ecr:glacial_shard', 10, 16, looting=0),
+                     entry('ecr:rime_shard', 8, 14, looting=0), entry('minecraft:diamond', 4, 8, looting=0), entry('minecraft:enchanted_golden_apple', 1, 1, looting=0),
+                     entry('minecraft:experience_bottle', 12, 18, looting=0), entry('minecraft:amethyst_shard', 8, 16, looting=0)],
+    'mire_lantern': [entry('ecr:mirelight_scythe', 1, 1, looting=0), entry('ecr:lantern_seal', 1, 1, looting=0), entry('ecr:wisp_essence', 10, 16, looting=0),
+                     entry('minecraft:diamond', 4, 8, looting=0), entry('minecraft:enchanted_golden_apple', 1, 1, looting=0), entry('minecraft:netherite_scrap', 1, 3, looting=0, chance=0.6),
+                     entry('minecraft:experience_bottle', 12, 18, looting=0), entry('minecraft:glow_berries', 12, 24, looting=0)],
     'silkqueen': [entry('ecr:queens_fang', 1, 1, looting=0), entry('ecr:silk_gland', 6, 10, looting=0), entry('minecraft:string', 16, 32, looting=0),
                   entry('minecraft:spider_eye', 6, 10, looting=0), entry('minecraft:diamond', 3, 6, looting=0), entry('minecraft:ender_pearl', 4, 8, looting=0),
                   entry('minecraft:enchanted_golden_apple', 1, 1, looting=0, chance=0.5)],
@@ -85,6 +96,19 @@ def bp(name, b):
         groups['ecr:ranged_mode'] = {
             'minecraft:behavior.ranged_attack': {'priority': 3, 'attack_interval': {'min': 4.0, 'max': 6.0}, 'attack_range': {'min': 0.0, 'max': 24.0}, 'burst_shots': 2, 'burst_interval': 0.4, 'speed_multiplier': 1.0, 'target_in_sight_time': 0.5, 'in_range_movement_mode': 'follow_target'},
             'minecraft:shooter': {'def': 'ecr:petal_blade', 'power': 1.4}}
+    elif name == 'frost_cantor':
+        comps['minecraft:navigation.walk'] = {'can_pass_doors': True, 'avoid_water': False, 'is_amphibious': True, 'can_break_doors': False}
+        comps['minecraft:freezing_immune'] = {}
+        groups['ecr:melee_mode'] = melee
+        groups['ecr:ranged_mode'] = {
+            'minecraft:behavior.ranged_attack': {'priority': 3, 'attack_interval': {'min': 3.2, 'max': 4.8}, 'attack_range': {'min': 0.0, 'max': 26.0}, 'burst_shots': 3, 'burst_interval': 0.35, 'speed_multiplier': 1.0, 'target_in_sight_time': 0.5, 'in_range_movement_mode': 'follow_target'},
+            'minecraft:shooter': {'def': 'ecr:frost_note', 'power': 1.5}}
+    elif name == 'mire_lantern':
+        comps['minecraft:navigation.walk'] = {'can_pass_doors': True, 'avoid_water': False, 'is_amphibious': True, 'can_break_doors': False}
+        groups['ecr:melee_mode'] = melee
+        groups['ecr:ranged_mode'] = {
+            'minecraft:behavior.ranged_attack': {'priority': 3, 'attack_interval': {'min': 3.4, 'max': 5.0}, 'attack_range': {'min': 0.0, 'max': 24.0}, 'burst_shots': 2, 'burst_interval': 0.5, 'speed_multiplier': 1.0, 'target_in_sight_time': 0.5, 'in_range_movement_mode': 'follow_target'},
+            'minecraft:shooter': {'def': 'ecr:wisp_bolt', 'power': 1.3}}
     else:
         comps['minecraft:navigation.climb'] = {'can_path_over_water': True}
         comps['minecraft:can_climb'] = {}

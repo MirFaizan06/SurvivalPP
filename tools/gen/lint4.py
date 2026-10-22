@@ -213,7 +213,7 @@ ENT = {e['name'] for e in jl(f'{SM}/vanilladata_modules/mojang-entities.json')['
 PART = set()
 for p_ in glob.glob(f'{BEDROCK_SAMPLES}/resource_pack/particles/*.json'):
     PART |= set(re.findall(r'"identifier"\s*:\s*"(minecraft:[a-z_0-9]+)"', open(p_, encoding='utf-8').read()))
-NOT_IDS = {'minecraft:cherry_grove', 'minecraft:block_face', 'minecraft:vertical_half', 'minecraft:equippable', 'minecraft:overworld', 'minecraft:nether', 'minecraft:the_end', 'minecraft:player'}
+NOT_IDS = {'minecraft:cherry_grove', 'minecraft:block_face', 'minecraft:vertical_half', 'minecraft:equippable', 'minecraft:overworld', 'minecraft:nether', 'minecraft:the_end', 'minecraft:player', 'minecraft:free'}
 known = VBI | ENT | PART | NOT_IDS
 for p_ in glob.glob(f'{BP}/scripts/*.js'):
     src = open(p_, encoding='utf-8').read()
@@ -286,6 +286,19 @@ for p_ in glob.glob(f'{BP}/entities/*.json'):
     d_ = jl(p_)['minecraft:entity']['description']
     if d_.get('is_spawnable') and f'item.spawn_egg.entity.ecr:{n}.name' not in lang:
         bad(f'no spawn egg name for ecr:{n}')
+
+# boss-bar skins: bossbar.js SKINS must match gen_ui.SKINS (the glyph page is indexed by position), and every skin boss must be an entity
+import gen_ui
+js = open(f'{ROOT}/tools/scripts/bossbar.js', encoding='utf-8').read()
+m_ = re.search(r"export const SKINS = \[([^\]]*)\]", js)
+js_skins = re.findall(r"'([a-z_]+)'", m_.group(1)) if m_ else []
+if js_skins != list(gen_ui.SKINS):
+    bad(f'bossbar.js SKINS {js_skins} != gen_ui.SKINS {list(gen_ui.SKINS)}')
+for sk in gen_ui.SKINS:
+    if not os.path.exists(f'{BP}/entities/{sk}.json'):
+        bad(f'boss-bar skin {sk} has no entity')
+if not os.path.exists(f'{RP}/font/glyph_E4.png'):
+    bad('missing RP font/glyph_E4.png (boss-bar glyph page)')
 
 print(f'\nLINT4: {len(problems)} problem(s), {len(warns)} warning(s)')
 sys.exit(1 if problems else 0)

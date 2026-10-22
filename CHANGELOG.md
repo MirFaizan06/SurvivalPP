@@ -2,6 +2,38 @@
 
 All notable changes to **Eclipsed Realms: Chronicles of the Seven Seals** (formerly "Survival++ | Eclipsed Realms") (Tech Bytes Design). Versions follow `major.minor.patch`; the pack version is set in `tools/version.json`.
 
+## [1.6.0] - "Seals Update"
+
+### Fixed (from the real game's Content Log)
+- **Five mobs never loaded** (Gravewalker, Cave Weaver, Revenant, Sporeling, Wild Boar): `hurt_by_target` had a member (`alert_same_type`) that does not exist in 1.26.50. This is why `/summon` said "not found" and the spawn eggs were missing, which made Chapter I step 2 impossible by the book. Removed; the new lint step `lint5.py` now catches every error class below offline.
+- **Wooden doors, buttons and pressure plates (all five woods) and the Stasis Trigger Plate did not load**: `redstone_producer` must be a base component, doors need `minecraft:movable`. Their items, the stasis plate recipe and the `blocks.json` entries failed with them.
+- **Highland Yak** failed to load (milking used an invalid `play_sounds` and `bucket:1`); it now transforms the bucket into a Milk Bucket.
+- **Silk Nests and Sunken Crypts never generated** (their features lacked `constraints`); **Jacaranda and Mireweep weeping trees never generated** (canopy height below 4); **Slate and Umbrastone rules** had a scatter chance of 1/1.
+- **All stonecutter recipes** lacked `unlock` data and were rejected.
+- **The Wayfarer's Journal text was black on a dark form**; all journal and lore pages now use light colours.
+- **Crop textures looked buggy and bright**: redrawn in a muted, vanilla-like style (straight stems, two-tone leaves, no black outline) and the crop blocks regained face dimming.
+- **The custom boss bar fell back to the vanilla bar**: bars are now drawn on the action bar with our own font glyphs (`font/glyph_E4.png`), independent of JSON-UI bindings; the UI overlay is kept (variable renamed) on top of the vanilla bar for clients that honour it.
+
+### Added
+- **Chapter III / Road III - The Silent Choir:** Verse Stones, the Frozen Cathedral (four chimes, the Cantor's Lectern, hidden vault), the Cantor's Tuning Fork (scans loaded chunks and tells you the direction) and **Ysolde, the Frost Cantor** (520 HP; Aria, Resonance Rings you jump, Icicle Chorus, Whiteout blizzard you kneel against, Requiem spiral, the interruptible Final Verse).
+- **Chapter IV / Road IV - The Lantern in the Mire:** Wisp Essence, the Keeper's Lantern, the Fen Hut, the Drowned Chapel (three sconces, Marsh Altar, flooded passage to the second half of the riddle) and **Morwen, the Mire Lantern** (560 HP; the fen swallows unlit players' light, wisp swarms, Lantern Mirages, Lantern Rain; carry a light).
+- **The journal forks into roads** after the First Seal (Road IV opens after Road III), with per-road clues, progress, lore pages and a "present offerings" step; `/scriptevent ecr:story road c3 2`.
+- **Boss introductions:** a camera-scripted scene per main boss (HUD hidden, input locked, orbit, close-up, title card, fade) with a failsafe release; `/scriptevent ecr:cinematic on|off|release|test <boss>`.
+- **Boss bars for all seven bosses** drawn with font glyphs, `/scriptevent ecr:bossbar on|off`.
+- **Alloy gear:** Rimesteel (iron+), Glacite (diamond+), Wispsteel (netherite+): tools, custom 3D armour, set bonuses and on-hit effects.
+- **Boss weapons:** Frostsong (right-click Resonance) and the Mirelight Scythe (sweep, life sip, right-click Beacon of the Lost).
+- **New undead:** Rimewalker (zombie-like), Hoarbone (skeleton-like), Mirewalker (zombie-like), Lanternbone (skeleton-like) and the Mire Wisp, with spawn rules, loot, eggs and death messages.
+- **Particles:** frost notes, snow swirls, wisp glow, lantern motes, burst effects. **Music:** two more CC0 boss themes (isaiah658). **Fogs:** three per new boss.
+- **8 new places** (Verse Cairn x4 variants, Frozen Cathedral, Fen Hut, Drowned Chapel, Wayfarer's Cairn) with seven new loot tables, 12 lore tablets, and new lore pages.
+
+### Changed
+- Hanae and the Eclipse Sovereign also get introduction scenes; their brains wait while the camera plays.
+- `LORE.md` and the docs site cover Chapters III and IV, the Eighth Voice and the new places.
+
+### Tooling
+- **`lint5.py`**: official-schema member check for every entity component, plus the specific classes of error the game reported (see above). The mock run now covers both new roads end to end (verses, fork, chimes, lectern, boss phases, fog, music, bars, sconces, altar, mirages, cinematic lock/restore).
+- *Not tested in-game:* the camera scenes, the glyph bar (needs `font/glyph_E4.png` to render in your client), structure placement and puzzle blocks, particles and animations. Please report anything that looks off with your Content Log.
+
 ## [1.5.0] - "Atmosphere Update"
 
 ### Added

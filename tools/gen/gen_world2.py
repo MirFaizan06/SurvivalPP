@@ -55,7 +55,7 @@ def build_all():
     structure('mossy_boulder', 'mossy_boulder', sizes['boulder'][1], ['forest', 'taiga', 'extreme_hills', 'mountains'], 1, 14, adj=3, steep=3)
     # silk nests: sealed pockets hidden in solid rock, found by mining or by their stray webs
     feature('silk_nest_feature', 'structure_template_feature', {
-        'structure_name': f'{NS}:silk_nest', 'adjustment_radius': 3, 'facing_direction': 'random', 'rotate_around_center': True})
+        'structure_name': f'{NS}:silk_nest', 'adjustment_radius': 3, 'facing_direction': 'random', 'rotate_around_center': True, 'constraints': {}})
     rule('silk_nest_rule', 'silk_nest_feature', 'underground_pass', tag('overworld'), dist_underground(1, 5, 38, 1, 70))
     loot()
 
