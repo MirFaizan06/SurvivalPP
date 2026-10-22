@@ -7,8 +7,8 @@ import { NS, safe } from './util.js';
 const TRACKS = {
     [`${NS}:veiled_blossom`]: { id: 'ecr.music.veiled_blossom', secs: 114, volume: 0.85 },
     [`${NS}:eclipse_sovereign`]: { id: 'ecr.music.eclipse_sovereign', secs: 123, volume: 0.85 },
-    [`${NS}:frost_cantor`]: { id: 'ecr.music.frost_cantor', secs: 114, volume: 0.85 },
-    [`${NS}:mire_lantern`]: { id: 'ecr.music.mire_lantern', secs: 142, volume: 0.85 },
+    [`${NS}:frost_cantor`]: { id: 'ecr.music.frost_cantor', secs: 112, volume: 0.85 },
+    [`${NS}:mire_lantern`]: { id: 'ecr.music.mire_lantern', secs: 80, volume: 0.85 },
     [`${NS}:cinder_bride`]: { id: 'ecr.music.cinder_bride', secs: 108, volume: 0.9 },
     [`${NS}:ashen_groom`]: { id: 'ecr.music.ashen_groom', secs: 130, volume: 0.9 },
 };

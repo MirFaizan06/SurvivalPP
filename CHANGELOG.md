@@ -2,6 +2,11 @@
 
 All notable changes to **Eclipsed Realms: Chronicles of the Seven Seals** (formerly "Survival++ | Eclipsed Realms") (Tech Bytes Design). Versions follow `major.minor.patch`; the pack version is set in `tools/version.json`.
 
+## [1.7.1]
+
+### Changed
+- **The Frost Cantor and Mire Lantern have real boss music now.** Their v1.6 themes were calm ambient loops. They are replaced by MintoDog's "Hard Boss Battle 2" (Cantor) and "Hard Boss Battle 1" (Mire Lantern), both CC0. Music lengths and credits updated; the fight logic is unchanged.
+
 ## [1.7.0] - "Burning Deep Update"
 
 ### Added
